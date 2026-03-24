@@ -1,0 +1,136 @@
+<section class="table-panel p-4 p-lg-4">
+  <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-3">
+    <div>
+      <p class="section-kicker mb-2">Registros cadastrados</p>
+      <h2 class="panel-title mb-0">Imóveis salvos</h2>
+    </div>
+
+    <div class="pagination-summary">
+      @if (pageData().totalItems > 0) {
+        <span>
+          Exibindo {{ displayedRangeStart() }} até {{ displayedRangeEnd() }} de
+          {{ pageData().totalItems }} registros
+        </span>
+      } @else {
+        <span>Nenhum registro encontrado.</span>
+      }
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table property-table align-middle mb-0">
+      <thead>
+        <tr>
+          <th>Imóvel</th>
+          <th>Categoria</th>
+          <th>Localização</th>
+          <th>Valor</th>
+          <th>Status SWOT</th>
+          <th>Anúncio</th>
+          <th>Mapa</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (isLoading()) {
+          <tr>
+            <td colspan="7" class="table-feedback">
+              <div class="loading-cell">
+                <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></div>
+                <span>Carregando registros da API...</span>
+              </div>
+            </td>
+          </tr>
+        } @else if (loadError()) {
+          <tr>
+            <td colspan="7" class="table-feedback">
+              <div class="alert alert-danger mb-0" role="alert">
+                {{ loadError() }}
+              </div>
+            </td>
+          </tr>
+        } @else if (!pageData().items.length) {
+          <tr>
+            <td colspan="7" class="table-feedback">
+              Nenhum imóvel encontrado para esta consulta.
+            </td>
+          </tr>
+        } @else {
+          @for (property of pageData().items; track trackByPropertyId($index, property)) {
+            <tr>
+              <td>
+                <div class="property-main">
+                  <strong>{{ property.title }}</strong>
+                  <span>{{ property.source }}</span>
+                </div>
+              </td>
+              <td>{{ property.category }}</td>
+              <td>
+                <div class="property-location">
+                  <strong>{{ property.addressLine }}</strong>
+                  <span>{{ property.neighborhood }} - {{ property.city }}/{{ property.state }}</span>
+                </div>
+              </td>
+              <td>
+                @if (property.price !== null) {
+                  {{ property.price | number: '1.2-2' }}
+                } @else {
+                  Não informado
+                }
+              </td>
+              <td>
+                <span class="status-pill">{{ property.swotStatus }}</span>
+              </td>
+              <td>
+                @if (property.originalUrl) {
+                  <a
+                    class="table-link"
+                    [href]="property.originalUrl"
+                    [title]="property.originalUrl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Ver anúncio
+                  </a>
+                } @else {
+                  <span class="text-muted">Sem link</span>
+                }
+              </td>
+              <td>
+                <app-map-tooltip-button
+                  [latitude]="property.latitude"
+                  [longitude]="property.longitude"
+                  [hasExactLocation]="property.hasExactLocation"
+                />
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mt-4">
+    <p class="pagination-caption mb-0">
+      Use a navegação abaixo para consultar os registros salvos.
+    </p>
+
+    <div class="btn-group" role="group" aria-label="Navegação da tabela">
+      <button
+        type="button"
+        class="btn btn-outline-brand"
+        (click)="previousPage.emit()"
+        [disabled]="isLoading() || pageData().page <= 1"
+      >
+        Página anterior
+      </button>
+      <button
+        type="button"
+        class="btn btn-brand"
+        (click)="nextPage.emit()"
+        [disabled]="isLoading() || pageData().page >= pageData().totalPages"
+      >
+        Próxima página
+      </button>
+    </div>
+  </div>
+</section>

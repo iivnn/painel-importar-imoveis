@@ -1,11 +1,1 @@
-{
-  "Version": 1,
-  "Hash": "9sqHYRHI359hZqzo/WK5rJ95O7BfzL4fXNJwUjseSKY=",
-  "Source": "Casa.Api",
-  "BasePath": "_content/Casa.Api",
-  "Mode": "Default",
-  "ManifestType": "Build",
-  "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
-  "Assets": []
-}
+{"Version":1,"Hash":"UpTYqkNhd9qEbjpObvCkPfKyw9HOKDq+Szd1UbcImOg=","Source":"Casa.Api","BasePath":"/","Mode":"Root","ManifestType":"Build","ReferencedProjectsConfiguration":[],"DiscoveryPatterns":[],"Assets":[],"Endpoints":[]}

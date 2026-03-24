@@ -1,0 +1,45 @@
+@if (latitude() !== null && longitude() !== null) {
+  <div class="map-actions">
+    <div class="map-tooltip-host">
+      <a
+        class="btn btn-map"
+        [href]="googleMapsUrl()"
+        target="_blank"
+        rel="noopener noreferrer"
+        (mouseenter)="showPreview($event)"
+        (mouseleave)="hidePreview()"
+        (focus)="showPreview($event)"
+        (blur)="hidePreview()"
+      >
+        Abrir mapa
+      </a>
+    </div>
+  </div>
+} @else {
+  <span class="map-badge map-badge--empty">Sem ponto</span>
+}
+
+@if (isPreviewVisible()) {
+  <div
+    class="map-tooltip-card"
+    role="tooltip"
+    [style.top.px]="previewTop()"
+    [style.left.px]="previewLeft()"
+  >
+    <div class="map-tooltip-card__meta">
+      <strong>Google Maps</strong>
+      <span>{{ coordinatesLabel() }}</span>
+      <small>
+        {{ hasExactLocation() ? 'Localização exata' : 'Localização aproximada' }}
+      </small>
+    </div>
+
+    <iframe
+      class="map-frame"
+      [src]="googleMapsEmbedUrl()"
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+      title="Mapa da localização"
+    ></iframe>
+  </div>
+}

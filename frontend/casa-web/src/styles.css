@@ -1,11 +1,44 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap");
+
+:root {
+  --bs-body-bg: #f1eadf;
+  --bs-body-color: #2b241b;
+  --bs-primary: #9c7447;
+  --bs-primary-rgb: 156, 116, 71;
+  --bs-secondary: #355347;
+  --bs-secondary-rgb: 53, 83, 71;
+  --bs-border-color: rgba(75, 62, 45, 0.14);
+  --bs-border-radius: 1rem;
+  --bs-border-radius-lg: 1.5rem;
+  --bs-link-color: #355347;
+  --bs-link-hover-color: #243a31;
+  --app-ink: #2b241b;
+  --app-muted: #625544;
+  --app-accent: #9c7447;
+}
+
 html,
 body {
   margin: 0;
   min-height: 100%;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: #eef3f8;
+  font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: #f1eadf;
 }
 
 * {
   box-sizing: border-box;
+}
+
+body {
+  color: var(--app-ink);
+}
+
+h1,
+h2,
+h3,
+h4,
+.display-title,
+.card-title,
+.workflow-title {
+  font-family: "Fraunces", Georgia, serif;
 }

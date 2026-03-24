@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "VBRfyrlM060=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\iivan\\OneDrive\\Documentos\\Casa\\backend\\Casa.Application\\Casa.Application.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\iivan\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\8.0.2\\microsoft.extensions.dependencyinjection.abstractions.8.0.2.nupkg.sha512"
+  ],
+  "logs": []
+}

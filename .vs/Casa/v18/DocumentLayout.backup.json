@@ -1,0 +1,71 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\iivan\\OneDrive\\Documentos\\Casa\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{C8D62F09-C864-422F-A7EF-2C0B2C4CFC82}|backend\\Casa.Api\\Casa.Api.csproj|c:\\users\\iivan\\onedrive\\documentos\\casa\\backend\\casa.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C8D62F09-C864-422F-A7EF-2C0B2C4CFC82}|backend\\Casa.Api\\Casa.Api.csproj|solutionrelative:backend\\casa.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F4B01363-2A3D-4A77-89F2-50DDB9405F4B}|backend\\Casa.Infrastructure\\Casa.Infrastructure.csproj|c:\\users\\iivan\\onedrive\\documentos\\casa\\backend\\casa.infrastructure\\dependencyinjection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F4B01363-2A3D-4A77-89F2-50DDB9405F4B}|backend\\Casa.Infrastructure\\Casa.Infrastructure.csproj|solutionrelative:backend\\casa.infrastructure\\dependencyinjection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F4B01363-2A3D-4A77-89F2-50DDB9405F4B}|backend\\Casa.Infrastructure\\Casa.Infrastructure.csproj|c:\\users\\iivan\\onedrive\\documentos\\casa\\backend\\casa.infrastructure\\persistence\\migrations\\casadbcontextmodelsnapshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F4B01363-2A3D-4A77-89F2-50DDB9405F4B}|backend\\Casa.Infrastructure\\Casa.Infrastructure.csproj|solutionrelative:backend\\casa.infrastructure\\persistence\\migrations\\casadbcontextmodelsnapshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\iivan\\OneDrive\\Documentos\\Casa\\backend\\Casa.Api\\Program.cs",
+              "RelativeDocumentMoniker": "backend\\Casa.Api\\Program.cs",
+              "ToolTip": "C:\\Users\\iivan\\OneDrive\\Documentos\\Casa\\backend\\Casa.Api\\Program.cs",
+              "RelativeToolTip": "backend\\Casa.Api\\Program.cs",
+              "ViewState": "AgIAAAIAAAAAAAAAAAAswBkAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-24T01:15:16.2Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "DependencyInjection.cs",
+              "DocumentMoniker": "C:\\Users\\iivan\\OneDrive\\Documentos\\Casa\\backend\\Casa.Infrastructure\\DependencyInjection.cs",
+              "RelativeDocumentMoniker": "backend\\Casa.Infrastructure\\DependencyInjection.cs",
+              "ToolTip": "C:\\Users\\iivan\\OneDrive\\Documentos\\Casa\\backend\\Casa.Infrastructure\\DependencyInjection.cs",
+              "RelativeToolTip": "backend\\Casa.Infrastructure\\DependencyInjection.cs",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAcwCwAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-24T01:15:10.046Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "CasaDbContextModelSnapshot.cs",
+              "DocumentMoniker": "C:\\Users\\iivan\\OneDrive\\Documentos\\Casa\\backend\\Casa.Infrastructure\\Persistence\\Migrations\\CasaDbContextModelSnapshot.cs",
+              "RelativeDocumentMoniker": "backend\\Casa.Infrastructure\\Persistence\\Migrations\\CasaDbContextModelSnapshot.cs",
+              "ToolTip": "C:\\Users\\iivan\\OneDrive\\Documentos\\Casa\\backend\\Casa.Infrastructure\\Persistence\\Migrations\\CasaDbContextModelSnapshot.cs",
+              "RelativeToolTip": "backend\\Casa.Infrastructure\\Persistence\\Migrations\\CasaDbContextModelSnapshot.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-24T01:14:46.501Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

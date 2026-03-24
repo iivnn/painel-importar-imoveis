@@ -1,0 +1,88 @@
+.map-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.map-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 88px;
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  background: rgba(53, 83, 71, 0.12);
+  color: #355347;
+}
+
+.map-badge--exact {
+  background: rgba(53, 83, 71, 0.18);
+}
+
+.map-badge--empty {
+  background: rgba(112, 104, 93, 0.12);
+  color: #70685d;
+}
+
+.map-tooltip-host {
+  display: inline-flex;
+}
+
+.btn-map {
+  --bs-btn-color: #355347;
+  --bs-btn-bg: rgba(53, 83, 71, 0.08);
+  --bs-btn-border-color: rgba(53, 83, 71, 0.18);
+  --bs-btn-hover-color: #f7f2e8;
+  --bs-btn-hover-bg: #355347;
+  --bs-btn-hover-border-color: #355347;
+  --bs-btn-active-color: #f7f2e8;
+  --bs-btn-active-bg: #2a4339;
+  --bs-btn-active-border-color: #2a4339;
+  --bs-btn-font-size: 0.82rem;
+  --bs-btn-font-weight: 700;
+  --bs-btn-padding-y: 0.35rem;
+  --bs-btn-padding-x: 0.75rem;
+  border-radius: 999px;
+}
+
+.map-tooltip-card {
+  position: fixed;
+  z-index: 1080;
+  width: 560px;
+  padding: 0.85rem 0.95rem 0.95rem;
+  border: 1px solid rgba(75, 62, 45, 0.12);
+  border-radius: 16px;
+  background: rgba(255, 252, 246, 0.98);
+  box-shadow: 0 18px 40px rgba(71, 56, 33, 0.16);
+  color: #2d241a;
+  display: grid;
+  gap: 0.2rem;
+  pointer-events: none;
+}
+
+.map-tooltip-card__meta {
+  display: grid;
+  gap: 0.2rem;
+  margin-bottom: 0.75rem;
+}
+
+.map-tooltip-card strong {
+  font-size: 0.9rem;
+}
+
+.map-tooltip-card span,
+.map-tooltip-card small {
+  color: var(--app-muted);
+}
+
+.map-frame {
+  display: block;
+  width: 100%;
+  height: 400px;
+  border: 0;
+  border-radius: 12px;
+  background: #e9e1d4;
+}

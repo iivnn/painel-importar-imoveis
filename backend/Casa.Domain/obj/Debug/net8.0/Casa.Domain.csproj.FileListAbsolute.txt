@@ -1,0 +1,12 @@
+C:\Users\iivan\OneDrive\Documentos\Casa\backend\Casa.Domain\bin\Debug\net8.0\Casa.Domain.deps.json
+C:\Users\iivan\OneDrive\Documentos\Casa\backend\Casa.Domain\bin\Debug\net8.0\Casa.Domain.dll
+C:\Users\iivan\OneDrive\Documentos\Casa\backend\Casa.Domain\bin\Debug\net8.0\Casa.Domain.pdb
+C:\Users\iivan\OneDrive\Documentos\Casa\backend\Casa.Domain\obj\Debug\net8.0\Casa.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\iivan\OneDrive\Documentos\Casa\backend\Casa.Domain\obj\Debug\net8.0\Casa.Domain.AssemblyInfoInputs.cache
+C:\Users\iivan\OneDrive\Documentos\Casa\backend\Casa.Domain\obj\Debug\net8.0\Casa.Domain.AssemblyInfo.cs
+C:\Users\iivan\OneDrive\Documentos\Casa\backend\Casa.Domain\obj\Debug\net8.0\Casa.Domain.csproj.CoreCompileInputs.cache
+C:\Users\iivan\OneDrive\Documentos\Casa\backend\Casa.Domain\obj\Debug\net8.0\Casa.Domain.sourcelink.json
+C:\Users\iivan\OneDrive\Documentos\Casa\backend\Casa.Domain\obj\Debug\net8.0\Casa.Domain.dll
+C:\Users\iivan\OneDrive\Documentos\Casa\backend\Casa.Domain\obj\Debug\net8.0\refint\Casa.Domain.dll
+C:\Users\iivan\OneDrive\Documentos\Casa\backend\Casa.Domain\obj\Debug\net8.0\Casa.Domain.pdb
+C:\Users\iivan\OneDrive\Documentos\Casa\backend\Casa.Domain\obj\Debug\net8.0\ref\Casa.Domain.dll
