@@ -39,7 +39,7 @@ export class MapTooltipButtonComponent {
       return this.sanitizer.bypassSecurityTrustResourceUrl('about:blank');
     }
 
-    const url = `https://www.google.com/maps?q=${this.latitude()},${this.longitude()}&z=13&output=embed`;
+    const url = `https://www.google.com/maps?q=${this.latitude()},${this.longitude()}&z=14&output=embed`;
 
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
