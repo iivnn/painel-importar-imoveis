@@ -1,9 +1,8 @@
 .hero-panel {
-  border: 1px solid rgba(75, 62, 45, 0.12);
+  border: 1px solid var(--app-border);
   border-radius: 32px;
-  background:
-    linear-gradient(135deg, rgba(255, 252, 246, 0.96), rgba(246, 239, 227, 0.9));
-  box-shadow: 0 24px 80px rgba(71, 56, 33, 0.12);
+  background: var(--app-surface);
+  box-shadow: 0 24px 80px var(--app-shadow-soft);
 }
 
 .hero-panel--compact {
@@ -20,7 +19,7 @@
 
 .display-title {
   font-family: "Fraunces", Georgia, serif;
-  color: #2b241b;
+  color: var(--app-ink);
 }
 
 .display-title--compact {
@@ -31,10 +30,10 @@
 }
 
 .summary-card {
-  border: 1px solid rgba(75, 62, 45, 0.12);
+  border: 1px solid var(--app-border);
   border-radius: 24px;
   padding: 1.1rem 1.25rem;
-  background: rgba(255, 252, 246, 0.78);
+  background: var(--app-surface-soft);
 }
 
 .summary-label {
@@ -43,7 +42,7 @@
   letter-spacing: 0.16em;
   font-size: 0.72rem;
   font-weight: 700;
-  color: #8c7354;
+  color: var(--app-muted);
 }
 
 .summary-value {
@@ -51,7 +50,7 @@
   margin-top: 0.35rem;
   font-size: clamp(1.8rem, 4vw, 2.6rem);
   line-height: 1;
-  color: #2d241a;
+  color: var(--app-ink);
 }
 
 .summary-copy {

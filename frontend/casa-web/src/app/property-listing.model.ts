@@ -1,10 +1,12 @@
+import { PropertySource, PropertySwotStatus } from './create-property.model';
+
 export interface PropertyListing {
   id: number;
   title: string;
   category: string;
-  source: string;
+  source: PropertySource;
   originalUrl: string;
-  swotStatus: string;
+  swotStatus: PropertySwotStatus;
   price: number | null;
   addressLine: string;
   neighborhood: string;
@@ -14,6 +16,7 @@ export interface PropertyListing {
   latitude: number | null;
   longitude: number | null;
   hasExactLocation: boolean;
+  excluded: boolean;
   createdAtUtc: string;
 }
 

@@ -1,0 +1,46 @@
+<div class="modal-backdrop-shell">
+  <section
+    class="confirm-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="confirm-delete-title"
+  >
+    <p class="confirm-modal__kicker mb-2">Excluir registro</p>
+    <h2 id="confirm-delete-title" class="confirm-modal__title mb-2">
+      Tem certeza que quer excluir?
+    </h2>
+    <p class="confirm-modal__copy mb-0">
+      O imóvel <strong>{{ propertyTitle() }}</strong> será marcado como excluído.
+    </p>
+
+    @if (errorMessage()) {
+      <div class="alert alert-danger mt-3 mb-0" role="alert">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <div class="confirm-modal__actions mt-4">
+      <button
+        type="button"
+        class="btn btn-outline-brand"
+        (click)="cancel.emit()"
+        [disabled]="isDeleting()"
+      >
+        Cancelar
+      </button>
+      <button
+        type="button"
+        class="btn btn-danger"
+        (click)="confirm.emit()"
+        [disabled]="isDeleting()"
+      >
+        @if (isDeleting()) {
+          <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+          Excluindo...
+        } @else {
+          Confirmar exclusão
+        }
+      </button>
+    </div>
+  </section>
+</div>

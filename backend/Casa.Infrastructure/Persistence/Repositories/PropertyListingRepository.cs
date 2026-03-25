@@ -13,6 +13,7 @@ public class PropertyListingRepository(CasaDbContext dbContext) : IPropertyListi
     {
         var query = dbContext.PropertyListings
             .AsNoTracking()
+            .Where(property => !property.Excluded)
             .OrderByDescending(property => property.CreatedAtUtc);
 
         var totalItems = await query.CountAsync(cancellationToken);
@@ -32,6 +33,12 @@ public class PropertyListingRepository(CasaDbContext dbContext) : IPropertyListi
             .FirstOrDefaultAsync(property => property.Id == id, cancellationToken);
     }
 
+    public Task<PropertyListing?> GetForUpdateAsync(int id, CancellationToken cancellationToken = default)
+    {
+        return dbContext.PropertyListings
+            .FirstOrDefaultAsync(property => property.Id == id, cancellationToken);
+    }
+
     public Task<bool> HasAnyAsync(CancellationToken cancellationToken = default)
     {
         return dbContext.PropertyListings.AnyAsync(cancellationToken);
@@ -45,6 +52,16 @@ public class PropertyListingRepository(CasaDbContext dbContext) : IPropertyListi
     public async Task AddRangeAsync(IEnumerable<PropertyListing> properties, CancellationToken cancellationToken = default)
     {
         await dbContext.PropertyListings.AddRangeAsync(properties, cancellationToken);
+    }
+
+    public async Task<bool> SoftDeleteAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var affectedRows = await dbContext.PropertyListings
+            .Where(property => property.Id == id && !property.Excluded)
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(property => property.Excluded, true), cancellationToken);
+
+        return affectedRows > 0;
     }
 
     public Task SaveChangesAsync(CancellationToken cancellationToken = default)

@@ -11,11 +11,15 @@ public interface IPropertyListingRepository
 
     Task<PropertyListing?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
 
+    Task<PropertyListing?> GetForUpdateAsync(int id, CancellationToken cancellationToken = default);
+
     Task<bool> HasAnyAsync(CancellationToken cancellationToken = default);
 
     Task AddAsync(PropertyListing property, CancellationToken cancellationToken = default);
 
     Task AddRangeAsync(IEnumerable<PropertyListing> properties, CancellationToken cancellationToken = default);
+
+    Task<bool> SoftDeleteAsync(int id, CancellationToken cancellationToken = default);
 
     Task SaveChangesAsync(CancellationToken cancellationToken = default);
 }

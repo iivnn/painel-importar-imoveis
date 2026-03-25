@@ -1,0 +1,14 @@
+<button
+  type="button"
+  class="theme-toggle-button"
+  [attr.aria-label]="themeService.theme() === 'dark' ? 'Ativar modo claro' : 'Ativar modo noturno'"
+  [attr.title]="themeService.theme() === 'dark' ? 'Ativar modo claro' : 'Ativar modo noturno'"
+  (click)="themeService.toggleTheme()"
+>
+  <i
+    class="bi"
+    [class.bi-sun-fill]="themeService.theme() === 'dark'"
+    [class.bi-moon-stars-fill]="themeService.theme() !== 'dark'"
+    aria-hidden="true"
+  ></i>
+</button>

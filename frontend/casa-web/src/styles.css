@@ -15,6 +15,49 @@
   --app-ink: #2b241b;
   --app-muted: #625544;
   --app-accent: #9c7447;
+  --app-highlight: #c8a16a;
+  --app-accent-soft: rgba(156, 116, 71, 0.14);
+  --app-background: radial-gradient(circle at top left, rgba(230, 194, 120, 0.18), transparent 24%),
+    radial-gradient(circle at right 20%, rgba(55, 88, 64, 0.12), transparent 20%),
+    linear-gradient(180deg, #f7f2e8 0%, #f1eadf 52%, #ebe3d5 100%);
+  --app-surface: linear-gradient(135deg, rgba(255, 252, 246, 0.96), rgba(246, 239, 227, 0.9));
+  --app-surface-soft: rgba(255, 252, 246, 0.82);
+  --app-border: rgba(75, 62, 45, 0.12);
+  --app-border-strong: rgba(75, 62, 45, 0.18);
+  --app-shadow-soft: rgba(71, 56, 33, 0.12);
+  --app-table-hover: rgba(255, 255, 255, 0.4);
+  --app-map-tooltip: rgba(255, 252, 246, 0.98);
+  --app-map-surface: #e9e1d4;
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --bs-body-bg: #11161b;
+  --bs-body-color: #e6dfd2;
+  --bs-primary: #d1a36a;
+  --bs-primary-rgb: 209, 163, 106;
+  --bs-secondary: #8fb6a5;
+  --bs-secondary-rgb: 143, 182, 165;
+  --bs-border-color: rgba(231, 222, 208, 0.12);
+  --bs-link-color: #9ec8b5;
+  --bs-link-hover-color: #cbe0d5;
+  --app-ink: #f0eadf;
+  --app-muted: #a8a295;
+  --app-accent: #d1a36a;
+  --app-highlight: #f0c289;
+  --app-accent-soft: rgba(209, 163, 106, 0.16);
+  --app-background: radial-gradient(circle at top left, rgba(209, 163, 106, 0.12), transparent 24%),
+    radial-gradient(circle at right 20%, rgba(114, 161, 140, 0.12), transparent 22%),
+    linear-gradient(180deg, #11161b 0%, #141b21 50%, #0f1418 100%);
+  --app-surface: linear-gradient(135deg, rgba(25, 33, 40, 0.96), rgba(18, 24, 30, 0.92));
+  --app-surface-soft: rgba(25, 33, 40, 0.82);
+  --app-border: rgba(231, 222, 208, 0.12);
+  --app-border-strong: rgba(231, 222, 208, 0.22);
+  --app-shadow-soft: rgba(0, 0, 0, 0.3);
+  --app-table-hover: rgba(255, 255, 255, 0.03);
+  --app-map-tooltip: rgba(18, 24, 30, 0.98);
+  --app-map-surface: #1b232a;
+  color-scheme: dark;
 }
 
 html,
@@ -22,7 +65,7 @@ body {
   margin: 0;
   min-height: 100%;
   font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: #f1eadf;
+  background: var(--bs-body-bg);
 }
 
 * {
@@ -30,7 +73,85 @@ body {
 }
 
 body {
+  background: var(--bs-body-bg);
   color: var(--app-ink);
+  transition:
+    background 0.22s ease,
+    background-color 0.22s ease,
+    color 0.22s ease;
+}
+
+.app-select-shell {
+  position: relative;
+}
+
+.app-select-shell::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-right: 2px solid color-mix(in srgb, var(--app-ink) 72%, transparent);
+  border-bottom: 2px solid color-mix(in srgb, var(--app-ink) 72%, transparent);
+  transform: translateY(-68%) rotate(45deg);
+  pointer-events: none;
+  opacity: 0.8;
+  transition:
+    opacity 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.app-select {
+  min-height: 3.25rem;
+  padding-right: 3rem;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  color: var(--app-ink);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--app-surface-soft) 92%, white 8%), color-mix(in srgb, var(--app-surface-soft) 98%, transparent)),
+    color-mix(in srgb, var(--app-accent-soft) 32%, transparent);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 10px 24px color-mix(in srgb, var(--app-shadow-soft) 58%, transparent);
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease,
+    transform 0.18s ease;
+}
+
+.app-select:hover {
+  border-color: color-mix(in srgb, var(--app-accent) 40%, var(--app-border-strong));
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--app-surface-soft) 96%, white 4%), color-mix(in srgb, var(--app-surface-soft) 100%, transparent)),
+    color-mix(in srgb, var(--app-accent-soft) 42%, transparent);
+}
+
+.app-select:focus {
+  border-color: color-mix(in srgb, var(--app-accent) 58%, var(--app-border-strong));
+  box-shadow:
+    0 0 0 0.26rem color-mix(in srgb, var(--app-accent-soft) 85%, transparent),
+    0 14px 28px color-mix(in srgb, var(--app-shadow-soft) 72%, transparent);
+  outline: none;
+}
+
+.app-select-shell:has(.app-select:hover)::after,
+.app-select-shell:has(.app-select:focus)::after {
+  border-color: color-mix(in srgb, var(--app-accent) 72%, transparent);
+  opacity: 1;
+}
+
+.app-select-shell:has(.app-select:focus)::after {
+  transform: translateY(-60%) rotate(45deg);
+}
+
+.app-select option {
+  color: #2b241b;
+  background: #fffaf2;
 }
 
 h1,

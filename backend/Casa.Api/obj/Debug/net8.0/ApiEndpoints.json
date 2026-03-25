@@ -1,5 +1,28 @@
 [
   {
+    "ContainingType": "Casa.Api.Endpoints.AddressEndpoints\u002B\u003C\u003Ec",
+    "Method": "\u003CMapAddressEndpoints\u003Eb__0_0",
+    "RelativePath": "api/address/cep/{cep}",
+    "HttpMethod": "GET",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "cep",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ],
+    "EndpointName": "LookupAddressByCep"
+  },
+  {
     "ContainingType": "Casa.Api.Endpoints.HealthEndpoints\u002B\u003C\u003Ec",
     "Method": "\u003CMapHealthEndpoints\u003Eb__0_0",
     "RelativePath": "api/health",
@@ -117,5 +140,28 @@
       }
     ],
     "EndpointName": "UpdateProperty"
+  },
+  {
+    "ContainingType": "Casa.Api.Endpoints.PropertyEndpoints\u002B\u003C\u003Ec",
+    "Method": "\u003CMapPropertyEndpoints\u003Eb__0_4",
+    "RelativePath": "api/properties/{id:int}",
+    "HttpMethod": "DELETE",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ],
+    "EndpointName": "SoftDeleteProperty"
   }
 ]

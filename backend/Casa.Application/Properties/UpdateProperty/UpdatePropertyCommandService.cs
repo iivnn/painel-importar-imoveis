@@ -16,7 +16,7 @@ public class UpdatePropertyCommandService(IPropertyListingRepository propertyLis
             return (null, validationError);
         }
 
-        var property = await propertyListingRepository.GetByIdAsync(id, cancellationToken);
+        var property = await propertyListingRepository.GetForUpdateAsync(id, cancellationToken);
         if (property is null)
         {
             return (null, null);

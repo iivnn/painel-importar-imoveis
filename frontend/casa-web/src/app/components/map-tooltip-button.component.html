@@ -4,6 +4,8 @@
       <a
         class="btn btn-map"
         [href]="googleMapsUrl()"
+        title="Abrir no Google Maps"
+        aria-label="Abrir no Google Maps"
         target="_blank"
         rel="noopener noreferrer"
         (mouseenter)="showPreview($event)"
@@ -11,7 +13,7 @@
         (focus)="showPreview($event)"
         (blur)="hidePreview()"
       >
-        Abrir mapa
+        <i class="bi bi-map" aria-hidden="true"></i>
       </a>
     </div>
   </div>

@@ -1,0 +1,25 @@
+.theme-toggle-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.65rem;
+  height: 2.65rem;
+  padding: 0;
+  border: 1px solid var(--app-border-strong);
+  border-radius: 999px;
+  background: var(--app-surface-soft);
+  color: var(--app-ink);
+  box-shadow: 0 12px 30px var(--app-shadow-soft);
+  font-size: 1rem;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease,
+    color 0.18s ease;
+}
+
+.theme-toggle-button:hover {
+  transform: translateY(-1px);
+  border-color: var(--app-accent);
+  color: var(--app-accent);
+}

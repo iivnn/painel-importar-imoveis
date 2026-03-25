@@ -25,6 +25,7 @@ export class PropertyListingsTableComponent {
 
   readonly previousPage = output<void>();
   readonly nextPage = output<void>();
+  readonly requestDelete = output<PropertyListing>();
 
   displayedRangeStart(): number {
     const data = this.pageData();

@@ -1,0 +1,57 @@
+.modal-backdrop-shell {
+  position: fixed;
+  inset: 0;
+  z-index: 1080;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: rgba(10, 13, 16, 0.56);
+  backdrop-filter: blur(8px);
+}
+
+.confirm-modal {
+  width: min(100%, 460px);
+  padding: 1.5rem;
+  border: 1px solid var(--app-border-strong);
+  border-radius: 28px;
+  background: var(--app-surface);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.24);
+}
+
+.confirm-modal__kicker {
+  color: var(--app-accent);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.confirm-modal__title {
+  color: var(--app-ink);
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 1.7rem;
+}
+
+.confirm-modal__copy {
+  color: var(--app-muted);
+  line-height: 1.65;
+}
+
+.confirm-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.btn-outline-brand {
+  --bs-btn-color: #355347;
+  --bs-btn-border-color: rgba(53, 83, 71, 0.35);
+  --bs-btn-hover-bg: #355347;
+  --bs-btn-hover-border-color: #355347;
+  --bs-btn-hover-color: #f7f2e8;
+  --bs-btn-active-bg: #2a4339;
+  --bs-btn-active-border-color: #2a4339;
+  --bs-btn-padding-x: 1.15rem;
+  --bs-btn-padding-y: 0.75rem;
+  --bs-btn-font-weight: 600;
+}

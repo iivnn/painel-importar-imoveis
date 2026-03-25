@@ -1,4 +1,6 @@
+using System.Text.Json.Serialization;
 using Casa.Api.Endpoints;
+using Casa.Api.Middleware;
 using Casa.Application;
 using Casa.Infrastructure;
 
@@ -8,6 +10,11 @@ const string FrontendCorsPolicy = "FrontendCorsPolicy";
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpClient();
+builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
+{
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddCors(options =>
@@ -32,6 +39,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseGlobalExceptionHandling();
 app.UseCors(FrontendCorsPolicy);
 
 app.MapApiEndpoints();

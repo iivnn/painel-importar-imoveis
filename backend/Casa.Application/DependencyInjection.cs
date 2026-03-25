@@ -1,5 +1,6 @@
 using Casa.Application.Properties.CreateProperty;
 using Casa.Application.Properties.GetProperties;
+using Casa.Application.Properties.SoftDeleteProperty;
 using Casa.Application.Properties.UpdateProperty;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,6 +12,7 @@ public static class DependencyInjection
     {
         services.AddScoped<CreatePropertyCommandService>();
         services.AddScoped<GetPropertiesQueryService>();
+        services.AddScoped<SoftDeletePropertyCommandService>();
         services.AddScoped<UpdatePropertyCommandService>();
 
         return services;

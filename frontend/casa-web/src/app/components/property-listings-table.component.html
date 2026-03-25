@@ -2,7 +2,7 @@
   <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-3">
     <div>
       <p class="section-kicker mb-2">Registros cadastrados</p>
-      <h2 class="panel-title mb-0">Imóveis salvos</h2>
+      <h2 class="panel-title mb-0">Imóveis</h2>
     </div>
 
     <div class="pagination-summary">
@@ -25,9 +25,9 @@
           <th>Categoria</th>
           <th>Localização</th>
           <th>Valor</th>
-          <th>Status SWOT</th>
           <th>Anúncio</th>
           <th>Mapa</th>
+          <th class="text-end">Ações</th>
         </tr>
       </thead>
       <tbody>
@@ -78,9 +78,6 @@
                 }
               </td>
               <td>
-                <span class="status-pill">{{ property.swotStatus }}</span>
-              </td>
-              <td>
                 @if (property.originalUrl) {
                   <a
                     class="table-link"
@@ -102,6 +99,23 @@
                   [hasExactLocation]="property.hasExactLocation"
                 />
               </td>
+              <td class="text-end">
+                <button
+                  type="button"
+                  class="btn table-action-button table-action-button--danger"
+                  (click)="requestDelete.emit(property)"
+                  [disabled]="property.excluded"
+                  [title]="property.excluded ? 'Registro já excluído' : 'Excluir registro'"
+                  [attr.aria-label]="property.excluded ? 'Registro já excluído' : 'Excluir registro'"
+                >
+                  <i
+                    class="bi"
+                    [class.bi-trash3]="!property.excluded"
+                    [class.bi-trash3-fill]="property.excluded"
+                    aria-hidden="true"
+                  ></i>
+                </button>
+              </td>
             </tr>
           }
         }
@@ -117,19 +131,23 @@
     <div class="btn-group" role="group" aria-label="Navegação da tabela">
       <button
         type="button"
-        class="btn btn-outline-brand"
+        class="btn table-page-button table-page-button--secondary"
         (click)="previousPage.emit()"
         [disabled]="isLoading() || pageData().page <= 1"
+        title="Página anterior"
+        aria-label="Página anterior"
       >
-        Página anterior
+        <i class="bi bi-chevron-left" aria-hidden="true"></i>
       </button>
       <button
         type="button"
-        class="btn btn-brand"
+        class="btn table-page-button table-page-button--primary"
         (click)="nextPage.emit()"
         [disabled]="isLoading() || pageData().page >= pageData().totalPages"
+        title="Próxima página"
+        aria-label="Próxima página"
       >
-        Próxima página
+        <i class="bi bi-chevron-right" aria-hidden="true"></i>
       </button>
     </div>
   </div>

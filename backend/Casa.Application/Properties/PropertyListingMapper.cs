@@ -8,9 +8,9 @@ internal static class PropertyListingMapper
     {
         target.Title = request.Title.Trim();
         target.Category = request.Category.Trim();
-        target.Source = request.Source.Trim();
+        target.Source = request.Source;
         target.OriginalUrl = request.OriginalUrl.Trim();
-        target.SwotStatus = request.SwotStatus.Trim();
+        target.SwotStatus = request.SwotStatus;
         target.Price = request.Price;
         target.AddressLine = request.AddressLine.Trim();
         target.Neighborhood = request.Neighborhood.Trim();
@@ -20,14 +20,13 @@ internal static class PropertyListingMapper
         target.Latitude = request.Latitude;
         target.Longitude = request.Longitude;
         target.HasExactLocation = request.HasExactLocation;
+        target.Excluded = request.Excluded;
     }
 
     public static string? Validate(PropertyListingUpsertRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.Title)) return "Title is required.";
         if (string.IsNullOrWhiteSpace(request.Category)) return "Category is required.";
-        if (string.IsNullOrWhiteSpace(request.Source)) return "Source is required.";
-        if (string.IsNullOrWhiteSpace(request.SwotStatus)) return "SwotStatus is required.";
         if (string.IsNullOrWhiteSpace(request.AddressLine)) return "AddressLine is required.";
         if (string.IsNullOrWhiteSpace(request.Neighborhood)) return "Neighborhood is required.";
         if (string.IsNullOrWhiteSpace(request.City)) return "City is required.";

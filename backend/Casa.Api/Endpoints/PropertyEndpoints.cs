@@ -2,6 +2,7 @@ using Casa.Application.Abstractions;
 using Casa.Application.Properties;
 using Casa.Application.Properties.CreateProperty;
 using Casa.Application.Properties.GetProperties;
+using Casa.Application.Properties.SoftDeleteProperty;
 using Casa.Application.Properties.UpdateProperty;
 
 namespace Casa.Api.Endpoints;
@@ -80,6 +81,18 @@ public static class PropertyEndpoints
             return property is null ? Results.NotFound() : Results.Ok(property);
         })
         .WithName("UpdateProperty")
+        .WithOpenApi();
+
+        endpoints.MapDelete("/api/properties/{id:int}", async (
+            int id,
+            SoftDeletePropertyCommandService softDeletePropertyCommandService,
+            CancellationToken cancellationToken) =>
+        {
+            var deleted = await softDeletePropertyCommandService.ExecuteAsync(id, cancellationToken);
+
+            return deleted ? Results.NoContent() : Results.NotFound();
+        })
+        .WithName("SoftDeleteProperty")
         .WithOpenApi();
 
         return endpoints;

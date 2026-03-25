@@ -1,9 +1,8 @@
 .table-panel {
-  border: 1px solid rgba(75, 62, 45, 0.12);
+  border: 1px solid var(--app-border);
   border-radius: 32px;
-  background:
-    linear-gradient(135deg, rgba(255, 252, 246, 0.96), rgba(246, 239, 227, 0.9));
-  box-shadow: 0 24px 80px rgba(71, 56, 33, 0.12);
+  background: var(--app-surface);
+  box-shadow: 0 24px 80px var(--app-shadow-soft);
 }
 
 .section-kicker {
@@ -16,7 +15,7 @@
 
 .panel-title {
   font-family: "Fraunces", Georgia, serif;
-  color: #2b241b;
+  color: var(--app-ink);
   font-size: 2rem;
 }
 
@@ -28,13 +27,13 @@
 
 .property-table {
   --bs-table-bg: transparent;
-  --bs-table-color: #2d241a;
-  --bs-table-border-color: rgba(108, 92, 70, 0.12);
+  --bs-table-color: var(--app-ink);
+  --bs-table-border-color: var(--app-border);
 }
 
 .property-table thead th {
   border-bottom-width: 1px;
-  color: #7a684f;
+  color: var(--app-muted);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -43,7 +42,7 @@
 }
 
 .property-table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--app-table-hover);
 }
 
 .property-table td {
@@ -61,7 +60,7 @@
 .property-main strong,
 .property-location strong {
   font-weight: 700;
-  color: #2d241a;
+  color: var(--app-ink);
 }
 
 .property-main span,
@@ -70,27 +69,14 @@
   font-size: 0.95rem;
 }
 
-.status-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 88px;
-  padding: 0.45rem 0.8rem;
-  border-radius: 999px;
-  font-size: 0.82rem;
-  font-weight: 700;
-  background: rgba(156, 116, 71, 0.12);
-  color: #855d34;
-}
-
 .table-link {
-  color: #355347;
+  color: var(--bs-link-color);
   font-weight: 700;
   text-decoration: none;
 }
 
 .table-link:hover {
-  color: #243a31;
+  color: var(--bs-link-hover-color);
   text-decoration: underline;
 }
 
@@ -108,28 +94,83 @@
   font-weight: 600;
 }
 
-.btn-brand {
-  --bs-btn-bg: var(--app-accent);
-  --bs-btn-border-color: var(--app-accent);
-  --bs-btn-hover-bg: #89653f;
-  --bs-btn-hover-border-color: #89653f;
-  --bs-btn-active-bg: #745433;
-  --bs-btn-active-border-color: #745433;
-  --bs-btn-color: #fffaf2;
-  --bs-btn-padding-x: 1.15rem;
-  --bs-btn-padding-y: 0.75rem;
-  --bs-btn-font-weight: 600;
+.table-action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.34rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
 }
 
-.btn-outline-brand {
-  --bs-btn-color: #355347;
-  --bs-btn-border-color: rgba(53, 83, 71, 0.35);
-  --bs-btn-hover-bg: #355347;
-  --bs-btn-hover-border-color: #355347;
-  --bs-btn-hover-color: #f7f2e8;
-  --bs-btn-active-bg: #2a4339;
-  --bs-btn-active-border-color: #2a4339;
-  --bs-btn-padding-x: 1.15rem;
-  --bs-btn-padding-y: 0.75rem;
-  --bs-btn-font-weight: 600;
+.table-action-button i {
+  font-size: 0.86rem;
+}
+
+.table-action-button--danger {
+  --bs-btn-color: #b65f5f;
+  --bs-btn-border-color: rgba(182, 95, 95, 0.24);
+  --bs-btn-bg: rgba(182, 95, 95, 0.08);
+  --bs-btn-hover-color: #fff7f7;
+  --bs-btn-hover-bg: #b65f5f;
+  --bs-btn-hover-border-color: #b65f5f;
+  --bs-btn-active-color: #fff7f7;
+  --bs-btn-active-bg: #944848;
+  --bs-btn-active-border-color: #944848;
+}
+
+.table-action-button:disabled {
+  opacity: 0.72;
+}
+
+.table-page-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  padding: 0;
+  border: 1px solid var(--app-border-strong);
+  border-radius: 999px;
+  background: var(--app-surface-soft);
+  color: var(--app-ink);
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.table-page-button i {
+  font-size: 0.9rem;
+}
+
+.table-page-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: var(--app-accent);
+  background: var(--app-accent-soft);
+  color: var(--app-accent);
+}
+
+.table-page-button:disabled {
+  border-color: var(--app-border);
+  background: transparent;
+  color: var(--app-muted);
+  opacity: 0.55;
+}
+
+.table-page-button--primary,
+.table-page-button--secondary {
+  --bs-btn-color: inherit;
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: transparent;
+  --bs-btn-hover-color: inherit;
+  --bs-btn-hover-bg: transparent;
+  --bs-btn-hover-border-color: transparent;
+  --bs-btn-active-color: inherit;
+  --bs-btn-active-bg: transparent;
+  --bs-btn-active-border-color: transparent;
 }

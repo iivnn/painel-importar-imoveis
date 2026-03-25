@@ -41,6 +41,11 @@ namespace Casa.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("Excluded")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(false);
+
                     b.Property<bool>("HasExactLocation")
                         .HasColumnType("INTEGER");
 

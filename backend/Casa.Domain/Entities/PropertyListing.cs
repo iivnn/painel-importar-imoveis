@@ -1,3 +1,5 @@
+using Casa.Domain.Enums;
+
 namespace Casa.Domain.Entities;
 
 public class PropertyListing
@@ -8,11 +10,11 @@ public class PropertyListing
 
     public string Category { get; set; } = string.Empty;
 
-    public string Source { get; set; } = string.Empty;
+    public PropertySource Source { get; set; }
 
     public string OriginalUrl { get; set; } = string.Empty;
 
-    public string SwotStatus { get; set; } = string.Empty;
+    public PropertySwotStatus SwotStatus { get; set; }
 
     public decimal? Price { get; set; }
 
@@ -31,6 +33,8 @@ public class PropertyListing
     public decimal? Longitude { get; set; }
 
     public bool HasExactLocation { get; set; }
+
+    public bool Excluded { get; set; }
 
     public DateTime CreatedAtUtc { get; set; }
 }

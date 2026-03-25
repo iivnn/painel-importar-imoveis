@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
+import { CreatePropertyRequest } from './create-property.model';
 import { PropertyListingPage } from './property-listing.model';
 
 @Injectable({ providedIn: 'root' })
@@ -15,5 +16,13 @@ export class PropertyListingsService {
       .set('pageSize', pageSize);
 
     return this.http.get<PropertyListingPage>(this.apiBaseUrl, { params });
+  }
+
+  softDelete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiBaseUrl}/${id}`);
+  }
+
+  create(request: CreatePropertyRequest): Observable<void> {
+    return this.http.post<void>(this.apiBaseUrl, request);
   }
 }

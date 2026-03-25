@@ -3,6 +3,14 @@
   "WorkspaceRootPath": "C:\\Users\\iivan\\OneDrive\\Documentos\\Casa\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{C8D62F09-C864-422F-A7EF-2C0B2C4CFC82}|backend\\Casa.Api\\Casa.Api.csproj|c:\\users\\iivan\\onedrive\\documentos\\casa\\backend\\casa.api\\endpoints\\propertyendpoints.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C8D62F09-C864-422F-A7EF-2C0B2C4CFC82}|backend\\Casa.Api\\Casa.Api.csproj|solutionrelative:backend\\casa.api\\endpoints\\propertyendpoints.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{71FAA6F9-836D-4FF1-A9DD-EA05F3F3F125}|backend\\Casa.Domain\\Casa.Domain.csproj|c:\\users\\iivan\\onedrive\\documentos\\casa\\backend\\casa.domain\\entities\\propertylisting.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{71FAA6F9-836D-4FF1-A9DD-EA05F3F3F125}|backend\\Casa.Domain\\Casa.Domain.csproj|solutionrelative:backend\\casa.domain\\entities\\propertylisting.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{F4B01363-2A3D-4A77-89F2-50DDB9405F4B}|backend\\Casa.Infrastructure\\Casa.Infrastructure.csproj|c:\\users\\iivan\\onedrive\\documentos\\casa\\backend\\casa.infrastructure\\dependencyinjection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{F4B01363-2A3D-4A77-89F2-50DDB9405F4B}|backend\\Casa.Infrastructure\\Casa.Infrastructure.csproj|solutionrelative:backend\\casa.infrastructure\\dependencyinjection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -22,36 +30,63 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\iivan\\OneDrive\\Documentos\\Casa\\backend\\Casa.Api\\Program.cs",
-              "RelativeDocumentMoniker": "backend\\Casa.Api\\Program.cs",
-              "ToolTip": "C:\\Users\\iivan\\OneDrive\\Documentos\\Casa\\backend\\Casa.Api\\Program.cs",
-              "RelativeToolTip": "backend\\Casa.Api\\Program.cs",
-              "ViewState": "AgIAAAIAAAAAAAAAAAAswBkAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-24T01:15:16.2Z"
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "DependencyInjection.cs",
-              "DocumentMoniker": "C:\\Users\\iivan\\OneDrive\\Documentos\\Casa\\backend\\Casa.Infrastructure\\DependencyInjection.cs",
-              "RelativeDocumentMoniker": "backend\\Casa.Infrastructure\\DependencyInjection.cs",
-              "ToolTip": "C:\\Users\\iivan\\OneDrive\\Documentos\\Casa\\backend\\Casa.Infrastructure\\DependencyInjection.cs",
-              "RelativeToolTip": "backend\\Casa.Infrastructure\\DependencyInjection.cs",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAcwC8AAAAEAAAAAAAAAA==",
+              "Title": "PropertyEndpoints.cs",
+              "DocumentMoniker": "C:\\Users\\iivan\\OneDrive\\Documentos\\Casa\\backend\\Casa.Api\\Endpoints\\PropertyEndpoints.cs",
+              "RelativeDocumentMoniker": "backend\\Casa.Api\\Endpoints\\PropertyEndpoints.cs",
+              "ToolTip": "C:\\Users\\iivan\\OneDrive\\Documentos\\Casa\\backend\\Casa.Api\\Endpoints\\PropertyEndpoints.cs",
+              "RelativeToolTip": "backend\\Casa.Api\\Endpoints\\PropertyEndpoints.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-24T01:15:10.046Z",
+              "WhenOpened": "2026-03-25T01:30:02.497Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
+              "Title": "DependencyInjection.cs",
+              "DocumentMoniker": "C:\\Users\\iivan\\OneDrive\\Documentos\\Casa\\backend\\Casa.Infrastructure\\DependencyInjection.cs",
+              "RelativeDocumentMoniker": "backend\\Casa.Infrastructure\\DependencyInjection.cs",
+              "ToolTip": "C:\\Users\\iivan\\OneDrive\\Documentos\\Casa\\backend\\Casa.Infrastructure\\DependencyInjection.cs",
+              "RelativeToolTip": "backend\\Casa.Infrastructure\\DependencyInjection.cs",
+              "ViewState": "AgIAAAEAAAAAAAAAAAArwBEAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-25T01:29:15.784Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "PropertyListing.cs",
+              "DocumentMoniker": "C:\\Users\\iivan\\OneDrive\\Documentos\\Casa\\backend\\Casa.Domain\\Entities\\PropertyListing.cs",
+              "RelativeDocumentMoniker": "backend\\Casa.Domain\\Entities\\PropertyListing.cs",
+              "ToolTip": "C:\\Users\\iivan\\OneDrive\\Documentos\\Casa\\backend\\Casa.Domain\\Entities\\PropertyListing.cs",
+              "RelativeToolTip": "backend\\Casa.Domain\\Entities\\PropertyListing.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAqwBwAAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-25T00:08:26.356Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\iivan\\OneDrive\\Documentos\\Casa\\backend\\Casa.Api\\Program.cs",
+              "RelativeDocumentMoniker": "backend\\Casa.Api\\Program.cs",
+              "ToolTip": "C:\\Users\\iivan\\OneDrive\\Documentos\\Casa\\backend\\Casa.Api\\Program.cs*",
+              "RelativeToolTip": "backend\\Casa.Api\\Program.cs*",
+              "ViewState": "AgIAAAoAAAAAAAAAAADgvy4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-24T01:15:16.2Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "CasaDbContextModelSnapshot.cs",
               "DocumentMoniker": "C:\\Users\\iivan\\OneDrive\\Documentos\\Casa\\backend\\Casa.Infrastructure\\Persistence\\Migrations\\CasaDbContextModelSnapshot.cs",
               "RelativeDocumentMoniker": "backend\\Casa.Infrastructure\\Persistence\\Migrations\\CasaDbContextModelSnapshot.cs",

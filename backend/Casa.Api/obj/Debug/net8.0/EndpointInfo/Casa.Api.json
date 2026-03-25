@@ -5,6 +5,29 @@
     "version": "1.0"
   },
   "paths": {
+    "/api/address/cep/{cep}": {
+      "get": {
+        "tags": [
+          "Casa.Api"
+        ],
+        "operationId": "LookupAddressByCep",
+        "parameters": [
+          {
+            "name": "cep",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/health": {
       "get": {
         "tags": [
@@ -124,6 +147,28 @@
             "description": "OK"
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "Casa.Api"
+        ],
+        "operationId": "SoftDeleteProperty",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     }
   },
@@ -141,16 +186,14 @@
             "nullable": true
           },
           "source": {
-            "type": "string",
-            "nullable": true
+            "$ref": "#/components/schemas/PropertySource"
           },
           "originalUrl": {
             "type": "string",
             "nullable": true
           },
           "swotStatus": {
-            "type": "string",
-            "nullable": true
+            "$ref": "#/components/schemas/PropertySwotStatus"
           },
           "price": {
             "type": "number",
@@ -189,9 +232,34 @@
           },
           "hasExactLocation": {
             "type": "boolean"
+          },
+          "excluded": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
+      },
+      "PropertySource": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "PropertySwotStatus": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "type": "integer",
+        "format": "int32"
       }
     }
   }
