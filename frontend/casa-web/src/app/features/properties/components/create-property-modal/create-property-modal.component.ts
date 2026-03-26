@@ -2,8 +2,8 @@ import { Component, computed, inject, input, output, signal } from '@angular/cor
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
 
-import { AddressLookupService } from '../address-lookup.service';
-import { CepLookupResult, CreatePropertyRequest, PropertySource } from '../create-property.model';
+import { AddressLookupService } from '../../../../core/services/address-lookup.service';
+import { CepLookupResult, CreatePropertyRequest, PropertySource } from '../../models/create-property.model';
 
 type EditableField =
   | 'title'

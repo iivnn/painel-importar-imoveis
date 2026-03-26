@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { CepLookupResult } from './create-property.model';
+import { CepLookupResult } from '../../features/properties/models/create-property.model';
 
 @Injectable({ providedIn: 'root' })
 export class AddressLookupService {

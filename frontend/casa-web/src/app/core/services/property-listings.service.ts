@@ -2,11 +2,10 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { CreatePropertyRequest } from './create-property.model';
-import { PropertyFilterOptions, PropertyFilters } from './property-filters.model';
-import { PropertyListing, PropertyListingPage } from './property-listing.model';
-import { PropertySwotAnalysis, SavePropertySwotRequest } from './property-swot.model';
-import { PropertySwotStatus } from './create-property.model';
+import { CreatePropertyRequest, PropertySwotStatus } from '../../features/properties/models/create-property.model';
+import { PropertyFilterOptions, PropertyFilters } from '../../features/properties/models/property-filters.model';
+import { PropertyListing, PropertyListingPage } from '../../features/properties/models/property-listing.model';
+import { PropertySwotAnalysis, SavePropertySwotRequest } from '../../features/properties/models/property-swot.model';
 
 @Injectable({ providedIn: 'root' })
 export class PropertyListingsService {

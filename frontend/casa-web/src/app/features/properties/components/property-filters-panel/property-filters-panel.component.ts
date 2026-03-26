@@ -1,12 +1,12 @@
 import { Component, effect, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { PropertySwotStatus } from '../create-property.model';
+import { PropertySwotStatus } from '../../models/create-property.model';
 import {
   EMPTY_PROPERTY_FILTERS,
   PropertyFilterOptions,
   PropertyFilters
-} from '../property-filters.model';
+} from '../../models/property-filters.model';
 
 type FilterDraft = {
   minPrice: string;

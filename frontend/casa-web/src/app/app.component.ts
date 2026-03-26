@@ -2,22 +2,22 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { finalize } from 'rxjs';
 
-import { ConfirmDeleteModalComponent } from './components/confirm-delete-modal.component';
-import { CreatePropertyModalComponent } from './components/create-property-modal.component';
-import { PropertyFiltersPanelComponent } from './components/property-filters-panel.component';
-import { PropertyListingsTableComponent } from './components/property-listings-table.component';
-import { PropertyMapPanelComponent } from './components/property-map-panel.component';
-import { PropertySwotModalComponent } from './components/property-swot-modal.component';
-import { ThemeToggleButtonComponent } from './components/theme-toggle-button.component';
-import { CreatePropertyRequest, PropertySwotStatus } from './create-property.model';
+import { PropertyListingsService } from './core/services/property-listings.service';
+import { ConfirmDeleteModalComponent } from './features/properties/components/confirm-delete-modal/confirm-delete-modal.component';
+import { CreatePropertyModalComponent } from './features/properties/components/create-property-modal/create-property-modal.component';
+import { PropertyFiltersPanelComponent } from './features/properties/components/property-filters-panel/property-filters-panel.component';
+import { PropertyListingsTableComponent } from './features/properties/components/property-listings-table/property-listings-table.component';
+import { PropertyMapPanelComponent } from './features/properties/components/property-map-panel/property-map-panel.component';
+import { PropertySwotModalComponent } from './features/properties/components/property-swot-modal/property-swot-modal.component';
+import { CreatePropertyRequest, PropertySwotStatus } from './features/properties/models/create-property.model';
 import {
   EMPTY_PROPERTY_FILTERS,
   PropertyFilterOptions,
   PropertyFilters
-} from './property-filters.model';
-import { PropertyListing, PropertyListingPage } from './property-listing.model';
-import { PropertyListingsService } from './property-listings.service';
-import { PropertySwotAnalysis, SavePropertySwotRequest } from './property-swot.model';
+} from './features/properties/models/property-filters.model';
+import { PropertyListing, PropertyListingPage } from './features/properties/models/property-listing.model';
+import { PropertySwotAnalysis, SavePropertySwotRequest } from './features/properties/models/property-swot.model';
+import { ThemeToggleButtonComponent } from './shared/components/theme-toggle-button/theme-toggle-button.component';
 
 @Component({
   selector: 'app-root',

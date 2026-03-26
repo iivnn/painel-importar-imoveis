@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import * as L from 'leaflet';
 
-import { PropertyListing } from '../property-listing.model';
+import { PropertyListing } from '../../models/property-listing.model';
 
 @Component({
   selector: 'app-property-map-panel',

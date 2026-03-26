@@ -1,7 +1,7 @@
 import { Component, effect, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { PropertySwotAnalysis, SavePropertySwotRequest } from '../property-swot.model';
+import { PropertySwotAnalysis, SavePropertySwotRequest } from '../../models/property-swot.model';
 
 @Component({
   selector: 'app-property-swot-modal',

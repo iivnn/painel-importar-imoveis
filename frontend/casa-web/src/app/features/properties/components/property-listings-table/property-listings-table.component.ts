@@ -1,9 +1,9 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, input, output } from '@angular/core';
 
-import { PropertySwotStatus } from '../create-property.model';
-import { PropertyListing, PropertyListingPage } from '../property-listing.model';
-import { MapTooltipButtonComponent } from './map-tooltip-button.component';
+import { PropertySwotStatus } from '../../models/create-property.model';
+import { PropertyListing, PropertyListingPage } from '../../models/property-listing.model';
+import { MapTooltipButtonComponent } from '../map-tooltip-button/map-tooltip-button.component';
 
 @Component({
   selector: 'app-property-listings-table',
