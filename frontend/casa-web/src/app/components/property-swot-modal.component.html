@@ -1,0 +1,143 @@
+<div class="modal-backdrop-shell">
+  <section
+    class="swot-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="property-swot-title"
+  >
+    <div class="swot-modal__header">
+      <div>
+        <p class="swot-modal__kicker mb-1">Analise SWOT</p>
+        <h2 id="property-swot-title" class="swot-modal__title mb-1">{{ propertyTitle() }}</h2>
+        <p class="swot-modal__copy mb-0">Preencha os quatro quadrantes da analise do imovel.</p>
+      </div>
+
+      <button
+        type="button"
+        class="btn swot-modal__close"
+        aria-label="Fechar analise SWOT"
+        title="Fechar analise SWOT"
+        (click)="cancel.emit()"
+        [disabled]="isSaving()"
+      >
+        <i class="bi bi-x-lg" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <div class="swot-modal__content">
+      @if (loadError()) {
+        <div class="alert alert-danger mb-3" role="alert">
+          {{ loadError() }}
+        </div>
+      }
+
+      @if (submitError()) {
+        <div class="alert alert-danger mb-3" role="alert">
+          {{ submitError() }}
+        </div>
+      }
+
+      <div class="swot-meta-card">
+        <label class="swot-score-field">
+          <span class="swot-score-field__label">Nota geral</span>
+          <input
+            type="number"
+            class="form-control swot-score-field__input"
+            min="0"
+            max="10"
+            step="0.5"
+            [value]="form().score ?? ''"
+            (input)="updateScore($event)"
+            [disabled]="isLoading() || isSaving()"
+            placeholder="0 a 10"
+          />
+          <small>Use essa nota para comparar os melhores imoveis depois.</small>
+        </label>
+      </div>
+
+      <div class="swot-grid">
+        <label class="swot-card swot-card--strengths">
+          <span class="swot-card__title">Strengths</span>
+          <textarea
+            class="form-control swot-card__textarea"
+            [value]="form().strengths"
+            (input)="updateField('strengths', readInputValue($event))"
+            [disabled]="isLoading() || isSaving()"
+            rows="7"
+            placeholder="Pontos fortes do imovel..."
+          ></textarea>
+        </label>
+
+        <label class="swot-card swot-card--weaknesses">
+          <span class="swot-card__title">Weaknesses</span>
+          <textarea
+            class="form-control swot-card__textarea"
+            [value]="form().weaknesses"
+            (input)="updateField('weaknesses', readInputValue($event))"
+            [disabled]="isLoading() || isSaving()"
+            rows="7"
+            placeholder="Pontos fracos do imovel..."
+          ></textarea>
+        </label>
+
+        <label class="swot-card swot-card--opportunities">
+          <span class="swot-card__title">Opportunities</span>
+          <textarea
+            class="form-control swot-card__textarea"
+            [value]="form().opportunities"
+            (input)="updateField('opportunities', readInputValue($event))"
+            [disabled]="isLoading() || isSaving()"
+            rows="7"
+            placeholder="Oportunidades identificadas..."
+          ></textarea>
+        </label>
+
+        <label class="swot-card swot-card--threats">
+          <span class="swot-card__title">Threats</span>
+          <textarea
+            class="form-control swot-card__textarea"
+            [value]="form().threats"
+            (input)="updateField('threats', readInputValue($event))"
+            [disabled]="isLoading() || isSaving()"
+            rows="7"
+            placeholder="Riscos e ameacas..."
+          ></textarea>
+        </label>
+      </div>
+    </div>
+
+    <div class="swot-modal__footer">
+      <button
+        type="button"
+        class="btn btn-outline-brand"
+        (click)="cancel.emit()"
+        [disabled]="isSaving()"
+      >
+        Fechar
+      </button>
+      <button
+        type="button"
+        class="btn btn-brand"
+        (click)="submit()"
+        [disabled]="isLoading() || isSaving()"
+      >
+        @if (isSaving()) {
+          <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+          Salvando...
+        } @else {
+          Salvar analise
+        }
+      </button>
+    </div>
+
+    @if (isLoading()) {
+      <div class="swot-modal__loading">
+        <div class="swot-modal__loading-card">
+          <div class="spinner-border" role="status" aria-hidden="true"></div>
+          <strong>Carregando analise SWOT...</strong>
+          <span>Aguarde um instante.</span>
+        </div>
+      </div>
+    }
+  </section>
+</div>

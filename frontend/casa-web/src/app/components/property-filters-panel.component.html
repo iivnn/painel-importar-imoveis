@@ -1,0 +1,148 @@
+<section class="filters-panel">
+  <div class="filters-panel__top">
+    <div>
+      <p class="filters-panel__kicker mb-2">Consulta rapida</p>
+      <h2 class="filters-panel__title mb-0">Filtros e visualizacao</h2>
+    </div>
+
+    <div class="filters-panel__summary">
+      <strong>{{ totalItems() }}</strong>
+      <span>registros nesta consulta</span>
+    </div>
+  </div>
+
+  <div class="filters-panel__view-toggle" role="tablist" aria-label="Modo de visualizacao">
+    <button
+      type="button"
+      class="btn filters-panel__view-button"
+      [class.filters-panel__view-button--active]="activeView() === 'list'"
+      (click)="changeView.emit('list')"
+    >
+      <i class="bi bi-table" aria-hidden="true"></i>
+      <span>Lista</span>
+    </button>
+    <button
+      type="button"
+      class="btn filters-panel__view-button"
+      [class.filters-panel__view-button--active]="activeView() === 'map'"
+      (click)="changeView.emit('map')"
+    >
+      <i class="bi bi-geo-alt" aria-hidden="true"></i>
+      <span>Mapa</span>
+    </button>
+  </div>
+
+  <div class="filters-grid">
+    <label class="filters-field">
+      <span>Valor minimo</span>
+      <input
+        type="number"
+        class="form-control filters-field__input"
+        min="0"
+        step="100"
+        [value]="draft().minPrice"
+        (input)="updateField('minPrice', $any($event.target).value)"
+        placeholder="Ex.: 1500"
+      />
+    </label>
+
+    <label class="filters-field">
+      <span>Valor maximo</span>
+      <input
+        type="number"
+        class="form-control filters-field__input"
+        min="0"
+        step="100"
+        [value]="draft().maxPrice"
+        (input)="updateField('maxPrice', $any($event.target).value)"
+        placeholder="Ex.: 3500"
+      />
+    </label>
+
+    <label class="filters-field">
+      <span>Bairro</span>
+      <div class="app-select-shell">
+        <select
+          class="form-control app-select filters-field__select"
+          [value]="draft().neighborhood"
+          (change)="updateField('neighborhood', $any($event.target).value)"
+        >
+          <option value="">Todos</option>
+          @for (neighborhood of filterOptions().neighborhoods; track neighborhood) {
+            <option [value]="neighborhood">{{ neighborhood }}</option>
+          }
+        </select>
+      </div>
+    </label>
+
+    <label class="filters-field">
+      <span>Categoria</span>
+      <div class="app-select-shell">
+        <select
+          class="form-control app-select filters-field__select"
+          [value]="draft().category"
+          (change)="updateField('category', $any($event.target).value)"
+        >
+          <option value="">Todas</option>
+          @for (category of filterOptions().categories; track category) {
+            <option [value]="category">{{ category }}</option>
+          }
+        </select>
+      </div>
+    </label>
+
+    <label class="filters-field">
+      <span>Status</span>
+      <div class="app-select-shell">
+        <select
+          class="form-control app-select filters-field__select"
+          [value]="draft().swotStatus"
+          (change)="updateField('swotStatus', $any($event.target).value)"
+        >
+          <option value="">Todos</option>
+          @for (status of statusOptions; track status.value) {
+            <option [value]="status.value">{{ status.label }}</option>
+          }
+        </select>
+      </div>
+    </label>
+
+    <label class="filters-field">
+      <span>Nota minima</span>
+      <input
+        type="number"
+        class="form-control filters-field__input"
+        min="0"
+        max="10"
+        step="0.5"
+        [value]="draft().minScore"
+        (input)="updateField('minScore', $any($event.target).value)"
+        placeholder="Ex.: 8"
+      />
+    </label>
+  </div>
+
+  <div class="filters-panel__actions">
+    <button
+      type="button"
+      class="btn btn-outline-brand"
+      (click)="reset()"
+      [disabled]="isLoading()"
+    >
+      Limpar filtros
+    </button>
+    <button
+      type="button"
+      class="btn btn-brand"
+      (click)="submit()"
+      [disabled]="isLoading()"
+    >
+      @if (isLoading()) {
+        <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+        Atualizando...
+      } @else {
+        Aplicar filtros
+      }
+    </button>
+  </div>
+</section>

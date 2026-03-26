@@ -1,3 +1,4 @@
+using Casa.Application.Properties.GetProperties;
 using Casa.Domain.Entities;
 
 namespace Casa.Application.Abstractions;
@@ -5,8 +6,14 @@ namespace Casa.Application.Abstractions;
 public interface IPropertyListingRepository
 {
     Task<(IReadOnlyList<PropertyListing> Items, int TotalItems)> GetPagedAsync(
-        int page,
-        int pageSize,
+        GetPropertiesQuery query,
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<PropertyListing>> GetMapItemsAsync(
+        PropertyFilters filters,
+        CancellationToken cancellationToken = default);
+
+    Task<PropertyFilterOptionsResponse> GetFilterOptionsAsync(
         CancellationToken cancellationToken = default);
 
     Task<PropertyListing?> GetByIdAsync(int id, CancellationToken cancellationToken = default);

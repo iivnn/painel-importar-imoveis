@@ -8,9 +8,10 @@ export type PropertySource =
 export type PropertySwotStatus =
   | 'Novo'
   | 'EmAnalise'
-  | 'Favorito'
-  | 'Pendente'
-  | 'Descartado';
+  | 'Visitado'
+  | 'Proposta'
+  | 'Descartado'
+  | 'Favorito';
 
 export interface CreatePropertyRequest {
   title: string;

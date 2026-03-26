@@ -4,7 +4,8 @@ public enum PropertySwotStatus
 {
     Novo,
     EmAnalise,
-    Favorito,
-    Pendente,
-    Descartado
+    Visitado,
+    Proposta,
+    Descartado,
+    Favorito
 }

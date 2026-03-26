@@ -64,22 +64,6 @@
             </div>
           </label>
 
-          <label class="field-shell">
-            <span class="field-shell__label">Status</span>
-            <div class="app-select-shell">
-              <select
-                class="form-control field-shell__control app-select"
-                [ngModel]="form().swotStatus"
-                (ngModelChange)="updateStatus($event)"
-                name="swotStatus"
-              >
-                @for (option of statusOptions; track option.value) {
-                  <option [ngValue]="option.value">{{ option.label }}</option>
-                }
-              </select>
-            </div>
-          </label>
-
           <label class="field-shell field-shell--full">
             <span class="field-shell__label">Link do anuncio</span>
             <input

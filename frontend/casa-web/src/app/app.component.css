@@ -76,6 +76,11 @@
   font-weight: 600;
 }
 
+.app-content-stack {
+  display: grid;
+  gap: 1.25rem;
+}
+
 .theme-toggle-floating {
   position: fixed;
   top: 1rem;

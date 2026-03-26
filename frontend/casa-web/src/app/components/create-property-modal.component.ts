@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
 
 import { AddressLookupService } from '../address-lookup.service';
-import { CepLookupResult, CreatePropertyRequest, PropertySource, PropertySwotStatus } from '../create-property.model';
+import { CepLookupResult, CreatePropertyRequest, PropertySource } from '../create-property.model';
 
 type EditableField =
   | 'title'
@@ -31,14 +31,6 @@ export class CreatePropertyModalComponent {
     { value: 'Indicacao', label: 'Indicacao' },
     { value: 'Corretor', label: 'Corretor' },
     { value: 'Outro', label: 'Outro' }
-  ];
-
-  readonly statusOptions: { value: PropertySwotStatus; label: string }[] = [
-    { value: 'Novo', label: 'Novo' },
-    { value: 'EmAnalise', label: 'Em analise' },
-    { value: 'Favorito', label: 'Favorito' },
-    { value: 'Pendente', label: 'Pendente' },
-    { value: 'Descartado', label: 'Descartado' }
   ];
 
   readonly isSaving = input(false);
@@ -97,13 +89,6 @@ export class CreatePropertyModalComponent {
     this.form.update(current => ({
       ...current,
       source: value
-    }));
-  }
-
-  updateStatus(value: PropertySwotStatus): void {
-    this.form.update(current => ({
-      ...current,
-      swotStatus: value
     }));
   }
 

@@ -2,13 +2,13 @@
   <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-3">
     <div>
       <p class="section-kicker mb-2">Registros cadastrados</p>
-      <h2 class="panel-title mb-0">Imóveis</h2>
+      <h2 class="panel-title mb-0">Imoveis</h2>
     </div>
 
     <div class="pagination-summary">
       @if (pageData().totalItems > 0) {
         <span>
-          Exibindo {{ displayedRangeStart() }} até {{ displayedRangeEnd() }} de
+          Exibindo {{ displayedRangeStart() }} ate {{ displayedRangeEnd() }} de
           {{ pageData().totalItems }} registros
         </span>
       } @else {
@@ -21,13 +21,13 @@
     <table class="table property-table align-middle mb-0">
       <thead>
         <tr>
-          <th>Imóvel</th>
-          <th>Categoria</th>
-          <th>Localização</th>
-          <th>Valor</th>
-          <th>Anúncio</th>
-          <th>Mapa</th>
-          <th class="text-end">Ações</th>
+          <th class="col-property">Imovel</th>
+          <th class="col-category">Categoria</th>
+          <th class="col-status">Status</th>
+          <th class="col-location">Localizacao</th>
+          <th class="col-price">Valor</th>
+          <th class="col-link">Anuncio</th>
+          <th class="col-actions">Acoes</th>
         </tr>
       </thead>
       <tbody>
@@ -51,33 +51,51 @@
         } @else if (!pageData().items.length) {
           <tr>
             <td colspan="7" class="table-feedback">
-              Nenhum imóvel encontrado para esta consulta.
+              Nenhum imovel encontrado para esta consulta.
             </td>
           </tr>
         } @else {
           @for (property of pageData().items; track trackByPropertyId($index, property)) {
             <tr>
-              <td>
+              <td class="col-property">
                 <div class="property-main">
                   <strong>{{ property.title }}</strong>
                   <span>{{ property.source }}</span>
+                  @if (property.score !== null) {
+                    <small class="property-main__score">Nota {{ property.score | number: '1.1-1' }}/10</small>
+                  }
                 </div>
               </td>
-              <td>{{ property.category }}</td>
-              <td>
+              <td class="col-category">{{ property.category }}</td>
+              <td class="col-status">
+                <div class="app-select-shell table-status-select-shell">
+                  <select
+                    class="form-control app-select table-status-select"
+                    [value]="property.swotStatus"
+                    (change)="emitStatusChange(property, $event)"
+                    [title]="'Status atual: ' + property.swotStatus"
+                    [disabled]="isUpdatingStatus(property.id)"
+                  >
+                    @for (option of statusOptions; track option.value) {
+                      <option [value]="option.value">{{ option.label }}</option>
+                    }
+                  </select>
+                </div>
+              </td>
+              <td class="col-location">
                 <div class="property-location">
                   <strong>{{ property.addressLine }}</strong>
                   <span>{{ property.neighborhood }} - {{ property.city }}/{{ property.state }}</span>
                 </div>
               </td>
-              <td>
+              <td class="col-price">
                 @if (property.price !== null) {
                   {{ property.price | number: '1.2-2' }}
                 } @else {
-                  Não informado
+                  Nao informado
                 }
               </td>
-              <td>
+              <td class="col-link">
                 @if (property.originalUrl) {
                   <a
                     class="table-link"
@@ -86,35 +104,44 @@
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Ver anúncio
+                    Ver anuncio
                   </a>
                 } @else {
                   <span class="text-muted">Sem link</span>
                 }
               </td>
-              <td>
-                <app-map-tooltip-button
-                  [latitude]="property.latitude"
-                  [longitude]="property.longitude"
-                  [hasExactLocation]="property.hasExactLocation"
-                />
-              </td>
-              <td class="text-end">
-                <button
-                  type="button"
-                  class="btn table-action-button table-action-button--danger"
-                  (click)="requestDelete.emit(property)"
-                  [disabled]="property.excluded"
-                  [title]="property.excluded ? 'Registro já excluído' : 'Excluir registro'"
-                  [attr.aria-label]="property.excluded ? 'Registro já excluído' : 'Excluir registro'"
-                >
-                  <i
-                    class="bi"
-                    [class.bi-trash3]="!property.excluded"
-                    [class.bi-trash3-fill]="property.excluded"
-                    aria-hidden="true"
-                  ></i>
-                </button>
+              <td class="col-actions">
+                <div class="table-actions">
+                  <app-map-tooltip-button
+                    [latitude]="property.latitude"
+                    [longitude]="property.longitude"
+                    [hasExactLocation]="property.hasExactLocation"
+                  />
+                  <button
+                    type="button"
+                    class="btn table-action-button table-action-button--accent"
+                    (click)="requestSwot.emit(property)"
+                    title="Abrir analise SWOT"
+                    aria-label="Abrir analise SWOT"
+                  >
+                    <i class="bi bi-grid-1x2-fill" aria-hidden="true"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn table-action-button table-action-button--danger"
+                    (click)="requestDelete.emit(property)"
+                    [disabled]="property.excluded"
+                    [title]="property.excluded ? 'Registro ja excluido' : 'Excluir registro'"
+                    [attr.aria-label]="property.excluded ? 'Registro ja excluido' : 'Excluir registro'"
+                  >
+                    <i
+                      class="bi"
+                      [class.bi-trash3]="!property.excluded"
+                      [class.bi-trash3-fill]="property.excluded"
+                      aria-hidden="true"
+                    ></i>
+                  </button>
+                </div>
               </td>
             </tr>
           }
@@ -125,17 +152,17 @@
 
   <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mt-4">
     <p class="pagination-caption mb-0">
-      Use a navegação abaixo para consultar os registros salvos.
+      Use a navegacao abaixo para consultar os registros salvos.
     </p>
 
-    <div class="btn-group" role="group" aria-label="Navegação da tabela">
+    <div class="btn-group" role="group" aria-label="Navegacao da tabela">
       <button
         type="button"
         class="btn table-page-button table-page-button--secondary"
         (click)="previousPage.emit()"
         [disabled]="isLoading() || pageData().page <= 1"
-        title="Página anterior"
-        aria-label="Página anterior"
+        title="Pagina anterior"
+        aria-label="Pagina anterior"
       >
         <i class="bi bi-chevron-left" aria-hidden="true"></i>
       </button>
@@ -144,8 +171,8 @@
         class="btn table-page-button table-page-button--primary"
         (click)="nextPage.emit()"
         [disabled]="isLoading() || pageData().page >= pageData().totalPages"
-        title="Próxima página"
-        aria-label="Próxima página"
+        title="Proxima pagina"
+        aria-label="Proxima pagina"
       >
         <i class="bi bi-chevron-right" aria-hidden="true"></i>
       </button>

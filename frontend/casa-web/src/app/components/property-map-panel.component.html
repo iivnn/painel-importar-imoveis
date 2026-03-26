@@ -1,0 +1,39 @@
+<section class="map-panel">
+  <div class="map-panel__header">
+    <div>
+      <p class="section-kicker mb-2">Visualizacao espacial</p>
+      <h2 class="panel-title mb-0">Mapa dos imoveis</h2>
+    </div>
+
+    <div class="map-panel__summary">
+      <span>{{ properties().length }} itens filtrados</span>
+      <strong>{{ totalWithCoordinates }} com localizacao no mapa</strong>
+    </div>
+  </div>
+
+  @if (loadError()) {
+    <div class="alert alert-danger mb-0" role="alert">
+      {{ loadError() }}
+    </div>
+  } @else {
+    <div class="map-panel__canvas-shell">
+      <div #mapHost class="map-panel__canvas" aria-label="Mapa de imoveis"></div>
+
+      @if (!isLoading() && totalWithCoordinates === 0) {
+        <div class="map-panel__empty-state">
+          Nenhum imovel com latitude e longitude encontrado para os filtros atuais.
+        </div>
+      }
+
+      @if (isLoading()) {
+        <div class="map-panel__loading">
+          <div class="map-panel__loading-card">
+            <div class="spinner-border" role="status" aria-hidden="true"></div>
+            <strong>Atualizando mapa...</strong>
+            <span>Buscando os registros filtrados.</span>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</section>

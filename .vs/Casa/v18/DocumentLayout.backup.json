@@ -40,7 +40,7 @@
               "RelativeDocumentMoniker": "backend\\Casa.Api\\Endpoints\\PropertyEndpoints.cs",
               "ToolTip": "C:\\Users\\iivan\\OneDrive\\Documentos\\Casa\\backend\\Casa.Api\\Endpoints\\PropertyEndpoints.cs",
               "RelativeToolTip": "backend\\Casa.Api\\Endpoints\\PropertyEndpoints.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAMAAAAAAAAAA==",
+              "ViewState": "AgIAAGEAAAAAAAAAAAAQwBwAAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-25T01:30:02.497Z",
               "EditorCaption": ""
@@ -55,8 +55,7 @@
               "RelativeToolTip": "backend\\Casa.Infrastructure\\DependencyInjection.cs",
               "ViewState": "AgIAAAEAAAAAAAAAAAArwBEAAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-25T01:29:15.784Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-25T01:29:15.784Z"
             },
             {
               "$type": "Document",
@@ -68,8 +67,7 @@
               "RelativeToolTip": "backend\\Casa.Domain\\Entities\\PropertyListing.cs",
               "ViewState": "AgIAAA4AAAAAAAAAAAAqwBwAAAAtAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-25T00:08:26.356Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-25T00:08:26.356Z"
             },
             {
               "$type": "Document",
@@ -77,12 +75,11 @@
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\iivan\\OneDrive\\Documentos\\Casa\\backend\\Casa.Api\\Program.cs",
               "RelativeDocumentMoniker": "backend\\Casa.Api\\Program.cs",
-              "ToolTip": "C:\\Users\\iivan\\OneDrive\\Documentos\\Casa\\backend\\Casa.Api\\Program.cs*",
-              "RelativeToolTip": "backend\\Casa.Api\\Program.cs*",
+              "ToolTip": "C:\\Users\\iivan\\OneDrive\\Documentos\\Casa\\backend\\Casa.Api\\Program.cs",
+              "RelativeToolTip": "backend\\Casa.Api\\Program.cs",
               "ViewState": "AgIAAAoAAAAAAAAAAADgvy4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-24T01:15:16.2Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-24T01:15:16.2Z"
             },
             {
               "$type": "Document",

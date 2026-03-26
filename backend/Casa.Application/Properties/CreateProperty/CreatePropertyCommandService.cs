@@ -1,5 +1,6 @@
 using Casa.Application.Abstractions;
 using Casa.Domain.Entities;
+using Casa.Domain.Enums;
 
 namespace Casa.Application.Properties.CreateProperty;
 
@@ -17,10 +18,12 @@ public class CreatePropertyCommandService(IPropertyListingRepository propertyLis
 
         var property = new PropertyListing
         {
-            CreatedAtUtc = DateTime.UtcNow
+            CreatedAtUtc = DateTime.UtcNow,
+            SwotStatus = PropertySwotStatus.Novo
         };
 
         PropertyListingMapper.Apply(property, request);
+        property.SwotStatus = PropertySwotStatus.Novo;
 
         await propertyListingRepository.AddAsync(property, cancellationToken);
         await propertyListingRepository.SaveChangesAsync(cancellationToken);

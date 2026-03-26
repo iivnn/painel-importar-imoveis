@@ -8,22 +8,31 @@ public class GetPropertiesQueryService(IPropertyListingRepository propertyListin
         GetPropertiesQuery query,
         CancellationToken cancellationToken = default)
     {
-        var page = query.Page < 1 ? 1 : query.Page;
-        var pageSize = query.PageSize switch
+        var normalizedQuery = new GetPropertiesQuery
         {
-            < 1 => 10,
-            > 100 => 100,
-            _ => query.PageSize
+            Page = query.Page < 1 ? 1 : query.Page,
+            PageSize = query.PageSize switch
+            {
+                < 1 => 10,
+                > 100 => 100,
+                _ => query.PageSize
+            },
+            MinPrice = query.MinPrice,
+            MaxPrice = query.MaxPrice,
+            Neighborhood = string.IsNullOrWhiteSpace(query.Neighborhood) ? null : query.Neighborhood.Trim(),
+            Category = string.IsNullOrWhiteSpace(query.Category) ? null : query.Category.Trim(),
+            SwotStatus = query.SwotStatus,
+            MinScore = query.MinScore
         };
 
-        var (items, totalItems) = await propertyListingRepository.GetPagedAsync(page, pageSize, cancellationToken);
-        var totalPages = totalItems == 0 ? 0 : (int)Math.Ceiling(totalItems / (double)pageSize);
+        var (items, totalItems) = await propertyListingRepository.GetPagedAsync(normalizedQuery, cancellationToken);
+        var totalPages = totalItems == 0 ? 0 : (int)Math.Ceiling(totalItems / (double)normalizedQuery.PageSize);
 
         return new GetPropertiesResponse
         {
             Items = items,
-            Page = page,
-            PageSize = pageSize,
+            Page = normalizedQuery.Page,
+            PageSize = normalizedQuery.PageSize,
             TotalItems = totalItems,
             TotalPages = totalPages
         };

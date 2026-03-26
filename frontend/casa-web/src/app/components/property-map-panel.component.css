@@ -1,0 +1,153 @@
+.map-panel {
+  display: grid;
+  gap: 1rem;
+  padding: 1.35rem 1.4rem;
+  border: 1px solid var(--app-border);
+  border-radius: 32px;
+  background: var(--app-surface);
+  box-shadow: 0 24px 80px var(--app-shadow-soft);
+}
+
+.section-kicker {
+  color: var(--app-accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.panel-title {
+  font-family: "Fraunces", Georgia, serif;
+  color: var(--app-ink);
+  font-size: 2rem;
+}
+
+.map-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.map-panel__summary {
+  display: grid;
+  justify-items: end;
+  color: var(--app-muted);
+  text-align: right;
+}
+
+.map-panel__summary strong {
+  color: var(--app-ink);
+}
+
+.map-panel__canvas-shell {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--app-border);
+  border-radius: 28px;
+  background: var(--app-map-surface);
+}
+
+.map-panel__canvas {
+  width: 100%;
+  min-height: 37rem;
+}
+
+.map-panel__loading,
+.map-panel__empty-state {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.map-panel__loading {
+  background: rgba(10, 13, 16, 0.2);
+  backdrop-filter: blur(3px);
+}
+
+.map-panel__loading-card {
+  display: grid;
+  justify-items: center;
+  gap: 0.7rem;
+  padding: 1.2rem 1.4rem;
+  border: 1px solid var(--app-border);
+  border-radius: 24px;
+  background: var(--app-surface);
+  text-align: center;
+}
+
+.map-panel__loading-card strong {
+  color: var(--app-ink);
+}
+
+.map-panel__loading-card span,
+.map-panel__empty-state {
+  color: var(--app-muted);
+}
+
+:host ::ng-deep .leaflet-popup-content-wrapper,
+:host ::ng-deep .leaflet-popup-tip {
+  background: var(--app-surface);
+  color: var(--app-ink);
+  box-shadow: 0 16px 40px var(--app-shadow-soft);
+}
+
+:host ::ng-deep .leaflet-popup-content {
+  margin: 0;
+  min-width: 14rem;
+}
+
+:host ::ng-deep .leaflet-control-zoom a {
+  color: var(--app-ink);
+  background: var(--app-surface);
+  border-color: var(--app-border);
+}
+
+:host ::ng-deep .map-popup {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.9rem;
+}
+
+:host ::ng-deep .map-popup strong {
+  font-size: 0.96rem;
+}
+
+:host ::ng-deep .map-popup span {
+  color: var(--app-muted);
+  font-size: 0.88rem;
+}
+
+:host ::ng-deep .map-popup a {
+  margin-top: 0.25rem;
+  color: var(--bs-link-color);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+:host ::ng-deep .map-popup a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 767.98px) {
+  .map-panel {
+    padding: 1rem;
+    border-radius: 24px;
+  }
+
+  .map-panel__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .map-panel__summary {
+    justify-items: start;
+    text-align: left;
+  }
+
+  .map-panel__canvas {
+    min-height: 28rem;
+  }
+}

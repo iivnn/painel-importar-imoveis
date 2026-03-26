@@ -81,6 +81,72 @@ body {
     color 0.22s ease;
 }
 
+.property-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.property-table thead th,
+.property-table td {
+  vertical-align: middle;
+}
+
+.property-table .col-property {
+  width: 18%;
+}
+
+.property-table .col-category,
+.property-table .col-status {
+  width: 11%;
+}
+
+.property-table .col-location {
+  width: 26%;
+}
+
+.property-table .col-price,
+.property-table .col-link {
+  width: 10%;
+}
+
+.property-table .col-status,
+.property-table .col-link,
+.property-table .col-actions {
+  text-align: center;
+}
+
+.property-table .col-price {
+  text-align: right;
+}
+
+.property-table .col-actions {
+  width: 14%;
+}
+
+.table-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+}
+
+@media (max-width: 991.98px) {
+  .property-table {
+    table-layout: auto;
+  }
+
+  .property-table .col-property,
+  .property-table .col-category,
+  .property-table .col-status,
+  .property-table .col-location,
+  .property-table .col-price,
+  .property-table .col-link,
+  .property-table .col-actions {
+    width: auto;
+  }
+}
+
 .app-select-shell {
   position: relative;
 }
@@ -162,4 +228,30 @@ h4,
 .card-title,
 .workflow-title {
   font-family: "Fraunces", Georgia, serif;
+}
+
+.btn-brand {
+  --bs-btn-bg: var(--app-accent);
+  --bs-btn-border-color: var(--app-accent);
+  --bs-btn-hover-bg: #89653f;
+  --bs-btn-hover-border-color: #89653f;
+  --bs-btn-active-bg: #745433;
+  --bs-btn-active-border-color: #745433;
+  --bs-btn-color: #fffaf2;
+  --bs-btn-padding-x: 1.15rem;
+  --bs-btn-padding-y: 0.75rem;
+  --bs-btn-font-weight: 600;
+}
+
+.btn-outline-brand {
+  --bs-btn-color: #355347;
+  --bs-btn-border-color: rgba(53, 83, 71, 0.35);
+  --bs-btn-hover-bg: #355347;
+  --bs-btn-hover-border-color: #355347;
+  --bs-btn-hover-color: #f7f2e8;
+  --bs-btn-active-bg: #2a4339;
+  --bs-btn-active-border-color: #2a4339;
+  --bs-btn-padding-x: 1.15rem;
+  --bs-btn-padding-y: 0.75rem;
+  --bs-btn-font-weight: 600;
 }

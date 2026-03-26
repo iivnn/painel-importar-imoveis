@@ -16,6 +16,11 @@ export interface PropertyListing {
   latitude: number | null;
   longitude: number | null;
   hasExactLocation: boolean;
+  strengths: string;
+  weaknesses: string;
+  opportunities: string;
+  threats: string;
+  score: number | null;
   excluded: boolean;
   createdAtUtc: string;
 }

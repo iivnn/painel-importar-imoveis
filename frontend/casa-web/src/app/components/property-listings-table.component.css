@@ -48,25 +48,50 @@
 .property-table td {
   padding-top: 1rem;
   padding-bottom: 1rem;
-  vertical-align: middle;
 }
 
 .property-main,
 .property-location {
   display: grid;
   gap: 0.25rem;
+  min-width: 0;
 }
 
 .property-main strong,
 .property-location strong {
   font-weight: 700;
   color: var(--app-ink);
+  overflow-wrap: anywhere;
 }
 
 .property-main span,
 .property-location span {
   color: var(--app-muted);
   font-size: 0.95rem;
+  overflow-wrap: anywhere;
+}
+
+.property-main__score {
+  color: var(--app-accent);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.table-status-select-shell {
+  width: 100%;
+}
+
+.table-status-select {
+  min-height: 2.5rem;
+  padding-top: 0.42rem;
+  padding-bottom: 0.42rem;
+  padding-left: 0.72rem;
+  padding-right: 2.2rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-align: center;
 }
 
 .table-link {
@@ -120,6 +145,18 @@
   --bs-btn-active-color: #fff7f7;
   --bs-btn-active-bg: #944848;
   --bs-btn-active-border-color: #944848;
+}
+
+.table-action-button--accent {
+  --bs-btn-color: var(--app-accent);
+  --bs-btn-border-color: color-mix(in srgb, var(--app-accent) 26%, transparent);
+  --bs-btn-bg: color-mix(in srgb, var(--app-accent-soft) 72%, transparent);
+  --bs-btn-hover-color: #fffaf2;
+  --bs-btn-hover-bg: var(--app-accent);
+  --bs-btn-hover-border-color: var(--app-accent);
+  --bs-btn-active-color: #fffaf2;
+  --bs-btn-active-bg: color-mix(in srgb, var(--app-accent) 86%, black 14%);
+  --bs-btn-active-border-color: color-mix(in srgb, var(--app-accent) 86%, black 14%);
 }
 
 .table-action-button:disabled {

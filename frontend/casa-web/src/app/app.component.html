@@ -4,16 +4,16 @@
   </div>
 
   <div class="container-xl">
-    <nav class="app-navbar mb-4" aria-label="Navegação principal">
+    <nav class="app-navbar mb-4" aria-label="Navegacao principal">
       <div class="app-navbar__brand">
         <i class="bi bi-buildings" aria-hidden="true"></i>
       </div>
 
       <div class="app-navbar__links">
-        <a class="app-navbar__link app-navbar__link--active" href="#">Início</a>
+        <a class="app-navbar__link app-navbar__link--active" href="#">Inicio</a>
         <button type="button" class="app-navbar__link" (click)="openCreateModal()">Cadastrar</button>
         <a class="app-navbar__link" href="#">Favoritos</a>
-        <a class="app-navbar__link" href="#">Configurações</a>
+        <a class="app-navbar__link" href="#">Configuracoes</a>
       </div>
 
       <div class="app-navbar__meta">
@@ -21,14 +21,38 @@
       </div>
     </nav>
 
-    <app-property-listings-table
-      [pageData]="pageData()"
-      [isLoading]="isLoading()"
-      [loadError]="loadError()"
-      (previousPage)="goToPreviousPage()"
-      (nextPage)="goToNextPage()"
-      (requestDelete)="openDeleteModal($event)"
-    />
+    <div class="app-content-stack">
+      <app-property-filters-panel
+        [filters]="filters()"
+        [filterOptions]="filterOptions()"
+        [totalItems]="pageData().totalItems"
+        [activeView]="activeView()"
+        [isLoading]="isLoading() || isMapLoading() || isFilterOptionsLoading()"
+        (applyFilters)="applyFilters($event)"
+        (clearFilters)="clearFilters()"
+        (changeView)="setActiveView($event)"
+      />
+
+      @if (activeView() === 'list') {
+        <app-property-listings-table
+          [pageData]="pageData()"
+          [isLoading]="isLoading()"
+          [loadError]="loadError()"
+          [updatingStatusIds]="updatingStatusIds()"
+          (previousPage)="goToPreviousPage()"
+          (nextPage)="goToNextPage()"
+          (requestStatusChange)="updatePropertyStatus($event.property, $event.status)"
+          (requestSwot)="openSwotModal($event)"
+          (requestDelete)="openDeleteModal($event)"
+        />
+      } @else {
+        <app-property-map-panel
+          [properties]="mapItems()"
+          [isLoading]="isMapLoading()"
+          [loadError]="mapLoadError()"
+        />
+      }
+    </div>
   </div>
 </main>
 
@@ -48,6 +72,19 @@
     [submitError]="createError()"
     (cancel)="closeCreateModal()"
     (save)="createProperty($event)"
+  />
+}
+
+@if (isSwotModalOpen() && propertyPendingSwot(); as propertyPendingSwot) {
+  <app-property-swot-modal
+    [propertyTitle]="propertyPendingSwot.title"
+    [analysis]="swotAnalysis()"
+    [isLoading]="isSwotLoading()"
+    [isSaving]="isSwotSaving()"
+    [loadError]="swotLoadError()"
+    [submitError]="swotSubmitError()"
+    (cancel)="closeSwotModal()"
+    (save)="saveSwot($event)"
   />
 }
 

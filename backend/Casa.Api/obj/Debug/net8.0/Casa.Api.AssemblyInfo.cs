@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Casa.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1f8d1b5f45f7e3df96aa215105ee757f27cf15fa")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+60cd2e93bb7657a807dbb9eff0189ea82e36aafe")]
 [assembly: System.Reflection.AssemblyProductAttribute("Casa.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Casa.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

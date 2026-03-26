@@ -57,6 +57,21 @@ public class CasaDbContext(DbContextOptions<CasaDbContext> options) : DbContext(
                 .HasMaxLength(80)
                 .IsRequired();
 
+            entity.Property(property => property.Strengths)
+                .HasMaxLength(4000);
+
+            entity.Property(property => property.Weaknesses)
+                .HasMaxLength(4000);
+
+            entity.Property(property => property.Opportunities)
+                .HasMaxLength(4000);
+
+            entity.Property(property => property.Threats)
+                .HasMaxLength(4000);
+
+            entity.Property(property => property.Score)
+                .HasPrecision(4, 2);
+
             entity.Property(property => property.OriginalUrl)
                 .HasMaxLength(500);
 
@@ -88,10 +103,14 @@ public class CasaDbContext(DbContextOptions<CasaDbContext> options) : DbContext(
     {
         return status switch
         {
-            "Em analise" => PropertySwotStatus.EmAnalise,
             "Novo" => PropertySwotStatus.Novo,
+            "Analisado" => PropertySwotStatus.EmAnalise,
+            "Em analise" => PropertySwotStatus.EmAnalise,
+            "EmAnalise" => PropertySwotStatus.EmAnalise,
+            "Visitado" => PropertySwotStatus.Visitado,
+            "Proposta" => PropertySwotStatus.Proposta,
             "Favorito" => PropertySwotStatus.Favorito,
-            "Pendente" => PropertySwotStatus.Pendente,
+            "Pendente" => PropertySwotStatus.Novo,
             "Descartado" => PropertySwotStatus.Descartado,
             _ when Enum.TryParse<PropertySwotStatus>(status, true, out var parsedStatus) => parsedStatus,
             _ => PropertySwotStatus.Novo
