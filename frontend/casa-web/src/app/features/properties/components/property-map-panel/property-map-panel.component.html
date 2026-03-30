@@ -1,13 +1,13 @@
 <section class="map-panel">
   <div class="map-panel__header">
     <div>
-      <p class="section-kicker mb-2">Visualizacao espacial</p>
-      <h2 class="panel-title mb-0">Mapa dos imoveis</h2>
+      <p class="section-kicker mb-2">Visualiza&ccedil;&atilde;o espacial</p>
+      <h2 class="panel-title mb-0">Mapa dos im&oacute;veis</h2>
     </div>
 
     <div class="map-panel__summary">
       <span>{{ properties().length }} itens filtrados</span>
-      <strong>{{ totalWithCoordinates }} com localizacao no mapa</strong>
+      <strong>{{ totalWithCoordinates }} com localiza&ccedil;&atilde;o no mapa</strong>
     </div>
   </div>
 
@@ -17,11 +17,11 @@
     </div>
   } @else {
     <div class="map-panel__canvas-shell">
-      <div #mapHost class="map-panel__canvas" aria-label="Mapa de imoveis"></div>
+      <div #mapHost class="map-panel__canvas" aria-label="Mapa de im&oacute;veis"></div>
 
       @if (!isLoading() && totalWithCoordinates === 0) {
         <div class="map-panel__empty-state">
-          Nenhum imovel com latitude e longitude encontrado para os filtros atuais.
+          Nenhum im&oacute;vel com latitude e longitude encontrado para os filtros atuais.
         </div>
       }
 

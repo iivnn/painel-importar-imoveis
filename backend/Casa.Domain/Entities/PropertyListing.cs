@@ -18,6 +18,14 @@ public class PropertyListing
 
     public decimal? Price { get; set; }
 
+    public decimal? CondoFee { get; set; }
+
+    public decimal? Iptu { get; set; }
+
+    public decimal? Insurance { get; set; }
+
+    public decimal? UpfrontCost { get; set; }
+
     public string AddressLine { get; set; } = string.Empty;
 
     public string Neighborhood { get; set; } = string.Empty;
@@ -44,7 +52,17 @@ public class PropertyListing
 
     public decimal? Score { get; set; }
 
+    public string Notes { get; set; } = string.Empty;
+
+    public string DiscardReason { get; set; } = string.Empty;
+
+    public bool IsFavorite { get; set; }
+
     public bool Excluded { get; set; }
 
     public DateTime CreatedAtUtc { get; set; }
+
+    public ICollection<PropertyAttachment> Attachments { get; set; } = [];
+
+    public ICollection<PropertyStatusHistory> StatusHistory { get; set; } = [];
 }

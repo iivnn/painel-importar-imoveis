@@ -2,13 +2,13 @@
   <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-3">
     <div>
       <p class="section-kicker mb-2">Registros cadastrados</p>
-      <h2 class="panel-title mb-0">Imoveis</h2>
+      <h2 class="panel-title mb-0">Im&oacute;veis</h2>
     </div>
 
     <div class="pagination-summary">
       @if (pageData().totalItems > 0) {
         <span>
-          Exibindo {{ displayedRangeStart() }} ate {{ displayedRangeEnd() }} de
+          Exibindo {{ displayedRangeStart() }} at&eacute; {{ displayedRangeEnd() }} de
           {{ pageData().totalItems }} registros
         </span>
       } @else {
@@ -21,13 +21,13 @@
     <table class="table property-table align-middle mb-0">
       <thead>
         <tr>
-          <th class="col-property">Imovel</th>
+          <th class="col-property">Im&oacute;vel</th>
           <th class="col-category">Categoria</th>
           <th class="col-status">Status</th>
-          <th class="col-location">Localizacao</th>
+          <th class="col-location">Localiza&ccedil;&atilde;o</th>
           <th class="col-price">Valor</th>
-          <th class="col-link">Anuncio</th>
-          <th class="col-actions">Acoes</th>
+          <th class="col-link">An&uacute;ncio</th>
+          <th class="col-actions">A&ccedil;&otilde;es</th>
         </tr>
       </thead>
       <tbody>
@@ -51,12 +51,12 @@
         } @else if (!pageData().items.length) {
           <tr>
             <td colspan="7" class="table-feedback">
-              Nenhum imovel encontrado para esta consulta.
+              Nenhum im&oacute;vel encontrado para esta consulta.
             </td>
           </tr>
         } @else {
           @for (property of pageData().items; track trackByPropertyId($index, property)) {
-            <tr>
+            <tr [class.property-row--highlighted]="isHighlighted(property.id)">
               <td class="col-property">
                 <div class="property-main">
                   <strong>{{ property.title }}</strong>
@@ -92,7 +92,7 @@
                 @if (property.price !== null) {
                   {{ property.price | number: '1.2-2' }}
                 } @else {
-                  Nao informado
+                  N&atilde;o informado
                 }
               </td>
               <td class="col-link">
@@ -104,7 +104,7 @@
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Ver anuncio
+                    Ver an&uacute;ncio
                   </a>
                 } @else {
                   <span class="text-muted">Sem link</span>
@@ -112,6 +112,52 @@
               </td>
               <td class="col-actions">
                 <div class="table-actions">
+                  <button
+                    type="button"
+                    class="btn table-action-button table-action-button--neutral"
+                    (click)="requestDetail.emit(property)"
+                    title="Abrir detalhe do imóvel"
+                    aria-label="Abrir detalhe do imóvel"
+                  >
+                    <i class="bi bi-eye" aria-hidden="true"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn table-action-button table-action-button--neutral"
+                    (click)="requestEdit.emit(property)"
+                    title="Editar imóvel"
+                    aria-label="Editar imóvel"
+                  >
+                    <i class="bi bi-pencil" aria-hidden="true"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn table-action-button"
+                    [class.table-action-button--accent]="isCompared(property.id)"
+                    [class.table-action-button--neutral]="!isCompared(property.id)"
+                    (click)="toggleCompare.emit(property)"
+                    [title]="isCompared(property.id) ? 'Remover da comparação' : 'Adicionar à comparação'"
+                    [attr.aria-label]="isCompared(property.id) ? 'Remover da comparação' : 'Adicionar à comparação'"
+                  >
+                    <i class="bi bi-columns-gap" aria-hidden="true"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn table-action-button"
+                    [class.table-action-button--favorite]="property.isFavorite"
+                    [class.table-action-button--favorite-muted]="!property.isFavorite"
+                    (click)="requestFavoriteToggle.emit(property)"
+                    [disabled]="isUpdatingStatus(property.id)"
+                    [title]="property.isFavorite ? 'Remover dos finalistas' : 'Marcar como finalista'"
+                    [attr.aria-label]="property.isFavorite ? 'Remover dos finalistas' : 'Marcar como finalista'"
+                  >
+                    <i
+                      class="bi"
+                      [class.bi-star]="!property.isFavorite"
+                      [class.bi-star-fill]="property.isFavorite"
+                      aria-hidden="true"
+                    ></i>
+                  </button>
                   <app-map-tooltip-button
                     [latitude]="property.latitude"
                     [longitude]="property.longitude"
@@ -119,10 +165,19 @@
                   />
                   <button
                     type="button"
+                    class="btn table-action-button table-action-button--media"
+                    (click)="requestMedia.emit(property)"
+                    title="Abrir m&iacute;dia e observa&ccedil;&otilde;es"
+                    aria-label="Abrir m&iacute;dia e observa&ccedil;&otilde;es"
+                  >
+                    <i class="bi bi-images" aria-hidden="true"></i>
+                  </button>
+                  <button
+                    type="button"
                     class="btn table-action-button table-action-button--accent"
                     (click)="requestSwot.emit(property)"
-                    title="Abrir analise SWOT"
-                    aria-label="Abrir analise SWOT"
+                    title="Abrir an&aacute;lise SWOT"
+                    aria-label="Abrir an&aacute;lise SWOT"
                   >
                     <i class="bi bi-grid-1x2-fill" aria-hidden="true"></i>
                   </button>
@@ -131,8 +186,8 @@
                     class="btn table-action-button table-action-button--danger"
                     (click)="requestDelete.emit(property)"
                     [disabled]="property.excluded"
-                    [title]="property.excluded ? 'Registro ja excluido' : 'Excluir registro'"
-                    [attr.aria-label]="property.excluded ? 'Registro ja excluido' : 'Excluir registro'"
+                    [title]="property.excluded ? 'Registro j&aacute; exclu&iacute;do' : 'Excluir registro'"
+                    [attr.aria-label]="property.excluded ? 'Registro j&aacute; exclu&iacute;do' : 'Excluir registro'"
                   >
                     <i
                       class="bi"
@@ -152,17 +207,17 @@
 
   <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mt-4">
     <p class="pagination-caption mb-0">
-      Use a navegacao abaixo para consultar os registros salvos.
+      Use a navega&ccedil;&atilde;o abaixo para consultar os registros salvos.
     </p>
 
-    <div class="btn-group" role="group" aria-label="Navegacao da tabela">
+    <div class="btn-group" role="group" aria-label="Navega&ccedil;&atilde;o da tabela">
       <button
         type="button"
         class="btn table-page-button table-page-button--secondary"
         (click)="previousPage.emit()"
         [disabled]="isLoading() || pageData().page <= 1"
-        title="Pagina anterior"
-        aria-label="Pagina anterior"
+        title="P&aacute;gina anterior"
+        aria-label="P&aacute;gina anterior"
       >
         <i class="bi bi-chevron-left" aria-hidden="true"></i>
       </button>
@@ -171,8 +226,8 @@
         class="btn table-page-button table-page-button--primary"
         (click)="nextPage.emit()"
         [disabled]="isLoading() || pageData().page >= pageData().totalPages"
-        title="Proxima pagina"
-        aria-label="Proxima pagina"
+        title="Pr&oacute;xima p&aacute;gina"
+        aria-label="Pr&oacute;xima p&aacute;gina"
       >
         <i class="bi bi-chevron-right" aria-hidden="true"></i>
       </button>

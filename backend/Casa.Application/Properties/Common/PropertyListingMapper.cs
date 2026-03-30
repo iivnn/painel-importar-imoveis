@@ -12,6 +12,10 @@ internal static class PropertyListingMapper
         target.OriginalUrl = request.OriginalUrl.Trim();
         target.SwotStatus = request.SwotStatus;
         target.Price = request.Price;
+        target.CondoFee = request.CondoFee;
+        target.Iptu = request.Iptu;
+        target.Insurance = request.Insurance;
+        target.UpfrontCost = request.UpfrontCost;
         target.AddressLine = request.AddressLine.Trim();
         target.Neighborhood = request.Neighborhood.Trim();
         target.City = request.City.Trim();
@@ -20,6 +24,9 @@ internal static class PropertyListingMapper
         target.Latitude = request.Latitude;
         target.Longitude = request.Longitude;
         target.HasExactLocation = request.HasExactLocation;
+        target.Notes = request.Notes.Trim();
+        target.DiscardReason = request.DiscardReason.Trim();
+        target.IsFavorite = request.IsFavorite;
         target.Excluded = request.Excluded;
     }
 
@@ -31,7 +38,6 @@ internal static class PropertyListingMapper
         if (string.IsNullOrWhiteSpace(request.Neighborhood)) return "Neighborhood is required.";
         if (string.IsNullOrWhiteSpace(request.City)) return "City is required.";
         if (string.IsNullOrWhiteSpace(request.State)) return "State is required.";
-        if (string.IsNullOrWhiteSpace(request.PostalCode)) return "PostalCode is required.";
 
         return null;
     }

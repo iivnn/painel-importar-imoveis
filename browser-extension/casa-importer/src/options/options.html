@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Casa Importador - Configuracoes</title>
+    <link rel="stylesheet" href="./options.css" />
+  </head>
+  <body>
+    <main class="options-shell">
+      <header class="options-header">
+        <span class="options-kicker">Extensao Chrome</span>
+        <h1>Configuracoes do importador</h1>
+        <p>Defina como a extensao deve conversar com o sistema Casa rodando localmente.</p>
+      </header>
+
+      <section class="options-card">
+        <label class="options-field">
+          <span>URL base da API</span>
+          <input id="apiBaseUrl" type="url" placeholder="http://localhost:5074" />
+        </label>
+
+        <label class="options-field">
+          <span>Timeout da requisicao (ms)</span>
+          <input id="requestTimeoutMs" type="number" min="1000" step="1000" />
+        </label>
+
+        <div class="options-actions">
+          <button id="saveButton" class="button button-primary" type="button">Salvar</button>
+        </div>
+
+        <div id="saveStatus" class="options-status">Carregando configuracoes...</div>
+      </section>
+    </main>
+
+    <script type="module" src="./options.js"></script>
+  </body>
+  </html>

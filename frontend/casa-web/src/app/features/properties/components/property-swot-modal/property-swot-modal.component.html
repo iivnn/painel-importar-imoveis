@@ -7,16 +7,16 @@
   >
     <div class="swot-modal__header">
       <div>
-        <p class="swot-modal__kicker mb-1">Analise SWOT</p>
+        <p class="swot-modal__kicker mb-1">An&aacute;lise SWOT</p>
         <h2 id="property-swot-title" class="swot-modal__title mb-1">{{ propertyTitle() }}</h2>
-        <p class="swot-modal__copy mb-0">Preencha os quatro quadrantes da analise do imovel.</p>
+        <p class="swot-modal__copy mb-0">Preencha os quatro quadrantes da an&aacute;lise do im&oacute;vel.</p>
       </div>
 
       <button
         type="button"
         class="btn swot-modal__close"
-        aria-label="Fechar analise SWOT"
-        title="Fechar analise SWOT"
+        aria-label="Fechar an&aacute;lise SWOT"
+        title="Fechar an&aacute;lise SWOT"
         (click)="cancel.emit()"
         [disabled]="isSaving()"
       >
@@ -51,7 +51,7 @@
             [disabled]="isLoading() || isSaving()"
             placeholder="0 a 10"
           />
-          <small>Use essa nota para comparar os melhores imoveis depois.</small>
+          <small>Use essa nota para comparar os melhores im&oacute;veis depois.</small>
         </label>
       </div>
 
@@ -64,7 +64,7 @@
             (input)="updateField('strengths', readInputValue($event))"
             [disabled]="isLoading() || isSaving()"
             rows="7"
-            placeholder="Pontos fortes do imovel..."
+            placeholder="Pontos fortes do im&oacute;vel..."
           ></textarea>
         </label>
 
@@ -76,7 +76,7 @@
             (input)="updateField('weaknesses', readInputValue($event))"
             [disabled]="isLoading() || isSaving()"
             rows="7"
-            placeholder="Pontos fracos do imovel..."
+            placeholder="Pontos fracos do im&oacute;vel..."
           ></textarea>
         </label>
 
@@ -100,7 +100,7 @@
             (input)="updateField('threats', readInputValue($event))"
             [disabled]="isLoading() || isSaving()"
             rows="7"
-            placeholder="Riscos e ameacas..."
+            placeholder="Riscos e amea&ccedil;as..."
           ></textarea>
         </label>
       </div>
@@ -125,7 +125,7 @@
           <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
           Salvando...
         } @else {
-          Salvar analise
+          Salvar an&aacute;lise
         }
       </button>
     </div>
@@ -134,7 +134,7 @@
       <div class="swot-modal__loading">
         <div class="swot-modal__loading-card">
           <div class="spinner-border" role="status" aria-hidden="true"></div>
-          <strong>Carregando analise SWOT...</strong>
+          <strong>Carregando an&aacute;lise SWOT...</strong>
           <span>Aguarde um instante.</span>
         </div>
       </div>

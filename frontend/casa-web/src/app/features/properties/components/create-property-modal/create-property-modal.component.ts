@@ -1,14 +1,23 @@
-import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
 
 import { AddressLookupService } from '../../../../core/services/address-lookup.service';
-import { CepLookupResult, CreatePropertyRequest, PropertySource } from '../../models/create-property.model';
+import {
+  CepLookupResult,
+  CreatePropertyRequest,
+  PropertySource,
+  PropertySwotStatus
+} from '../../models/create-property.model';
+import { PropertyListing } from '../../models/property-listing.model';
+import { AppSettings } from '../../../settings/models/app-settings.model';
 
 type EditableField =
   | 'title'
   | 'category'
   | 'originalUrl'
+  | 'notes'
+  | 'discardReason'
   | 'addressLine'
   | 'neighborhood'
   | 'city'
@@ -28,13 +37,24 @@ export class CreatePropertyModalComponent {
   readonly sourceOptions: { value: PropertySource; label: string }[] = [
     { value: 'AppExterno', label: 'App externo' },
     { value: 'PortalWeb', label: 'Portal web' },
-    { value: 'Indicacao', label: 'Indicacao' },
+    { value: 'Indicacao', label: 'Indicação' },
     { value: 'Corretor', label: 'Corretor' },
     { value: 'Outro', label: 'Outro' }
   ];
 
+  readonly statusOptions: { value: PropertySwotStatus; label: string }[] = [
+    { value: 'Novo', label: 'Novo' },
+    { value: 'EmAnalise', label: 'Em análise' },
+    { value: 'Visitado', label: 'Visitado' },
+    { value: 'Proposta', label: 'Proposta' },
+    { value: 'Descartado', label: 'Descartado' }
+  ];
+
   readonly isSaving = input(false);
   readonly submitError = input('');
+  readonly defaults = input<AppSettings | null>(null);
+  readonly mode = input<'create' | 'edit'>('create');
+  readonly initialValue = input<PropertyListing | null>(null);
 
   readonly cancel = output<void>();
   readonly save = output<CreatePropertyRequest>();
@@ -46,6 +66,10 @@ export class CreatePropertyModalComponent {
     originalUrl: '',
     swotStatus: 'Novo',
     price: null,
+    condoFee: null,
+    iptu: null,
+    insurance: null,
+    upfrontCost: null,
     addressLine: '',
     neighborhood: '',
     city: '',
@@ -54,6 +78,9 @@ export class CreatePropertyModalComponent {
     latitude: null,
     longitude: null,
     hasExactLocation: true,
+    notes: '',
+    discardReason: '',
+    isFavorite: false,
     excluded: false
   });
 
@@ -64,15 +91,70 @@ export class CreatePropertyModalComponent {
     const value = this.form();
 
     return Boolean(
-      value.title.trim() &&
-      value.category.trim() &&
-      value.addressLine.trim() &&
-      value.neighborhood.trim() &&
-      value.city.trim() &&
-      value.state.trim() &&
-      value.postalCode.trim()
-    );
+      value.title.trim()
+      && value.category.trim()
+      && value.addressLine.trim()
+      && value.neighborhood.trim()
+      && value.city.trim()
+      && value.state.trim()
+      && value.postalCode.trim()
+    ) && (value.swotStatus !== 'Descartado' || Boolean(value.discardReason.trim()));
   });
+
+  readonly modalEyebrow = computed(() => this.mode() === 'create' ? 'Cadastro rápido' : 'Edição completa');
+  readonly modalTitle = computed(() => this.mode() === 'create' ? 'Novo imóvel' : 'Editar imóvel');
+  readonly submitLabel = computed(() => this.mode() === 'create' ? 'Salvar registro' : 'Salvar alterações');
+
+  constructor() {
+    effect(() => {
+      const defaults = this.defaults();
+      if (!defaults || this.initialValue()) {
+        return;
+      }
+
+      this.form.update(current => ({
+        ...current,
+        source: defaults.defaultSource,
+        category: current.category || defaults.defaultCategory,
+        city: current.city || defaults.defaultCity,
+        state: current.state || defaults.defaultState,
+        hasExactLocation: defaults.defaultHasExactLocation
+      }));
+    }, { allowSignalWrites: true });
+
+    effect(() => {
+      const initialValue = this.initialValue();
+      if (!initialValue) {
+        return;
+      }
+
+      this.form.set({
+        title: initialValue.title,
+        category: initialValue.category,
+        source: initialValue.source,
+        originalUrl: initialValue.originalUrl,
+        swotStatus: initialValue.swotStatus,
+        price: initialValue.price,
+        condoFee: initialValue.condoFee,
+        iptu: initialValue.iptu,
+        insurance: initialValue.insurance,
+        upfrontCost: initialValue.upfrontCost,
+        addressLine: initialValue.addressLine,
+        neighborhood: initialValue.neighborhood,
+        city: initialValue.city,
+        state: initialValue.state,
+        postalCode: initialValue.postalCode,
+        latitude: initialValue.latitude,
+        longitude: initialValue.longitude,
+        hasExactLocation: initialValue.hasExactLocation,
+        notes: initialValue.notes,
+        discardReason: initialValue.discardReason,
+        isFavorite: initialValue.isFavorite,
+        excluded: initialValue.excluded
+      });
+      this.cepError.set('');
+    }, { allowSignalWrites: true });
+  }
 
   updateField(field: EditableField, value: string): void {
     this.form.update(current => ({
@@ -92,7 +174,18 @@ export class CreatePropertyModalComponent {
     }));
   }
 
-  updateNumber(field: 'price' | 'latitude' | 'longitude', value: string): void {
+  updateStatus(value: PropertySwotStatus): void {
+    this.form.update(current => ({
+      ...current,
+      swotStatus: value,
+      discardReason: value === 'Descartado' ? current.discardReason : ''
+    }));
+  }
+
+  updateNumber(
+    field: 'price' | 'condoFee' | 'iptu' | 'insurance' | 'upfrontCost' | 'latitude' | 'longitude',
+    value: string
+  ): void {
     const parsedValue = value.trim() === '' ? null : Number(value);
 
     this.form.update(current => ({
@@ -123,7 +216,7 @@ export class CreatePropertyModalComponent {
       .subscribe({
         next: response => this.applyCepLookup(response),
         error: () => {
-          this.cepError.set('Nao foi possivel localizar o CEP informado.');
+          this.cepError.set('Não foi possível localizar o CEP informado.');
         }
       });
   }
@@ -140,6 +233,8 @@ export class CreatePropertyModalComponent {
       title: value.title.trim(),
       category: value.category.trim(),
       originalUrl: value.originalUrl.trim(),
+      notes: value.notes.trim(),
+      discardReason: value.discardReason.trim(),
       addressLine: value.addressLine.trim(),
       neighborhood: value.neighborhood.trim(),
       city: value.city.trim(),

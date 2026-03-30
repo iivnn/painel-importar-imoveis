@@ -211,6 +211,110 @@
         }
       }
     },
+    "/api/properties/favorites": {
+      "get": {
+        "tags": [
+          "Casa.Api"
+        ],
+        "operationId": "GetFavoriteProperties",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "minPrice",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "maxPrice",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "neighborhood",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "swotStatus",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "minScore",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "onlyWithSwot",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "onlyWithNotes",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "onlyWithMedia",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/properties/{id}": {
       "get": {
         "tags": [
@@ -323,6 +427,40 @@
         }
       }
     },
+    "/api/properties/{id}/favorite": {
+      "put": {
+        "tags": [
+          "Casa.Api"
+        ],
+        "operationId": "UpdatePropertyFavorite",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePropertyFavoriteRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/properties/{id}/swot": {
       "get": {
         "tags": [
@@ -378,6 +516,204 @@
           }
         }
       }
+    },
+    "/api/properties/{id}/details": {
+      "get": {
+        "tags": [
+          "Casa.Api"
+        ],
+        "operationId": "GetPropertyDetails",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/properties/{id}/notes": {
+      "put": {
+        "tags": [
+          "Casa.Api"
+        ],
+        "operationId": "UpdatePropertyNotes",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePropertyNotesRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/properties/{id}/attachments": {
+      "post": {
+        "tags": [
+          "Casa.Api"
+        ],
+        "operationId": "AddPropertyAttachments",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/properties/{propertyId}/attachments/{attachmentId}": {
+      "delete": {
+        "tags": [
+          "Casa.Api"
+        ],
+        "operationId": "DeletePropertyAttachment",
+        "parameters": [
+          {
+            "name": "propertyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "attachmentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/properties/inconsistencies": {
+      "get": {
+        "tags": [
+          "Casa.Api"
+        ],
+        "operationId": "GetPropertyInconsistencies",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/properties/inconsistencies/summary": {
+      "get": {
+        "tags": [
+          "Casa.Api"
+        ],
+        "operationId": "GetPropertyInconsistenciesSummary",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/properties/inconsistencies/{inconsistencyId}/dismiss": {
+      "put": {
+        "tags": [
+          "Casa.Api"
+        ],
+        "operationId": "DismissPropertyInconsistency",
+        "parameters": [
+          {
+            "name": "inconsistencyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/settings": {
+      "get": {
+        "tags": [
+          "Casa.Api"
+        ],
+        "operationId": "GetAppSettings",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Casa.Api"
+        ],
+        "operationId": "UpdateAppSettings",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAppSettingsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -404,6 +740,26 @@
             "$ref": "#/components/schemas/PropertySwotStatus"
           },
           "price": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "condoFee": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "iptu": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "insurance": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "upfrontCost": {
             "type": "number",
             "format": "double",
             "nullable": true
@@ -439,6 +795,17 @@
             "nullable": true
           },
           "hasExactLocation": {
+            "type": "boolean"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "discardReason": {
+            "type": "string",
+            "nullable": true
+          },
+          "isFavorite": {
             "type": "boolean"
           },
           "excluded": {
@@ -491,17 +858,171 @@
           1,
           2,
           3,
-          4,
-          5
+          4
         ],
         "type": "integer",
         "format": "int32"
+      },
+      "UpdateAppSettingsRequest": {
+        "type": "object",
+        "properties": {
+          "defaultSource": {
+            "$ref": "#/components/schemas/PropertySource"
+          },
+          "defaultCategory": {
+            "type": "string",
+            "nullable": true
+          },
+          "defaultCity": {
+            "type": "string",
+            "nullable": true
+          },
+          "defaultState": {
+            "type": "string",
+            "nullable": true
+          },
+          "defaultHasExactLocation": {
+            "type": "boolean"
+          },
+          "listingsPageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "favoritesPageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "favoritesSortBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "mapInitialLatitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "mapInitialLongitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "mapInitialZoom": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mapOnlyExactLocation": {
+            "type": "boolean"
+          },
+          "monthlyBudgetIdeal": {
+            "type": "number",
+            "format": "double"
+          },
+          "monthlyBudgetMax": {
+            "type": "number",
+            "format": "double"
+          },
+          "preferredNeighborhoods": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "avoidedNeighborhoods": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "priceBelowAverageRatio": {
+            "type": "number",
+            "format": "double"
+          },
+          "priceAboveAverageRatio": {
+            "type": "number",
+            "format": "double"
+          },
+          "requireCoordinatesForCompleteLocation": {
+            "type": "boolean"
+          },
+          "requireOriginalUrl": {
+            "type": "boolean"
+          },
+          "minimumPhotoCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requireSwotStatuses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "requireNotesStatuses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "requireMediaStatuses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "priceWeight": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "locationWeight": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "analysisWeight": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "evidenceWeight": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sourceQualityWeight": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdatePropertyFavoriteRequest": {
+        "type": "object",
+        "properties": {
+          "isFavorite": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdatePropertyNotesRequest": {
+        "type": "object",
+        "properties": {
+          "notes": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "UpdatePropertyStatusRequest": {
         "type": "object",
         "properties": {
           "swotStatus": {
             "$ref": "#/components/schemas/PropertySwotStatus"
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

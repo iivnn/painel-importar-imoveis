@@ -122,19 +122,19 @@
 }
 
 .swot-card--strengths {
-  background: color-mix(in srgb, var(--bs-secondary) 9%, var(--app-surface-soft));
+  background: color-mix(in srgb, var(--app-success-soft) 72%, var(--app-surface-soft));
 }
 
 .swot-card--weaknesses {
-  background: color-mix(in srgb, #b65f5f 9%, var(--app-surface-soft));
+  background: color-mix(in srgb, var(--app-danger-soft) 74%, var(--app-surface-soft));
 }
 
 .swot-card--opportunities {
-  background: color-mix(in srgb, var(--app-accent) 10%, var(--app-surface-soft));
+  background: color-mix(in srgb, var(--app-warning-soft) 74%, var(--app-surface-soft));
 }
 
 .swot-card--threats {
-  background: color-mix(in srgb, #7d6aa8 10%, var(--app-surface-soft));
+  background: color-mix(in srgb, var(--app-info-soft) 72%, var(--app-surface-soft));
 }
 
 .swot-card__title {
@@ -189,32 +189,6 @@
 .swot-modal__loading-card span {
   color: var(--app-muted);
   font-size: 0.92rem;
-}
-
-.btn-brand {
-  --bs-btn-bg: var(--app-accent);
-  --bs-btn-border-color: var(--app-accent);
-  --bs-btn-hover-bg: #89653f;
-  --bs-btn-hover-border-color: #89653f;
-  --bs-btn-active-bg: #745433;
-  --bs-btn-active-border-color: #745433;
-  --bs-btn-color: #fffaf2;
-  --bs-btn-padding-x: 1.15rem;
-  --bs-btn-padding-y: 0.75rem;
-  --bs-btn-font-weight: 600;
-}
-
-.btn-outline-brand {
-  --bs-btn-color: #355347;
-  --bs-btn-border-color: rgba(53, 83, 71, 0.35);
-  --bs-btn-hover-bg: #355347;
-  --bs-btn-hover-border-color: #355347;
-  --bs-btn-hover-color: #f7f2e8;
-  --bs-btn-active-bg: #2a4339;
-  --bs-btn-active-border-color: #2a4339;
-  --bs-btn-padding-x: 1.15rem;
-  --bs-btn-padding-y: 0.75rem;
-  --bs-btn-font-weight: 600;
 }
 
 @media (max-width: 767.98px) {

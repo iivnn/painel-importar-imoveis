@@ -1,0 +1,36 @@
+@if (activeImage(); as activeImage) {
+  <div class="favorite-carousel">
+    <div class="favorite-carousel__main">
+      <img [src]="activeImage" [alt]="title()" />
+
+      @if (thumbnailUrls().length > 1) {
+        <div class="favorite-carousel__nav">
+          <button type="button" class="btn favorite-carousel__nav-button" (click)="showPrevious()">
+            <i class="bi bi-chevron-left" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="btn favorite-carousel__nav-button" (click)="showNext()">
+            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+          </button>
+        </div>
+      }
+    </div>
+
+    <div class="favorite-carousel__thumbs">
+      @for (thumbnail of visibleThumbnails(); track thumbnail; let index = $index) {
+        <button
+          type="button"
+          class="btn favorite-carousel__thumb"
+          [class.favorite-carousel__thumb--active]="isActive(index)"
+          (click)="setActive(index)"
+        >
+          <img [src]="thumbnail" [alt]="title() + ' thumbnail ' + (index + 1)" />
+        </button>
+      }
+    </div>
+  </div>
+} @else {
+  <div class="favorite-carousel favorite-carousel--empty">
+    <i class="bi bi-image" aria-hidden="true"></i>
+    <span>Sem imagens</span>
+  </div>
+}

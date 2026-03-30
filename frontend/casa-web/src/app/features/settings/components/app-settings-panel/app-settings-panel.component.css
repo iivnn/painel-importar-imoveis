@@ -1,0 +1,177 @@
+.settings-shell {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.settings-hero,
+.settings-card {
+  border: 1px solid var(--app-border);
+  border-radius: 28px;
+  background: var(--app-surface);
+  box-shadow: 0 18px 56px var(--app-shadow-soft);
+}
+
+.settings-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.5rem 1.75rem;
+}
+
+.settings-hero__kicker {
+  color: var(--app-accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.settings-hero__title {
+  font-family: "Fraunces", Georgia, serif;
+  color: var(--app-ink);
+  font-size: 2rem;
+}
+
+.settings-hero__copy,
+.settings-card__copy {
+  color: var(--app-muted);
+  max-width: 52rem;
+}
+
+.settings-hero__summary {
+  min-width: 12rem;
+  padding: 1rem 1.2rem;
+  border-radius: 22px;
+  background: color-mix(in srgb, var(--app-surface-soft) 92%, var(--app-surface-elevated));
+  display: grid;
+  gap: 0.25rem;
+  align-self: start;
+}
+
+.settings-hero__summary span {
+  color: var(--app-muted);
+  font-size: 0.85rem;
+}
+
+.settings-hero__summary strong {
+  color: var(--app-ink);
+  font-size: 1.4rem;
+}
+
+.settings-grid {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.settings-card {
+  padding: 1.4rem 1.5rem;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.settings-card--wide {
+  grid-column: 1 / -1;
+}
+
+.settings-card__title {
+  color: var(--app-ink);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.settings-fields {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.settings-fields--three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.settings-fields--weights {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.settings-field,
+.settings-toggle {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.settings-field--full,
+.settings-toggle--full {
+  grid-column: 1 / -1;
+}
+
+.settings-field span {
+  color: var(--app-muted-strong);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.settings-toggle {
+  grid-auto-flow: column;
+  justify-content: start;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--app-ink);
+  font-weight: 600;
+}
+
+.settings-toggle input,
+.settings-chip input {
+  accent-color: var(--app-accent);
+}
+
+.settings-check-grid,
+.settings-status-rules {
+  display: grid;
+  gap: 1rem;
+}
+
+.settings-status-rules {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.settings-status-group {
+  padding: 1rem;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--app-surface-soft) 92%, var(--app-surface-elevated));
+  border: 1px solid color-mix(in srgb, var(--app-border) 86%, transparent);
+}
+
+.settings-status-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.settings-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid var(--app-border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--app-surface-elevated) 92%, var(--app-surface));
+  color: var(--app-ink);
+  font-size: 0.88rem;
+  box-shadow: 0 10px 22px color-mix(in srgb, var(--app-shadow-soft) 14%, transparent);
+}
+
+.settings-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (max-width: 1199.98px) {
+  .settings-grid,
+  .settings-fields,
+  .settings-fields--three,
+  .settings-fields--weights,
+  .settings-status-rules {
+    grid-template-columns: 1fr;
+  }
+}

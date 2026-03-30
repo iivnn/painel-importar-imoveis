@@ -42,16 +42,3 @@
   justify-content: flex-end;
   gap: 0.75rem;
 }
-
-.btn-outline-brand {
-  --bs-btn-color: #355347;
-  --bs-btn-border-color: rgba(53, 83, 71, 0.35);
-  --bs-btn-hover-bg: #355347;
-  --bs-btn-hover-border-color: #355347;
-  --bs-btn-hover-color: #f7f2e8;
-  --bs-btn-active-bg: #2a4339;
-  --bs-btn-active-border-color: #2a4339;
-  --bs-btn-padding-x: 1.15rem;
-  --bs-btn-padding-y: 0.75rem;
-  --bs-btn-font-weight: 600;
-}

@@ -1,4 +1,5 @@
 using Casa.Application.Abstractions;
+using Casa.Domain.Entities;
 using Casa.Domain.Enums;
 
 namespace Casa.Application.Properties.Swot;
@@ -26,6 +27,15 @@ public class SavePropertySwotAnalysisCommandService(IPropertyListingRepository p
 
         if (property.SwotStatus == PropertySwotStatus.Novo)
         {
+            await propertyListingRepository.AddStatusHistoryAsync(
+                new PropertyStatusHistory
+                {
+                    PropertyListingId = property.Id,
+                    PreviousStatus = PropertySwotStatus.Novo,
+                    NewStatus = PropertySwotStatus.EmAnalise,
+                    Reason = "Primeira analise SWOT registrada"
+                },
+                cancellationToken);
             property.SwotStatus = PropertySwotStatus.EmAnalise;
         }
 

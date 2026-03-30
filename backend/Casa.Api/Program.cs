@@ -3,14 +3,17 @@ using Casa.Api.Endpoints;
 using Casa.Api.Middleware;
 using Casa.Application;
 using Casa.Infrastructure;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
 const string FrontendCorsPolicy = "FrontendCorsPolicy";
 
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSignalR();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient();
+builder.Services.AddScoped<Casa.Api.Hubs.InconsistencyBroadcastService>();
 builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
 {
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
@@ -22,13 +25,16 @@ builder.Services.AddCors(options =>
     options.AddPolicy(FrontendCorsPolicy, policy =>
     {
         policy
-            .WithOrigins("http://localhost:4200")
+            .AllowAnyOrigin()
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
 });
 
 var app = builder.Build();
+
+var uploadsRoot = Path.Combine(app.Environment.ContentRootPath, "Data", "uploads");
+Directory.CreateDirectory(uploadsRoot);
 
 await app.Services.InitialiseInfrastructureAsync(app.Environment.ContentRootPath);
 
@@ -40,6 +46,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseGlobalExceptionHandling();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsRoot),
+    RequestPath = "/uploads"
+});
 app.UseCors(FrontendCorsPolicy);
 
 app.MapApiEndpoints();

@@ -6,6 +6,5 @@ public enum PropertySwotStatus
     EmAnalise,
     Visitado,
     Proposta,
-    Descartado,
-    Favorito
+    Descartado
 }

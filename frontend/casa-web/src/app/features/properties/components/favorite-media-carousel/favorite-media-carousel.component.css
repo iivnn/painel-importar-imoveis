@@ -1,0 +1,75 @@
+.favorite-carousel {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.favorite-carousel__main {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--app-border);
+  border-radius: 18px;
+  background: var(--app-map-surface);
+  aspect-ratio: 16 / 10;
+}
+
+.favorite-carousel__main img,
+.favorite-carousel__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.favorite-carousel__nav {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0.65rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+.favorite-carousel__nav-button {
+  width: 2rem;
+  height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid rgba(255, 250, 242, 0.3);
+  border-radius: 999px;
+  background: rgba(16, 18, 22, 0.58);
+  color: #fffaf2;
+}
+
+.favorite-carousel__thumbs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.favorite-carousel__thumb {
+  overflow: hidden;
+  padding: 0;
+  aspect-ratio: 1 / 1;
+  border: 1px solid var(--app-border);
+  border-radius: 14px;
+  background: var(--app-surface-soft);
+  opacity: 0.76;
+}
+
+.favorite-carousel__thumb--active {
+  border-color: var(--app-accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--app-accent-soft) 72%, transparent);
+  opacity: 1;
+}
+
+.favorite-carousel--empty {
+  min-height: 12rem;
+  place-items: center;
+  align-content: center;
+  border: 1px dashed var(--app-neutral-border);
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--app-neutral-soft) 60%, transparent);
+  color: var(--app-neutral);
+}

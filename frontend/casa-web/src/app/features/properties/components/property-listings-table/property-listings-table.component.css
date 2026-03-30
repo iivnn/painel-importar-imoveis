@@ -3,6 +3,7 @@
   border-radius: 32px;
   background: var(--app-surface);
   box-shadow: 0 24px 80px var(--app-shadow-soft);
+  backdrop-filter: blur(16px);
 }
 
 .section-kicker {
@@ -31,23 +32,38 @@
   --bs-table-border-color: var(--app-border);
 }
 
+.table-responsive {
+  overflow-x: clip;
+}
+
 .property-table thead th {
   border-bottom-width: 1px;
-  color: var(--app-muted);
+  color: var(--app-muted-strong);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  white-space: nowrap;
 }
 
 .property-table tbody tr:hover {
   background: var(--app-table-hover);
 }
 
+.property-table tbody tr.property-row--highlighted {
+  background: color-mix(in srgb, var(--app-accent-soft) 72%, transparent);
+  box-shadow: inset 3px 0 0 var(--app-accent);
+}
+
 .property-table td {
   padding-top: 1rem;
   padding-bottom: 1rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.property-table thead th {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
 }
 
 .property-main,
@@ -82,22 +98,25 @@
 }
 
 .table-status-select {
-  min-height: 2.5rem;
+  min-height: 2.35rem;
   padding-top: 0.42rem;
   padding-bottom: 0.42rem;
-  padding-left: 0.72rem;
-  padding-right: 2.2rem;
+  padding-left: 0.6rem;
+  padding-right: 2rem;
   border-radius: 999px;
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   font-weight: 700;
   letter-spacing: 0.03em;
   text-align: center;
 }
 
 .table-link {
-  color: var(--bs-link-color);
+  display: inline-block;
+  color: var(--app-info);
+  font-size: 0.92rem;
   font-weight: 700;
   text-decoration: none;
+  overflow-wrap: anywhere;
 }
 
 .table-link:hover {
@@ -123,40 +142,89 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.34rem;
-  width: 2rem;
-  height: 2rem;
+  padding: 0.28rem;
+  width: 1.9rem;
+  height: 1.9rem;
   border-radius: 999px;
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 700;
+  box-shadow: 0 10px 20px color-mix(in srgb, var(--app-shadow-soft) 24%, transparent);
 }
 
 .table-action-button i {
-  font-size: 0.86rem;
+  font-size: 0.8rem;
 }
 
 .table-action-button--danger {
-  --bs-btn-color: #b65f5f;
-  --bs-btn-border-color: rgba(182, 95, 95, 0.24);
-  --bs-btn-bg: rgba(182, 95, 95, 0.08);
-  --bs-btn-hover-color: #fff7f7;
-  --bs-btn-hover-bg: #b65f5f;
-  --bs-btn-hover-border-color: #b65f5f;
-  --bs-btn-active-color: #fff7f7;
-  --bs-btn-active-bg: #944848;
-  --bs-btn-active-border-color: #944848;
+  --bs-btn-color: var(--app-danger);
+  --bs-btn-border-color: var(--app-danger-border);
+  --bs-btn-bg: color-mix(in srgb, var(--app-danger-soft) 88%, var(--app-surface-elevated));
+  --bs-btn-hover-color: var(--app-on-danger);
+  --bs-btn-hover-bg: var(--app-danger);
+  --bs-btn-hover-border-color: var(--app-danger);
+  --bs-btn-active-color: var(--app-on-danger);
+  --bs-btn-active-bg: color-mix(in srgb, var(--app-danger) 82%, black 18%);
+  --bs-btn-active-border-color: color-mix(in srgb, var(--app-danger) 82%, black 18%);
 }
 
 .table-action-button--accent {
   --bs-btn-color: var(--app-accent);
-  --bs-btn-border-color: color-mix(in srgb, var(--app-accent) 26%, transparent);
-  --bs-btn-bg: color-mix(in srgb, var(--app-accent-soft) 72%, transparent);
-  --bs-btn-hover-color: #fffaf2;
+  --bs-btn-border-color: color-mix(in srgb, var(--app-accent) 30%, transparent);
+  --bs-btn-bg: color-mix(in srgb, var(--app-accent-soft) 86%, var(--app-surface-elevated));
+  --bs-btn-hover-color: var(--app-on-accent);
   --bs-btn-hover-bg: var(--app-accent);
   --bs-btn-hover-border-color: var(--app-accent);
-  --bs-btn-active-color: #fffaf2;
+  --bs-btn-active-color: var(--app-on-accent);
   --bs-btn-active-bg: color-mix(in srgb, var(--app-accent) 86%, black 14%);
   --bs-btn-active-border-color: color-mix(in srgb, var(--app-accent) 86%, black 14%);
+}
+
+.table-action-button--favorite {
+  --bs-btn-color: var(--app-warning);
+  --bs-btn-border-color: var(--app-warning-border);
+  --bs-btn-bg: color-mix(in srgb, var(--app-warning-soft) 86%, var(--app-surface-elevated));
+  --bs-btn-hover-color: var(--app-on-warning);
+  --bs-btn-hover-bg: var(--app-warning);
+  --bs-btn-hover-border-color: var(--app-warning);
+  --bs-btn-active-color: var(--app-on-warning);
+  --bs-btn-active-bg: color-mix(in srgb, var(--app-warning) 84%, black 16%);
+  --bs-btn-active-border-color: color-mix(in srgb, var(--app-warning) 84%, black 16%);
+}
+
+.table-action-button--favorite-muted {
+  --bs-btn-color: var(--app-muted-strong);
+  --bs-btn-border-color: var(--app-neutral-border);
+  --bs-btn-bg: color-mix(in srgb, var(--app-neutral-soft) 82%, var(--app-surface-elevated));
+  --bs-btn-hover-color: var(--app-on-warning);
+  --bs-btn-hover-bg: var(--app-warning);
+  --bs-btn-hover-border-color: var(--app-warning);
+  --bs-btn-active-color: var(--app-on-warning);
+  --bs-btn-active-bg: color-mix(in srgb, var(--app-warning) 84%, black 16%);
+  --bs-btn-active-border-color: color-mix(in srgb, var(--app-warning) 84%, black 16%);
+}
+
+.table-action-button--media {
+  --bs-btn-color: var(--app-info);
+  --bs-btn-border-color: var(--app-info-border);
+  --bs-btn-bg: color-mix(in srgb, var(--app-info-soft) 86%, var(--app-surface-elevated));
+  --bs-btn-hover-color: var(--app-on-info);
+  --bs-btn-hover-bg: var(--app-info);
+  --bs-btn-hover-border-color: var(--app-info);
+  --bs-btn-active-color: var(--app-on-info);
+  --bs-btn-active-bg: color-mix(in srgb, var(--app-info) 84%, black 16%);
+  --bs-btn-active-border-color: color-mix(in srgb, var(--app-info) 84%, black 16%);
+}
+
+.table-action-button--neutral {
+  --bs-btn-color: var(--app-muted-strong);
+  --bs-btn-border-color: var(--app-neutral-border);
+  --bs-btn-bg: color-mix(in srgb, var(--app-neutral-soft) 82%, var(--app-surface-elevated));
+  --bs-btn-hover-color: var(--app-ink);
+  --bs-btn-hover-bg: color-mix(in srgb, var(--app-info-soft) 84%, var(--app-surface-elevated));
+  --bs-btn-hover-border-color: color-mix(in srgb, var(--app-info) 40%, var(--app-neutral-border));
+  --bs-btn-active-color: var(--app-ink);
+  --bs-btn-active-bg: color-mix(in srgb, var(--app-info-soft) 92%, var(--app-surface-elevated));
+  --bs-btn-active-border-color: color-mix(in srgb, var(--app-info) 52%, var(--app-neutral-border));
 }
 
 .table-action-button:disabled {
@@ -172,8 +240,9 @@
   padding: 0;
   border: 1px solid var(--app-border-strong);
   border-radius: 999px;
-  background: var(--app-surface-soft);
+  background: var(--app-surface-elevated);
   color: var(--app-ink);
+  box-shadow: 0 10px 20px color-mix(in srgb, var(--app-shadow-soft) 22%, transparent);
   transition:
     background 0.18s ease,
     border-color 0.18s ease,
@@ -188,7 +257,7 @@
 .table-page-button:hover:not(:disabled) {
   transform: translateY(-1px);
   border-color: var(--app-accent);
-  background: var(--app-accent-soft);
+  background: color-mix(in srgb, var(--app-accent-soft) 86%, var(--app-surface-elevated));
   color: var(--app-accent);
 }
 
@@ -210,4 +279,24 @@
   --bs-btn-active-color: inherit;
   --bs-btn-active-bg: transparent;
   --bs-btn-active-border-color: transparent;
+}
+
+@media (max-width: 1399.98px) {
+  .property-table td,
+  .property-table thead th {
+    padding-left: 0.6rem;
+    padding-right: 0.6rem;
+  }
+
+  .table-action-button {
+    width: 1.82rem;
+    height: 1.82rem;
+  }
+}
+
+@media (max-width: 1199.98px) {
+  .table-actions {
+    max-width: 9rem;
+    margin-inline: auto;
+  }
 }

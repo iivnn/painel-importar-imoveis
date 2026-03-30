@@ -3,17 +3,62 @@
     <app-theme-toggle-button />
   </div>
 
+  <app-global-map-preview />
+
   <div class="container-xl">
-    <nav class="app-navbar mb-4" aria-label="Navegacao principal">
+    <nav class="app-navbar mb-4" aria-label="Navega&ccedil;&atilde;o principal">
       <div class="app-navbar__brand">
         <i class="bi bi-buildings" aria-hidden="true"></i>
       </div>
 
       <div class="app-navbar__links">
-        <a class="app-navbar__link app-navbar__link--active" href="#">Inicio</a>
+        <button
+          type="button"
+          class="app-navbar__link"
+          [class.app-navbar__link--active]="activeSection() === 'inicio'"
+          (click)="showHome()"
+        >
+          In&iacute;cio
+        </button>
         <button type="button" class="app-navbar__link" (click)="openCreateModal()">Cadastrar</button>
-        <a class="app-navbar__link" href="#">Favoritos</a>
-        <a class="app-navbar__link" href="#">Configuracoes</a>
+        <button
+          type="button"
+          class="app-navbar__link"
+          [class.app-navbar__link--active]="activeSection() === 'favoritos'"
+          (click)="showFavorites()"
+        >
+          Favoritos
+        </button>
+        <button
+          type="button"
+          class="app-navbar__link app-navbar__link--badge"
+          [class.app-navbar__link--active]="activeSection() === 'comparar'"
+          (click)="showCompare()"
+        >
+          <span>Comparar</span>
+          <span class="app-badge app-badge--info app-navbar__badge">
+            {{ comparePropertyIds().length }}
+          </span>
+        </button>
+        <button
+          type="button"
+          class="app-navbar__link app-navbar__link--badge"
+          [class.app-navbar__link--active]="activeSection() === 'inconsistencias'"
+          (click)="showInconsistencies()"
+        >
+          <span>Inconsistências</span>
+          <span class="app-badge app-badge--warning app-navbar__badge">
+            {{ inconsistenciesSummary()?.totalCount ?? 0 }}
+          </span>
+        </button>
+        <button
+          type="button"
+          class="app-navbar__link"
+          [class.app-navbar__link--active]="activeSection() === 'configuracoes'"
+          (click)="showSettings()"
+        >
+          Configura&ccedil;&otilde;es
+        </button>
       </div>
 
       <div class="app-navbar__meta">
@@ -22,34 +67,106 @@
     </nav>
 
     <div class="app-content-stack">
-      <app-property-filters-panel
-        [filters]="filters()"
-        [filterOptions]="filterOptions()"
-        [totalItems]="pageData().totalItems"
-        [activeView]="activeView()"
-        [isLoading]="isLoading() || isMapLoading() || isFilterOptionsLoading()"
-        (applyFilters)="applyFilters($event)"
-        (clearFilters)="clearFilters()"
-        (changeView)="setActiveView($event)"
-      />
+      @if (activeSection() === 'inicio') {
+        <app-property-filters-panel
+          [filters]="filters()"
+          [filterOptions]="filterOptions()"
+          [totalItems]="pageData().totalItems"
+          [activeView]="activeView()"
+          [isLoading]="isLoading() || isMapLoading() || isFilterOptionsLoading()"
+          (applyFilters)="applyFilters($event)"
+          (clearFilters)="clearFilters()"
+          (changeView)="setActiveView($event)"
+        />
 
-      @if (activeView() === 'list') {
-        <app-property-listings-table
-          [pageData]="pageData()"
-          [isLoading]="isLoading()"
-          [loadError]="loadError()"
-          [updatingStatusIds]="updatingStatusIds()"
-          (previousPage)="goToPreviousPage()"
-          (nextPage)="goToNextPage()"
-          (requestStatusChange)="updatePropertyStatus($event.property, $event.status)"
-          (requestSwot)="openSwotModal($event)"
-          (requestDelete)="openDeleteModal($event)"
+        @if (activeView() === 'list') {
+          <app-property-listings-table
+            [pageData]="pageData()"
+            [isLoading]="isLoading()"
+            [loadError]="loadError()"
+            [updatingStatusIds]="updatingStatusIds()"
+            [highlightedPropertyId]="highlightedPropertyId()"
+            [comparedPropertyIds]="comparePropertyIds()"
+            (previousPage)="goToPreviousPage()"
+            (nextPage)="goToNextPage()"
+            (requestDetail)="openPropertyDetail($event)"
+            (requestEdit)="openEditModal($event)"
+            (requestStatusChange)="updatePropertyStatus($event.property, $event.status)"
+            (toggleCompare)="toggleCompareSelection($event)"
+            (requestFavoriteToggle)="togglePropertyFavorite($event)"
+            (requestMedia)="openMediaModal($event)"
+            (requestSwot)="openSwotModal($event)"
+            (requestDelete)="openDeleteModal($event)"
+          />
+        } @else {
+          <app-property-map-panel
+            [properties]="mapItems()"
+            [isLoading]="isMapLoading()"
+            [loadError]="mapLoadError()"
+            [initialLatitude]="appSettings().mapInitialLatitude"
+            [initialLongitude]="appSettings().mapInitialLongitude"
+            [initialZoom]="appSettings().mapInitialZoom"
+            [onlyExactLocation]="appSettings().mapOnlyExactLocation"
+          />
+        }
+      } @else if (activeSection() === 'favoritos') {
+        <app-property-favorites-panel
+          [data]="favoritesData()"
+          [filters]="favoriteFilters()"
+          [sortBy]="favoriteSortBy()"
+          [settings]="appSettings()"
+          [isLoading]="isFavoritesLoading()"
+          [loadError]="favoritesLoadError()"
+          (applyFilters)="applyFavoriteFilters($event)"
+          (clearFilters)="clearFavoriteFilters()"
+          (changeSort)="changeFavoriteSort($event)"
+          (previousPage)="goToPreviousFavoritesPage()"
+          (nextPage)="goToNextFavoritesPage()"
+          (requestDetail)="openPropertyDetailById($event)"
+          (toggleCompare)="toggleCompareSelectionById($event)"
+          (toggleFavorite)="togglePropertyFavoriteById($event)"
+          (requestMedia)="openMediaModalById($event)"
+          (requestSwot)="openSwotModalById($event)"
+        />
+      } @else if (activeSection() === 'detalhe') {
+        <app-property-detail-panel
+          [details]="selectedPropertyDetails()"
+          [isLoading]="isPropertyDetailsLoading()"
+          [loadError]="propertyDetailsLoadError()"
+          (back)="closePropertyDetail()"
+          (edit)="selectedPropertyDetails() && openEditModalById(selectedPropertyDetails()!.propertyId)"
+          (openMedia)="selectedPropertyDetails() && openMediaModalById(selectedPropertyDetails()!.propertyId)"
+          (openSwot)="selectedPropertyDetails() && openSwotModalById(selectedPropertyDetails()!.propertyId)"
+          (toggleCompare)="selectedPropertyDetails() && toggleCompareSelectionById(selectedPropertyDetails()!.propertyId)"
+        />
+      } @else if (activeSection() === 'comparar') {
+        <app-property-compare-panel
+          [items]="compareDetails()"
+          [isLoading]="isCompareLoading()"
+          [loadError]="compareLoadError()"
+          (back)="showHome()"
+          (remove)="removeFromCompare($event)"
+          (openDetail)="openDetailFromCompare($event)"
+        />
+      } @else if (activeSection() === 'configuracoes') {
+        <app-settings-panel
+          [settings]="appSettings()"
+          [isLoading]="isSettingsLoading()"
+          [isSaving]="isSettingsSaving()"
+          [loadError]="settingsLoadError()"
+          [saveError]="settingsSaveError()"
+          [saveSuccessMessage]="settingsSaveSuccessMessage()"
+          (save)="saveSettings($event)"
         />
       } @else {
-        <app-property-map-panel
-          [properties]="mapItems()"
-          [isLoading]="isMapLoading()"
-          [loadError]="mapLoadError()"
+        <app-property-inconsistencies-panel
+          [summary]="inconsistenciesSummary()"
+          [items]="inconsistencyItems()"
+          [isLoading]="isInconsistenciesLoading()"
+          [loadError]="inconsistenciesLoadError()"
+          [dismissingIds]="dismissingInconsistencyIds()"
+          (openProperty)="openPropertyFromInconsistency($event)"
+          (dismiss)="dismissInconsistency($event)"
         />
       }
     </div>
@@ -70,8 +187,28 @@
   <app-create-property-modal
     [isSaving]="isSaving()"
     [submitError]="createError()"
+    [defaults]="appSettings()"
+    [mode]="createModalMode()"
+    [initialValue]="propertyPendingEdit()"
     (cancel)="closeCreateModal()"
     (save)="createProperty($event)"
+  />
+}
+
+@if (isMediaModalOpen() && propertyPendingMedia(); as propertyPendingMedia) {
+  <app-property-media-modal
+    [propertyTitle]="propertyPendingMedia.title"
+    [details]="propertyDetails()"
+    [isLoading]="isDetailsLoading()"
+    [isSavingNotes]="isNotesSaving()"
+    [activeUploadKind]="activeUploadKind()"
+    [deletingAttachmentIds]="deletingAttachmentIds()"
+    [loadError]="detailsLoadError()"
+    [submitError]="detailsSubmitError()"
+    (cancel)="closeMediaModal()"
+    (saveNotes)="savePropertyNotes($event)"
+    (uploadAttachments)="uploadPropertyAttachments($event.kind, $event.files)"
+    (deleteAttachment)="deletePropertyAttachment($event)"
   />
 }
 

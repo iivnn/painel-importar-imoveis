@@ -18,6 +18,8 @@ public static class DependencyInjection
             options.UseSqlite(configuration.GetConnectionString("CasaDb")));
 
         services.AddScoped<IPropertyListingRepository, PropertyListingRepository>();
+        services.AddScoped<IAppSettingsRepository, AppSettingsRepository>();
+        services.AddScoped<IDismissedPropertyInconsistencyRepository, DismissedPropertyInconsistencyRepository>();
 
         return services;
     }
@@ -75,7 +77,26 @@ public static class DependencyInjection
                 cancellationToken);
         }
 
+        var favoriteMigration = dbContext.Database
+            .GetMigrations()
+            .LastOrDefault(migration => migration.Contains("AddIsFavoriteToPropertyListing", StringComparison.Ordinal));
+
+        if (!string.IsNullOrWhiteSpace(favoriteMigration))
+        {
+            await MarkMigrationAsAppliedIfColumnExistsAsync(
+                databasePath,
+                favoriteMigration,
+                "IsFavorite",
+                cancellationToken);
+        }
+
         await dbContext.Database.MigrateAsync(cancellationToken);
+
+        if (!await dbContext.AppSettingsProfiles.AnyAsync(cancellationToken))
+        {
+            await dbContext.AppSettingsProfiles.AddAsync(new AppSettingsProfile(), cancellationToken);
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
 
         if (await dbContext.PropertyListings.AnyAsync(cancellationToken))
         {
@@ -95,7 +116,7 @@ public static class DependencyInjection
             CreateSeedProperty("Apartamento 2 quartos", "Apartamento", "Rua Sete de Abril, 120", "Centro", "Sao Paulo", "SP", "01044-000", PropertySource.AppExterno, PropertySwotStatus.Novo, 2350, -23.55052m, -46.63331m, true, 1, createdAtBase),
             CreateSeedProperty("Casa com quintal", "Casa", "Rua Harmonia, 450", "Vila Madalena", "Sao Paulo", "SP", "05435-000", PropertySource.PortalWeb, PropertySwotStatus.EmAnalise, 3200, -23.56168m, -46.65598m, false, 2, createdAtBase),
             CreateSeedProperty("Studio compacto", "Studio", "Avenida Atlantica, 890", "Copacabana", "Rio de Janeiro", "RJ", "22010-000", PropertySource.AppExterno, PropertySwotStatus.Novo, 2800, -22.97118m, -43.18254m, true, 3, createdAtBase),
-            CreateSeedProperty("Cobertura duplex", "Cobertura", "Rua Alagoas, 820", "Savassi", "Belo Horizonte", "MG", "30130-160", PropertySource.PortalWeb, PropertySwotStatus.Favorito, 5400, -19.93961m, -43.93455m, true, 4, createdAtBase),
+            CreateSeedProperty("Cobertura duplex", "Cobertura", "Rua Alagoas, 820", "Savassi", "Belo Horizonte", "MG", "30130-160", PropertySource.PortalWeb, PropertySwotStatus.EmAnalise, 5400, -19.93961m, -43.93455m, true, 4, createdAtBase, isFavorite: true),
             CreateSeedProperty("Apartamento mobiliado", "Apartamento", "Rua Chile, 150", "Centro", "Salvador", "BA", "40020-000", PropertySource.AppExterno, PropertySwotStatus.Visitado, 2600, -12.97182m, -38.50111m, true, 5, createdAtBase),
             CreateSeedProperty("Casa terrea", "Casa", "Rua Padre Chagas, 310", "Moinhos de Vento", "Porto Alegre", "RS", "90570-080", PropertySource.PortalWeb, PropertySwotStatus.Novo, 3500, -30.0277m, -51.20465m, false, 6, createdAtBase),
             CreateSeedProperty("Loft central", "Loft", "Setor Comercial Sul, Quadra 2", "Asa Sul", "Brasilia", "DF", "70302-000", PropertySource.AppExterno, PropertySwotStatus.Novo, 3100, -15.79389m, -47.88278m, true, 7, createdAtBase),
@@ -104,13 +125,13 @@ public static class DependencyInjection
             CreateSeedProperty("Apartamento familiar", "Apartamento", "Rua dos Mundurucus, 740", "Jurunas", "Belem", "PA", "66025-660", PropertySource.PortalWeb, PropertySwotStatus.EmAnalise, 2100, -1.45583m, -48.49018m, false, 10, createdAtBase),
             CreateSeedProperty("Casa em condominio", "Casa", "Avenida Efigenio Sales, 1800", "Aleixo", "Manaus", "AM", "69060-020", PropertySource.AppExterno, PropertySwotStatus.Novo, 4300, -3.10094m, -60.01381m, true, 11, createdAtBase),
             CreateSeedProperty("Apartamento proximo ao parque", "Apartamento", "Rua das Palmeiras, 210", "Jardins", "Aracaju", "SE", "49025-550", PropertySource.PortalWeb, PropertySwotStatus.Novo, 2200, -10.94725m, -37.07308m, false, 12, createdAtBase),
-            CreateSeedProperty("Studio com varanda", "Studio", "Rua Monsenhor Bruno, 650", "Meireles", "Fortaleza", "CE", "60115-190", PropertySource.AppExterno, PropertySwotStatus.Favorito, 2450, -3.73186m, -38.49678m, true, 13, createdAtBase),
+            CreateSeedProperty("Studio com varanda", "Studio", "Rua Monsenhor Bruno, 650", "Meireles", "Fortaleza", "CE", "60115-190", PropertySource.AppExterno, PropertySwotStatus.EmAnalise, 2450, -3.73186m, -38.49678m, true, 13, createdAtBase, isFavorite: true),
             CreateSeedProperty("Apartamento amplo", "Apartamento", "Rua Candido Mendes, 500", "Centro", "Sao Luis", "MA", "65020-120", PropertySource.PortalWeb, PropertySwotStatus.Descartado, 2300, -2.52972m, -44.30278m, false, 14, createdAtBase),
             CreateSeedProperty("Casa com edicula", "Casa", "Rua Pedro II, 120", "Centro", "Joao Pessoa", "PB", "58013-420", PropertySource.AppExterno, PropertySwotStatus.Novo, 2700, -7.1195m, -34.84501m, false, 15, createdAtBase),
             CreateSeedProperty("Apartamento novo", "Apartamento", "Avenida Afonso Pena, 90", "Centro", "Campo Grande", "MS", "79002-070", PropertySource.PortalWeb, PropertySwotStatus.Novo, 2400, -20.46971m, -54.62012m, true, 16, createdAtBase),
             CreateSeedProperty("Casa geminada", "Casa", "Rua 13 de Junho, 300", "Porto", "Cuiaba", "MT", "78020-000", PropertySource.AppExterno, PropertySwotStatus.Visitado, 2600, -15.60141m, -56.09789m, false, 17, createdAtBase),
             CreateSeedProperty("Apartamento compacto", "Apartamento", "Rua Senador Souza Naves, 75", "Centro", "Londrina", "PR", "86010-160", PropertySource.PortalWeb, PropertySwotStatus.Novo, 1850, -23.30445m, -51.16958m, true, 18, createdAtBase),
-            CreateSeedProperty("Cobertura com terraco", "Cobertura", "Rua Maceio, 55", "Adrianopolis", "Manaus", "AM", "69057-010", PropertySource.AppExterno, PropertySwotStatus.Favorito, 5200, -3.10395m, -60.01022m, true, 19, createdAtBase),
+            CreateSeedProperty("Cobertura com terraco", "Cobertura", "Rua Maceio, 55", "Adrianopolis", "Manaus", "AM", "69057-010", PropertySource.AppExterno, PropertySwotStatus.EmAnalise, 5200, -3.10395m, -60.01022m, true, 19, createdAtBase, isFavorite: true),
             CreateSeedProperty("Casa perto da praia", "Casa", "Avenida Litoranea, 130", "Ponta Negra", "Natal", "RN", "59090-130", PropertySource.PortalWeb, PropertySwotStatus.Proposta, 3400, -5.87841m, -35.17235m, false, 20, createdAtBase),
             CreateSeedProperty("Apartamento no centro historico", "Apartamento", "Rua do Giz, 40", "Centro", "Sao Luis", "MA", "65010-680", PropertySource.AppExterno, PropertySwotStatus.Novo, 2050, -2.52993m, -44.30684m, true, 21, createdAtBase),
             CreateSeedProperty("Studio perto do metro", "Studio", "Rua Aurora, 300", "Centro", "Sao Paulo", "SP", "01209-001", PropertySource.PortalWeb, PropertySwotStatus.Novo, 1950, -23.53858m, -46.64201m, true, 22, createdAtBase),
@@ -118,7 +139,7 @@ public static class DependencyInjection
             CreateSeedProperty("Casa de vila", "Casa", "Rua do Lavradio, 150", "Lapa", "Rio de Janeiro", "RJ", "20230-070", PropertySource.PortalWeb, PropertySwotStatus.Novo, 2900, -22.91371m, -43.18252m, false, 24, createdAtBase),
             CreateSeedProperty("Kitnet universitaria", "Kitnet", "Rua Clovis Bevilaqua, 55", "Centro", "Teresina", "PI", "64000-370", PropertySource.AppExterno, PropertySwotStatus.Descartado, 1400, -5.09194m, -42.80336m, false, 25, createdAtBase),
             CreateSeedProperty("Apartamento terreo", "Apartamento", "Rua Marechal Deodoro, 210", "Centro", "Maceio", "AL", "57020-200", PropertySource.PortalWeb, PropertySwotStatus.Novo, 1750, -9.66599m, -35.735m, true, 26, createdAtBase),
-            CreateSeedProperty("Casa espacosa", "Casa", "Rua Joaquim Tavora, 610", "Centro", "Palmas", "TO", "77001-014", PropertySource.AppExterno, PropertySwotStatus.Favorito, 3600, -10.18472m, -48.33361m, false, 27, createdAtBase),
+            CreateSeedProperty("Casa espacosa", "Casa", "Rua Joaquim Tavora, 610", "Centro", "Palmas", "TO", "77001-014", PropertySource.AppExterno, PropertySwotStatus.EmAnalise, 3600, -10.18472m, -48.33361m, false, 27, createdAtBase, isFavorite: true),
             CreateSeedProperty("Apartamento mobiliado premium", "Apartamento", "Rua das Acacias, 87", "Jardim Europa", "Goiania", "GO", "74240-160", PropertySource.PortalWeb, PropertySwotStatus.EmAnalise, 4100, -16.68689m, -49.26479m, true, 28, createdAtBase),
             CreateSeedProperty("Studio executivo", "Studio", "Rua Duque de Caxias, 180", "Centro", "Porto Velho", "RO", "76801-120", PropertySource.AppExterno, PropertySwotStatus.Novo, 1700, -8.76194m, -63.90389m, false, 29, createdAtBase),
             CreateSeedProperty("Apartamento com vista", "Apartamento", "Avenida Nacoes Unidas, 450", "Centro", "Boa Vista", "RR", "69301-000", PropertySource.PortalWeb, PropertySwotStatus.Novo, 2150, 2.82384m, -60.67529m, true, 30, createdAtBase)
@@ -140,7 +161,8 @@ public static class DependencyInjection
         decimal longitude,
         bool hasExactLocation,
         int sequence,
-        DateTime createdAtBase)
+        DateTime createdAtBase,
+        bool isFavorite = false)
     {
         return new PropertyListing
         {
@@ -159,6 +181,7 @@ public static class DependencyInjection
             Longitude = longitude,
             HasExactLocation = hasExactLocation,
             Score = Math.Round(5.4m + (sequence % 5) * 0.8m, 1),
+            IsFavorite = isFavorite,
             Excluded = false,
             CreatedAtUtc = createdAtBase.AddDays(sequence - 1)
         };
@@ -202,7 +225,8 @@ public static class DependencyInjection
             "Weaknesses",
             "Opportunities",
             "Threats",
-            "Score"
+            "Score",
+            "IsFavorite"
         };
 
         return expectedColumns.Any(column => !columns.Contains(column));
@@ -306,6 +330,11 @@ public static class DependencyInjection
             upgradeStatements.Add("ALTER TABLE PropertyListings ADD COLUMN Score TEXT NULL;");
         }
 
+        if (!columns.Contains("IsFavorite"))
+        {
+            upgradeStatements.Add("ALTER TABLE PropertyListings ADD COLUMN IsFavorite INTEGER NOT NULL DEFAULT 0;");
+        }
+
         foreach (var statement in upgradeStatements)
         {
             var command = connection.CreateCommand();
@@ -329,6 +358,16 @@ public static class DependencyInjection
                 """;
 
             await patchDefaultsCommand.ExecuteNonQueryAsync(cancellationToken);
+
+            var patchFavoriteCommand = connection.CreateCommand();
+            patchFavoriteCommand.CommandText = """
+                UPDATE PropertyListings
+                SET IsFavorite = 1,
+                    SwotStatus = 'EmAnalise'
+                WHERE SwotStatus = 'Favorito';
+                """;
+
+            await patchFavoriteCommand.ExecuteNonQueryAsync(cancellationToken);
         }
 
         if (string.IsNullOrWhiteSpace(initialMigration))

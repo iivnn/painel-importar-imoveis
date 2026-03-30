@@ -99,7 +99,7 @@
   },
   {
     "ContainingType": "Casa.Api.Endpoints.PropertyEndpoints\u002B\u003C\u003Ec",
-    "Method": "\u003CMapPropertyEndpoints\u003Eb__0_4",
+    "Method": "\u003CMapPropertyEndpoints\u003Eb__0_5",
     "RelativePath": "api/properties",
     "HttpMethod": "POST",
     "IsController": false,
@@ -122,7 +122,7 @@
   },
   {
     "ContainingType": "Casa.Api.Endpoints.PropertyEndpoints\u002B\u003C\u003Ec",
-    "Method": "\u003CMapPropertyEndpoints\u003Eb__0_3",
+    "Method": "\u003CMapPropertyEndpoints\u003Eb__0_4",
     "RelativePath": "api/properties/{id:int}",
     "HttpMethod": "GET",
     "IsController": false,
@@ -145,7 +145,7 @@
   },
   {
     "ContainingType": "Casa.Api.Endpoints.PropertyEndpoints\u002B\u003C\u003Ec",
-    "Method": "\u003CMapPropertyEndpoints\u003Eb__0_5",
+    "Method": "\u003CMapPropertyEndpoints\u003Eb__0_6",
     "RelativePath": "api/properties/{id:int}",
     "HttpMethod": "PUT",
     "IsController": false,
@@ -173,7 +173,7 @@
   },
   {
     "ContainingType": "Casa.Api.Endpoints.PropertyEndpoints\u002B\u003C\u003Ec",
-    "Method": "\u003CMapPropertyEndpoints\u003Eb__0_9",
+    "Method": "\u003CMapPropertyEndpoints\u003Eb__0_15",
     "RelativePath": "api/properties/{id:int}",
     "HttpMethod": "DELETE",
     "IsController": false,
@@ -196,7 +196,109 @@
   },
   {
     "ContainingType": "Casa.Api.Endpoints.PropertyEndpoints\u002B\u003C\u003Ec",
-    "Method": "\u003CMapPropertyEndpoints\u003Eb__0_6",
+    "Method": "\u003CMapPropertyEndpoints\u003Eb__0_13",
+    "RelativePath": "api/properties/{id:int}/attachments",
+    "HttpMethod": "POST",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ],
+    "EndpointName": "AddPropertyAttachments"
+  },
+  {
+    "ContainingType": "Casa.Api.Endpoints.PropertyEndpoints\u002B\u003C\u003Ec",
+    "Method": "\u003CMapPropertyEndpoints\u003Eb__0_11",
+    "RelativePath": "api/properties/{id:int}/details",
+    "HttpMethod": "GET",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ],
+    "EndpointName": "GetPropertyDetails"
+  },
+  {
+    "ContainingType": "Casa.Api.Endpoints.PropertyEndpoints\u002B\u003C\u003Ec",
+    "Method": "\u003CMapPropertyEndpoints\u003Eb__0_8",
+    "RelativePath": "api/properties/{id:int}/favorite",
+    "HttpMethod": "PUT",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "Casa.Application.Properties.Favorite.UpdatePropertyFavoriteRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ],
+    "EndpointName": "UpdatePropertyFavorite"
+  },
+  {
+    "ContainingType": "Casa.Api.Endpoints.PropertyEndpoints\u002B\u003C\u003Ec",
+    "Method": "\u003CMapPropertyEndpoints\u003Eb__0_12",
+    "RelativePath": "api/properties/{id:int}/notes",
+    "HttpMethod": "PUT",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "Casa.Application.Properties.Details.UpdatePropertyNotesRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ],
+    "EndpointName": "UpdatePropertyNotes"
+  },
+  {
+    "ContainingType": "Casa.Api.Endpoints.PropertyEndpoints\u002B\u003C\u003Ec",
+    "Method": "\u003CMapPropertyEndpoints\u003Eb__0_7",
     "RelativePath": "api/properties/{id:int}/status",
     "HttpMethod": "PUT",
     "IsController": false,
@@ -224,7 +326,7 @@
   },
   {
     "ContainingType": "Casa.Api.Endpoints.PropertyEndpoints\u002B\u003C\u003Ec",
-    "Method": "\u003CMapPropertyEndpoints\u003Eb__0_7",
+    "Method": "\u003CMapPropertyEndpoints\u003Eb__0_9",
     "RelativePath": "api/properties/{id:int}/swot",
     "HttpMethod": "GET",
     "IsController": false,
@@ -247,7 +349,7 @@
   },
   {
     "ContainingType": "Casa.Api.Endpoints.PropertyEndpoints\u002B\u003C\u003Ec",
-    "Method": "\u003CMapPropertyEndpoints\u003Eb__0_8",
+    "Method": "\u003CMapPropertyEndpoints\u003Eb__0_10",
     "RelativePath": "api/properties/{id:int}/swot",
     "HttpMethod": "PUT",
     "IsController": false,
@@ -275,6 +377,112 @@
   },
   {
     "ContainingType": "Casa.Api.Endpoints.PropertyEndpoints\u002B\u003C\u003Ec",
+    "Method": "\u003CMapPropertyEndpoints\u003Eb__0_14",
+    "RelativePath": "api/properties/{propertyId:int}/attachments/{attachmentId:int}",
+    "HttpMethod": "DELETE",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "propertyId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "attachmentId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ],
+    "EndpointName": "DeletePropertyAttachment"
+  },
+  {
+    "ContainingType": "Casa.Api.Endpoints.PropertyEndpoints\u002B\u003C\u003Ec",
+    "Method": "\u003CMapPropertyEndpoints\u003Eb__0_3",
+    "RelativePath": "api/properties/favorites",
+    "HttpMethod": "GET",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "page",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "minPrice",
+        "Type": "System.Nullable\u00601[[System.Decimal, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "maxPrice",
+        "Type": "System.Nullable\u00601[[System.Decimal, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "neighborhood",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "category",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "swotStatus",
+        "Type": "System.Nullable\u00601[[Casa.Domain.Enums.PropertySwotStatus, Casa.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "minScore",
+        "Type": "System.Nullable\u00601[[System.Decimal, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "onlyWithSwot",
+        "Type": "System.Nullable\u00601[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "onlyWithNotes",
+        "Type": "System.Nullable\u00601[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "onlyWithMedia",
+        "Type": "System.Nullable\u00601[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "sortBy",
+        "Type": "System.Nullable\u00601[[Casa.Application.Properties.Favorites.PropertyFavoriteSortBy, Casa.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ],
+    "EndpointName": "GetFavoriteProperties"
+  },
+  {
+    "ContainingType": "Casa.Api.Endpoints.PropertyEndpoints\u002B\u003C\u003Ec",
     "Method": "\u003CMapPropertyEndpoints\u003Eb__0_2",
     "RelativePath": "api/properties/filter-options",
     "HttpMethod": "GET",
@@ -289,6 +497,63 @@
       }
     ],
     "EndpointName": "GetPropertyFilterOptions"
+  },
+  {
+    "ContainingType": "Casa.Api.Endpoints.PropertyInconsistencyEndpoints\u002B\u003C\u003Ec",
+    "Method": "\u003CMapPropertyInconsistencyEndpoints\u003Eb__0_0",
+    "RelativePath": "api/properties/inconsistencies",
+    "HttpMethod": "GET",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ],
+    "EndpointName": "GetPropertyInconsistencies"
+  },
+  {
+    "ContainingType": "Casa.Api.Endpoints.PropertyInconsistencyEndpoints\u002B\u003C\u003Ec",
+    "Method": "\u003CMapPropertyInconsistencyEndpoints\u003Eb__0_2",
+    "RelativePath": "api/properties/inconsistencies/{inconsistencyId}/dismiss",
+    "HttpMethod": "PUT",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "inconsistencyId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ],
+    "EndpointName": "DismissPropertyInconsistency"
+  },
+  {
+    "ContainingType": "Casa.Api.Endpoints.PropertyInconsistencyEndpoints\u002B\u003C\u003Ec",
+    "Method": "\u003CMapPropertyInconsistencyEndpoints\u003Eb__0_1",
+    "RelativePath": "api/properties/inconsistencies/summary",
+    "HttpMethod": "GET",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ],
+    "EndpointName": "GetPropertyInconsistenciesSummary"
   },
   {
     "ContainingType": "Casa.Api.Endpoints.PropertyEndpoints\u002B\u003C\u003Ec",
@@ -337,5 +602,45 @@
       }
     ],
     "EndpointName": "GetPropertiesMap"
+  },
+  {
+    "ContainingType": "Casa.Api.Endpoints.SettingsEndpoints\u002B\u003C\u003Ec",
+    "Method": "\u003CMapSettingsEndpoints\u003Eb__0_0",
+    "RelativePath": "api/settings",
+    "HttpMethod": "GET",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ],
+    "EndpointName": "GetAppSettings"
+  },
+  {
+    "ContainingType": "Casa.Api.Endpoints.SettingsEndpoints\u002B\u003C\u003Ec",
+    "Method": "\u003CMapSettingsEndpoints\u003Eb__0_1",
+    "RelativePath": "api/settings",
+    "HttpMethod": "PUT",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "Casa.Application.Settings.UpdateAppSettingsRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ],
+    "EndpointName": "UpdateAppSettings"
   }
 ]

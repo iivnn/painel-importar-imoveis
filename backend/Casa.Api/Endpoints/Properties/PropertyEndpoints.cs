@@ -1,6 +1,10 @@
+using Casa.Api.Hubs;
 using Casa.Application.Abstractions;
 using Casa.Application.Properties;
 using Casa.Application.Properties.CreateProperty;
+using Casa.Application.Properties.Details;
+using Casa.Application.Properties.Favorite;
+using Casa.Application.Properties.Favorites;
 using Casa.Application.Properties.GetProperties;
 using Casa.Application.Properties.SoftDeleteProperty;
 using Casa.Application.Properties.Status;
@@ -75,6 +79,46 @@ public static class PropertyEndpoints
         .WithName("GetPropertyFilterOptions")
         .WithOpenApi();
 
+        endpoints.MapGet("/api/properties/favorites", async (
+            int? page,
+            int? pageSize,
+            decimal? minPrice,
+            decimal? maxPrice,
+            string? neighborhood,
+            string? category,
+            PropertySwotStatus? swotStatus,
+            decimal? minScore,
+            bool? onlyWithSwot,
+            bool? onlyWithNotes,
+            bool? onlyWithMedia,
+            PropertyFavoriteSortBy? sortBy,
+            GetFavoritePropertiesQueryService getFavoritePropertiesQueryService,
+            CancellationToken cancellationToken) =>
+        {
+            var favorites = await getFavoritePropertiesQueryService.ExecuteAsync(
+                new PropertyFilters
+                {
+                    MinPrice = minPrice,
+                    MaxPrice = maxPrice,
+                    Neighborhood = neighborhood,
+                    Category = category,
+                    SwotStatus = swotStatus,
+                    MinScore = minScore,
+                    OnlyFavorites = true,
+                    OnlyWithSwot = onlyWithSwot ?? false,
+                    OnlyWithNotes = onlyWithNotes ?? false,
+                    OnlyWithMedia = onlyWithMedia ?? false
+                },
+                sortBy ?? PropertyFavoriteSortBy.Recent,
+                page ?? 1,
+                pageSize ?? 6,
+                cancellationToken);
+
+            return Results.Ok(favorites);
+        })
+        .WithName("GetFavoriteProperties")
+        .WithOpenApi();
+
         endpoints.MapGet("/api/properties/{id:int}", async (
             int id,
             IPropertyListingRepository repository,
@@ -90,6 +134,7 @@ public static class PropertyEndpoints
         endpoints.MapPost("/api/properties", async (
             PropertyListingUpsertRequest request,
             CreatePropertyCommandService createPropertyCommandService,
+            InconsistencyBroadcastService inconsistencyBroadcastService,
             CancellationToken cancellationToken) =>
         {
             var (property, error) = await createPropertyCommandService.ExecuteAsync(request, cancellationToken);
@@ -102,6 +147,8 @@ public static class PropertyEndpoints
                 });
             }
 
+            await inconsistencyBroadcastService.PublishSummaryAsync(cancellationToken);
+            await inconsistencyBroadcastService.PublishPropertyCreatedAsync(property!.Id, property.Title, cancellationToken);
             return Results.Created($"/api/properties/{property!.Id}", property);
         })
         .WithName("CreateProperty")
@@ -111,6 +158,7 @@ public static class PropertyEndpoints
             int id,
             PropertyListingUpsertRequest request,
             UpdatePropertyCommandService updatePropertyCommandService,
+            InconsistencyBroadcastService inconsistencyBroadcastService,
             CancellationToken cancellationToken) =>
         {
             var (property, error) = await updatePropertyCommandService.ExecuteAsync(id, request, cancellationToken);
@@ -123,6 +171,11 @@ public static class PropertyEndpoints
                 });
             }
 
+            if (property is not null)
+            {
+                await inconsistencyBroadcastService.PublishSummaryAsync(cancellationToken);
+            }
+
             return property is null ? Results.NotFound() : Results.Ok(property);
         })
         .WithName("UpdateProperty")
@@ -132,13 +185,38 @@ public static class PropertyEndpoints
             int id,
             UpdatePropertyStatusRequest request,
             UpdatePropertyStatusCommandService updatePropertyStatusCommandService,
+            InconsistencyBroadcastService inconsistencyBroadcastService,
             CancellationToken cancellationToken) =>
         {
             var property = await updatePropertyStatusCommandService.ExecuteAsync(id, request, cancellationToken);
 
+            if (property is not null)
+            {
+                await inconsistencyBroadcastService.PublishSummaryAsync(cancellationToken);
+            }
+
             return property is null ? Results.NotFound() : Results.Ok(property);
         })
         .WithName("UpdatePropertyStatus")
+        .WithOpenApi();
+
+        endpoints.MapPut("/api/properties/{id:int}/favorite", async (
+            int id,
+            UpdatePropertyFavoriteRequest request,
+            UpdatePropertyFavoriteCommandService updatePropertyFavoriteCommandService,
+            InconsistencyBroadcastService inconsistencyBroadcastService,
+            CancellationToken cancellationToken) =>
+        {
+            var property = await updatePropertyFavoriteCommandService.ExecuteAsync(id, request, cancellationToken);
+
+            if (property is not null)
+            {
+                await inconsistencyBroadcastService.PublishSummaryAsync(cancellationToken);
+            }
+
+            return property is null ? Results.NotFound() : Results.Ok(property);
+        })
+        .WithName("UpdatePropertyFavorite")
         .WithOpenApi();
 
         endpoints.MapGet("/api/properties/{id:int}/swot", async (
@@ -157,21 +235,154 @@ public static class PropertyEndpoints
             int id,
             PropertySwotAnalysisRequest request,
             SavePropertySwotAnalysisCommandService savePropertySwotAnalysisCommandService,
+            InconsistencyBroadcastService inconsistencyBroadcastService,
             CancellationToken cancellationToken) =>
         {
             var swot = await savePropertySwotAnalysisCommandService.ExecuteAsync(id, request, cancellationToken);
+
+            if (swot is not null)
+            {
+                await inconsistencyBroadcastService.PublishSummaryAsync(cancellationToken);
+            }
 
             return swot is null ? Results.NotFound() : Results.Ok(swot);
         })
         .WithName("SavePropertySwot")
         .WithOpenApi();
 
+        endpoints.MapGet("/api/properties/{id:int}/details", async (
+            int id,
+            GetPropertyDetailsQueryService getPropertyDetailsQueryService,
+            CancellationToken cancellationToken) =>
+        {
+            var details = await getPropertyDetailsQueryService.ExecuteAsync(id, cancellationToken);
+
+            return details is null ? Results.NotFound() : Results.Ok(details);
+        })
+        .WithName("GetPropertyDetails")
+        .WithOpenApi();
+
+        endpoints.MapPut("/api/properties/{id:int}/notes", async (
+            int id,
+            UpdatePropertyNotesRequest request,
+            UpdatePropertyNotesCommandService updatePropertyNotesCommandService,
+            InconsistencyBroadcastService inconsistencyBroadcastService,
+            CancellationToken cancellationToken) =>
+        {
+            var details = await updatePropertyNotesCommandService.ExecuteAsync(id, request, cancellationToken);
+
+            if (details is not null)
+            {
+                await inconsistencyBroadcastService.PublishSummaryAsync(cancellationToken);
+            }
+
+            return details is null ? Results.NotFound() : Results.Ok(details);
+        })
+        .WithName("UpdatePropertyNotes")
+        .WithOpenApi();
+
+        endpoints.MapPost("/api/properties/{id:int}/attachments", async (
+            int id,
+            HttpRequest httpRequest,
+            SavePropertyAttachmentsCommandService savePropertyAttachmentsCommandService,
+            InconsistencyBroadcastService inconsistencyBroadcastService,
+            IWebHostEnvironment environment,
+            CancellationToken cancellationToken) =>
+        {
+            if (!httpRequest.HasFormContentType)
+            {
+                return Results.BadRequest(new { error = "Formulario invalido." });
+            }
+
+            var form = await httpRequest.ReadFormAsync(cancellationToken);
+            if (!Enum.TryParse<PropertyAttachmentKind>(form["kind"], true, out var kind))
+            {
+                return Results.BadRequest(new { error = "Tipo de anexo invalido." });
+            }
+
+            if (form.Files.Count == 0)
+            {
+                return Results.BadRequest(new { error = "Nenhum arquivo foi enviado." });
+            }
+
+            var savedFiles = new List<(string OriginalFileName, string StoredFileName, string RelativePath, string ContentType)>();
+            var propertyDirectory = Path.Combine(environment.ContentRootPath, "Data", "uploads", "properties", id.ToString());
+            Directory.CreateDirectory(propertyDirectory);
+
+            foreach (var file in form.Files)
+            {
+                if (!IsSupportedImage(file.ContentType))
+                {
+                    return Results.BadRequest(new { error = "Somente imagens JPG, PNG, WEBP e GIF sao suportadas." });
+                }
+
+                var extension = Path.GetExtension(file.FileName);
+                var storedFileName = $"{Guid.NewGuid():N}{extension}";
+                var filePath = Path.Combine(propertyDirectory, storedFileName);
+
+                await using var stream = File.Create(filePath);
+                await file.CopyToAsync(stream, cancellationToken);
+
+                savedFiles.Add((
+                    file.FileName,
+                    storedFileName,
+                    $"/uploads/properties/{id}/{storedFileName}",
+                    file.ContentType));
+            }
+
+            var details = await savePropertyAttachmentsCommandService.ExecuteAsync(id, kind, savedFiles, cancellationToken);
+
+            if (details is not null)
+            {
+                await inconsistencyBroadcastService.PublishSummaryAsync(cancellationToken);
+            }
+
+            return details is null ? Results.NotFound() : Results.Ok(details);
+        })
+        .DisableAntiforgery()
+        .WithName("AddPropertyAttachments")
+        .WithOpenApi();
+
+        endpoints.MapDelete("/api/properties/{propertyId:int}/attachments/{attachmentId:int}", async (
+            int propertyId,
+            int attachmentId,
+            DeletePropertyAttachmentCommandService deletePropertyAttachmentCommandService,
+            InconsistencyBroadcastService inconsistencyBroadcastService,
+            IWebHostEnvironment environment,
+            CancellationToken cancellationToken) =>
+        {
+            var relativePath = await deletePropertyAttachmentCommandService.ExecuteAsync(propertyId, attachmentId, cancellationToken);
+            if (relativePath is null)
+            {
+                return Results.NotFound();
+            }
+
+            var trimmedRelativePath = relativePath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
+            var physicalPath = Path.Combine(environment.ContentRootPath, trimmedRelativePath);
+
+            if (File.Exists(physicalPath))
+            {
+                File.Delete(physicalPath);
+            }
+
+            await inconsistencyBroadcastService.PublishSummaryAsync(cancellationToken);
+            return Results.NoContent();
+        })
+        .WithName("DeletePropertyAttachment")
+        .WithOpenApi();
+
         endpoints.MapDelete("/api/properties/{id:int}", async (
             int id,
             SoftDeletePropertyCommandService softDeletePropertyCommandService,
+            InconsistencyBroadcastService inconsistencyBroadcastService,
             CancellationToken cancellationToken) =>
         {
             var deleted = await softDeletePropertyCommandService.ExecuteAsync(id, cancellationToken);
+
+            if (deleted)
+            {
+                await inconsistencyBroadcastService.PublishSummaryAsync(cancellationToken);
+            }
 
             return deleted ? Results.NoContent() : Results.NotFound();
         })
@@ -198,5 +409,10 @@ public static class PropertyEndpoints
             SwotStatus = swotStatus,
             MinScore = minScore
         };
+    }
+
+    private static bool IsSupportedImage(string? contentType)
+    {
+        return contentType is "image/jpeg" or "image/png" or "image/webp" or "image/gif";
     }
 }

@@ -1,0 +1,295 @@
+<section class="settings-shell">
+  <section class="settings-hero">
+    <div>
+      <p class="settings-hero__kicker mb-2">Prefer&ecirc;ncias do sistema</p>
+      <h2 class="settings-hero__title mb-1">Configura&ccedil;&otilde;es</h2>
+      <p class="settings-hero__copy mb-0">
+        Ajuste o sistema ao seu crit&eacute;rio de decis&atilde;o, sem ficar preso a configura&ccedil;&otilde;es gen&eacute;ricas.
+      </p>
+    </div>
+
+    <div class="settings-hero__summary">
+      <span>Peso total configurado</span>
+      <strong>{{ totalWeight() }} / 100</strong>
+    </div>
+  </section>
+
+  @if (loadError()) {
+    <div class="alert alert-danger mb-0" role="alert">
+      {{ loadError() }}
+    </div>
+  } @else {
+    <div class="settings-grid">
+      <section class="settings-card">
+        <div class="settings-card__header">
+          <div>
+            <h3 class="settings-card__title mb-1">Padr&otilde;es de cadastro</h3>
+            <p class="settings-card__copy mb-0">Valores sugeridos para o modal de cadastro r&aacute;pido.</p>
+          </div>
+        </div>
+
+        <div class="settings-fields">
+          <label class="settings-field">
+            <span>Origem padr&atilde;o</span>
+            <div class="app-select-shell">
+              <select class="form-control app-select" [ngModel]="form().defaultSource" (ngModelChange)="updateSource($event)">
+                @for (option of sourceOptions; track option.value) {
+                  <option [ngValue]="option.value">{{ option.label }}</option>
+                }
+              </select>
+            </div>
+          </label>
+
+          <label class="settings-field">
+            <span>Categoria padr&atilde;o</span>
+            <input class="form-control" [ngModel]="form().defaultCategory" (ngModelChange)="updateText('defaultCategory', $event)" />
+          </label>
+
+          <label class="settings-field">
+            <span>Cidade padr&atilde;o</span>
+            <input class="form-control" [ngModel]="form().defaultCity" (ngModelChange)="updateText('defaultCity', $event)" />
+          </label>
+
+          <label class="settings-field">
+            <span>Estado padr&atilde;o</span>
+            <input class="form-control" maxlength="2" [ngModel]="form().defaultState" (ngModelChange)="updateText('defaultState', $event)" />
+          </label>
+
+          <label class="settings-toggle settings-toggle--full">
+            <input type="checkbox" [ngModel]="form().defaultHasExactLocation" (ngModelChange)="updateBoolean('defaultHasExactLocation', $event)" />
+            <span>Marcar localiza&ccedil;&atilde;o exata por padr&atilde;o</span>
+          </label>
+        </div>
+      </section>
+
+      <section class="settings-card">
+        <div class="settings-card__header">
+          <div>
+            <h3 class="settings-card__title mb-1">Lista e favoritos</h3>
+            <p class="settings-card__copy mb-0">Controle de p&aacute;gina, leitura e ordena&ccedil;&atilde;o da shortlist.</p>
+          </div>
+        </div>
+
+        <div class="settings-fields">
+          <label class="settings-field">
+            <span>Itens por p&aacute;gina na lista</span>
+            <input class="form-control" type="number" min="5" max="50" [ngModel]="form().listingsPageSize" (ngModelChange)="updateNumber('listingsPageSize', $event)" />
+          </label>
+
+          <label class="settings-field">
+            <span>Itens por p&aacute;gina em favoritos</span>
+            <input class="form-control" type="number" min="3" max="24" [ngModel]="form().favoritesPageSize" (ngModelChange)="updateNumber('favoritesPageSize', $event)" />
+          </label>
+
+          <label class="settings-field settings-field--full">
+            <span>Ordena&ccedil;&atilde;o padr&atilde;o dos favoritos</span>
+            <div class="app-select-shell">
+              <select class="form-control app-select" [ngModel]="form().favoritesSortBy" (ngModelChange)="updateFavoriteSort($event)">
+                @for (option of favoriteSortOptions; track option.value) {
+                  <option [ngValue]="option.value">{{ option.label }}</option>
+                }
+              </select>
+            </div>
+          </label>
+        </div>
+      </section>
+
+      <section class="settings-card">
+        <div class="settings-card__header">
+          <div>
+            <h3 class="settings-card__title mb-1">Mapa</h3>
+            <p class="settings-card__copy mb-0">Posi&ccedil;&atilde;o inicial e regra de exibi&ccedil;&atilde;o do painel geogr&aacute;fico.</p>
+          </div>
+        </div>
+
+        <div class="settings-fields">
+          <label class="settings-field">
+            <span>Latitude inicial</span>
+            <input class="form-control" type="number" step="0.000001" [ngModel]="form().mapInitialLatitude" (ngModelChange)="updateNumber('mapInitialLatitude', $event)" />
+          </label>
+
+          <label class="settings-field">
+            <span>Longitude inicial</span>
+            <input class="form-control" type="number" step="0.000001" [ngModel]="form().mapInitialLongitude" (ngModelChange)="updateNumber('mapInitialLongitude', $event)" />
+          </label>
+
+          <label class="settings-field">
+            <span>Zoom inicial</span>
+            <input class="form-control" type="number" min="3" max="18" [ngModel]="form().mapInitialZoom" (ngModelChange)="updateNumber('mapInitialZoom', $event)" />
+          </label>
+
+          <label class="settings-toggle settings-toggle--full">
+            <input type="checkbox" [ngModel]="form().mapOnlyExactLocation" (ngModelChange)="updateBoolean('mapOnlyExactLocation', $event)" />
+            <span>Mostrar no mapa apenas im&oacute;veis com localiza&ccedil;&atilde;o exata</span>
+          </label>
+        </div>
+      </section>
+
+      <section class="settings-card">
+        <div class="settings-card__header">
+          <div>
+            <h3 class="settings-card__title mb-1">Perfil de aluguel</h3>
+            <p class="settings-card__copy mb-0">Par&acirc;metros que orientam inconsist&ecirc;ncias e leitura dos favoritos.</p>
+          </div>
+        </div>
+
+        <div class="settings-fields">
+          <label class="settings-field">
+            <span>Or&ccedil;amento ideal</span>
+            <input class="form-control" type="number" min="0" step="100" [ngModel]="form().monthlyBudgetIdeal" (ngModelChange)="updateNumber('monthlyBudgetIdeal', $event)" />
+          </label>
+
+          <label class="settings-field">
+            <span>Teto mensal</span>
+            <input class="form-control" type="number" min="0" step="100" [ngModel]="form().monthlyBudgetMax" (ngModelChange)="updateNumber('monthlyBudgetMax', $event)" />
+          </label>
+
+          <label class="settings-field settings-field--full">
+            <span>Bairros preferidos</span>
+            <textarea class="form-control" rows="4" [ngModel]="preferredNeighborhoodsText()" (ngModelChange)="updateNeighborhoods('preferred', $event)" placeholder="Um bairro por linha"></textarea>
+          </label>
+
+          <label class="settings-field settings-field--full">
+            <span>Bairros a evitar</span>
+            <textarea class="form-control" rows="4" [ngModel]="avoidedNeighborhoodsText()" (ngModelChange)="updateNeighborhoods('avoided', $event)" placeholder="Um bairro por linha"></textarea>
+          </label>
+        </div>
+      </section>
+
+      <section class="settings-card settings-card--wide">
+        <div class="settings-card__header">
+          <div>
+            <h3 class="settings-card__title mb-1">Regras de inconsist&ecirc;ncias</h3>
+            <p class="settings-card__copy mb-0">Defina o rigor da an&aacute;lise autom&aacute;tica para dados, pre&ccedil;o e evid&ecirc;ncias.</p>
+          </div>
+        </div>
+
+        <div class="settings-fields settings-fields--three">
+          <label class="settings-field">
+            <span>Limite de pre&ccedil;o abaixo da m&eacute;dia</span>
+            <input class="form-control" type="number" min="0.4" max="0.95" step="0.01" [ngModel]="form().priceBelowAverageRatio" (ngModelChange)="updateNumber('priceBelowAverageRatio', $event)" />
+          </label>
+
+          <label class="settings-field">
+            <span>Limite de pre&ccedil;o acima da m&eacute;dia</span>
+            <input class="form-control" type="number" min="1.05" max="2.5" step="0.01" [ngModel]="form().priceAboveAverageRatio" (ngModelChange)="updateNumber('priceAboveAverageRatio', $event)" />
+          </label>
+
+          <label class="settings-field">
+            <span>M&iacute;nimo de fotos em status avan&ccedil;ados</span>
+            <input class="form-control" type="number" min="0" max="20" [ngModel]="form().minimumPhotoCount" (ngModelChange)="updateNumber('minimumPhotoCount', $event)" />
+          </label>
+        </div>
+
+        <div class="settings-check-grid">
+          <label class="settings-toggle">
+            <input type="checkbox" [ngModel]="form().requireCoordinatesForCompleteLocation" (ngModelChange)="updateBoolean('requireCoordinatesForCompleteLocation', $event)" />
+            <span>Exigir coordenadas para considerar localiza&ccedil;&atilde;o completa</span>
+          </label>
+
+          <label class="settings-toggle">
+            <input type="checkbox" [ngModel]="form().requireOriginalUrl" (ngModelChange)="updateBoolean('requireOriginalUrl', $event)" />
+            <span>Exigir link do an&uacute;ncio original</span>
+          </label>
+        </div>
+
+        <div class="settings-status-rules">
+          <div class="settings-status-group">
+            <h4 class="mb-2">Status que exigem SWOT</h4>
+            <div class="settings-status-options">
+              @for (option of statusOptions; track option.value) {
+                <label class="settings-chip">
+                  <input type="checkbox" [checked]="hasStatus('requireSwotStatuses', option.value)" (change)="toggleStatus('requireSwotStatuses', option.value, $any($event.target).checked)" />
+                  <span>{{ option.label }}</span>
+                </label>
+              }
+            </div>
+          </div>
+
+          <div class="settings-status-group">
+            <h4 class="mb-2">Status que exigem observa&ccedil;&otilde;es</h4>
+            <div class="settings-status-options">
+              @for (option of statusOptions; track option.value) {
+                <label class="settings-chip">
+                  <input type="checkbox" [checked]="hasStatus('requireNotesStatuses', option.value)" (change)="toggleStatus('requireNotesStatuses', option.value, $any($event.target).checked)" />
+                  <span>{{ option.label }}</span>
+                </label>
+              }
+            </div>
+          </div>
+
+          <div class="settings-status-group">
+            <h4 class="mb-2">Status que exigem m&iacute;dia</h4>
+            <div class="settings-status-options">
+              @for (option of statusOptions; track option.value) {
+                <label class="settings-chip">
+                  <input type="checkbox" [checked]="hasStatus('requireMediaStatuses', option.value)" (change)="toggleStatus('requireMediaStatuses', option.value, $any($event.target).checked)" />
+                  <span>{{ option.label }}</span>
+                </label>
+              }
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="settings-card settings-card--wide">
+        <div class="settings-card__header">
+          <div>
+            <h3 class="settings-card__title mb-1">Crit&eacute;rios de decis&atilde;o</h3>
+            <p class="settings-card__copy mb-0">Esses pesos alimentam o ajuste ao perfil nos cards de favoritos.</p>
+          </div>
+        </div>
+
+        <div class="settings-fields settings-fields--weights">
+          <label class="settings-field">
+            <span>Peso de pre&ccedil;o</span>
+            <input class="form-control" type="number" min="0" max="100" [ngModel]="form().priceWeight" (ngModelChange)="updateNumber('priceWeight', $event)" />
+          </label>
+
+          <label class="settings-field">
+            <span>Peso de localiza&ccedil;&atilde;o</span>
+            <input class="form-control" type="number" min="0" max="100" [ngModel]="form().locationWeight" (ngModelChange)="updateNumber('locationWeight', $event)" />
+          </label>
+
+          <label class="settings-field">
+            <span>Peso da an&aacute;lise</span>
+            <input class="form-control" type="number" min="0" max="100" [ngModel]="form().analysisWeight" (ngModelChange)="updateNumber('analysisWeight', $event)" />
+          </label>
+
+          <label class="settings-field">
+            <span>Peso das evid&ecirc;ncias</span>
+            <input class="form-control" type="number" min="0" max="100" [ngModel]="form().evidenceWeight" (ngModelChange)="updateNumber('evidenceWeight', $event)" />
+          </label>
+
+          <label class="settings-field">
+            <span>Peso da qualidade do cadastro</span>
+            <input class="form-control" type="number" min="0" max="100" [ngModel]="form().sourceQualityWeight" (ngModelChange)="updateNumber('sourceQualityWeight', $event)" />
+          </label>
+        </div>
+      </section>
+    </div>
+
+    @if (saveError()) {
+      <div class="alert alert-danger mb-0" role="alert">
+        {{ saveError() }}
+      </div>
+    }
+
+    @if (saveSuccessMessage()) {
+      <div class="alert alert-success mb-0" role="status">
+        {{ saveSuccessMessage() }}
+      </div>
+    }
+
+    <div class="settings-actions">
+      <button type="button" class="btn btn-brand" (click)="submit()" [disabled]="isLoading() || isSaving()">
+        @if (isSaving()) {
+          <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+          Salvando...
+        } @else {
+          Salvar configura&ccedil;&otilde;es
+        }
+      </button>
+    </div>
+  }
+</section>

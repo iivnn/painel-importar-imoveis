@@ -43,7 +43,6 @@ export class PropertyFiltersPanelComponent {
     { value: 'EmAnalise', label: 'Em analise' },
     { value: 'Visitado', label: 'Visitado' },
     { value: 'Proposta', label: 'Proposta' },
-    { value: 'Favorito', label: 'Favorito' },
     { value: 'Descartado', label: 'Descartado' }
   ];
 

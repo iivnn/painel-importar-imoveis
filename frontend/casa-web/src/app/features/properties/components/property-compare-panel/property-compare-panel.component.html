@@ -1,0 +1,75 @@
+<section class="compare-shell">
+  <div class="compare-toolbar">
+    <button type="button" class="btn btn-outline-brand" (click)="back.emit()">Voltar</button>
+    <div class="compare-toolbar__summary">{{ items().length }} imovel(is) em comparacao</div>
+  </div>
+
+  @if (isLoading()) {
+    <div class="compare-feedback">
+      <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></div>
+      <span>Montando comparacao...</span>
+    </div>
+  } @else if (loadError()) {
+    <div class="alert alert-danger mb-0" role="alert">{{ loadError() }}</div>
+  } @else if (items().length < 2) {
+    <div class="compare-feedback">Selecione pelo menos dois imoveis para comparar lado a lado.</div>
+  } @else {
+    <div class="compare-table-shell">
+      <table class="table compare-table align-middle mb-0">
+        <thead>
+          <tr>
+            <th class="compare-table__criterion-head">Criterio</th>
+            @for (item of items(); track item.propertyId) {
+              <th class="compare-table__property-column">
+                <div class="compare-table__property-head">
+                  <strong>{{ item.title }}</strong>
+                  <span>{{ item.city }}/{{ item.state }}</span>
+                  <div class="compare-table__property-actions">
+                    <button type="button" class="btn btn-sm btn-outline-brand" (click)="openDetail.emit(item.propertyId)">Detalhe</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger" (click)="remove.emit(item.propertyId)">Remover</button>
+                  </div>
+                </div>
+              </th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows; track row.key) {
+            <tr>
+              <th class="compare-table__row-label">{{ row.label }}</th>
+              @for (item of items(); track item.propertyId) {
+                <td class="compare-table__value-cell">
+                  @switch (row.key) {
+                    @case ('price') { <span class="compare-table__value">{{ item.price ?? 0 | number:'1.0-0' }}</span> }
+                    @case ('monthlyTotalCost') { <span class="compare-table__value">{{ item.monthlyTotalCost ?? 0 | number:'1.0-0' }}</span> }
+                    @case ('upfrontCost') { <span class="compare-table__value">{{ item.upfrontCost ?? 0 | number:'1.0-0' }}</span> }
+                    @case ('score') { <span class="compare-table__value">{{ item.score ?? '-' }}</span> }
+                    @default { <span class="compare-table__value">{{ $any(item)[row.key] || '-' }}</span> }
+                  }
+                </td>
+              }
+            </tr>
+          }
+          <tr>
+            <th class="compare-table__row-label">Observacoes</th>
+            @for (item of items(); track item.propertyId) {
+              <td class="compare-table__long-copy">{{ item.notes || 'Sem observacoes.' }}</td>
+            }
+          </tr>
+          <tr>
+            <th class="compare-table__row-label">Risco principal</th>
+            @for (item of items(); track item.propertyId) {
+              <td class="compare-table__long-copy">{{ item.threats || 'Nao informado.' }}</td>
+            }
+          </tr>
+          <tr>
+            <th class="compare-table__row-label">Ponto forte</th>
+            @for (item of items(); track item.propertyId) {
+              <td class="compare-table__long-copy">{{ item.strengths || 'Nao informado.' }}</td>
+            }
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

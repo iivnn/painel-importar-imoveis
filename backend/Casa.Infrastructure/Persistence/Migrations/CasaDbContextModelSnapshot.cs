@@ -17,6 +17,196 @@ namespace Casa.Infrastructure.Persistence.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.25");
 
+            modelBuilder.Entity("Casa.Domain.Entities.AppSettingsProfile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AnalysisWeight")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AvoidedNeighborhoods")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DefaultCategory")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DefaultCity")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("DefaultHasExactLocation")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("DefaultSource")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DefaultState")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("EvidenceWeight")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("FavoritesPageSize")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("FavoritesSortBy")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ListingsPageSize")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("LocationWeight")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("MapInitialLatitude")
+                        .HasPrecision(10, 6)
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("MapInitialLongitude")
+                        .HasPrecision(10, 6)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("MapInitialZoom")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("MapOnlyExactLocation")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MinimumPhotoCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("MonthlyBudgetIdeal")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("MonthlyBudgetMax")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PreferredNeighborhoods")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("PriceAboveAverageRatio")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("PriceBelowAverageRatio")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("PriceWeight")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("RequireCoordinatesForCompleteLocation")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("RequireMediaStatuses")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RequireNotesStatuses")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("RequireOriginalUrl")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("RequireSwotStatuses")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("SourceQualityWeight")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AppSettingsProfiles", (string)null);
+                });
+
+            modelBuilder.Entity("Casa.Domain.Entities.DismissedPropertyInconsistency", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(160)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DismissedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("PropertyId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DismissedPropertyInconsistencies", (string)null);
+                });
+
+            modelBuilder.Entity("Casa.Domain.Entities.PropertyAttachment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OriginalFileName")
+                        .IsRequired()
+                        .HasMaxLength(260)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("PropertyListingId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("RelativePath")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("StoredFileName")
+                        .IsRequired()
+                        .HasMaxLength(260)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PropertyListingId");
+
+                    b.ToTable("PropertyAttachments", (string)null);
+                });
+
             modelBuilder.Entity("Casa.Domain.Entities.PropertyListing", b =>
                 {
                     b.Property<int>("Id")
@@ -38,7 +228,16 @@ namespace Casa.Infrastructure.Persistence.Migrations
                         .HasMaxLength(120)
                         .HasColumnType("TEXT");
 
+                    b.Property<decimal?>("CondoFee")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DiscardReason")
+                        .IsRequired()
+                        .HasMaxLength(1000)
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("Excluded")
@@ -49,6 +248,19 @@ namespace Casa.Infrastructure.Persistence.Migrations
                     b.Property<bool>("HasExactLocation")
                         .HasColumnType("INTEGER");
 
+                    b.Property<decimal?>("Insurance")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal?>("Iptu")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsFavorite")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(false);
+
                     b.Property<decimal?>("Latitude")
                         .HasColumnType("TEXT");
 
@@ -58,6 +270,11 @@ namespace Casa.Infrastructure.Persistence.Migrations
                     b.Property<string>("Neighborhood")
                         .IsRequired()
                         .HasMaxLength(120)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasMaxLength(8000)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Opportunities")
@@ -112,6 +329,10 @@ namespace Casa.Infrastructure.Persistence.Migrations
                         .HasMaxLength(180)
                         .HasColumnType("TEXT");
 
+                    b.Property<decimal?>("UpfrontCost")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Weaknesses")
                         .IsRequired()
                         .HasMaxLength(4000)
@@ -120,6 +341,68 @@ namespace Casa.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PropertyListings", (string)null);
+                });
+
+            modelBuilder.Entity("Casa.Domain.Entities.PropertyStatusHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("ChangedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NewStatus")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PreviousStatus")
+                        .HasMaxLength(60)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("PropertyListingId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PropertyListingId");
+
+                    b.ToTable("PropertyStatusHistory", (string)null);
+                });
+
+            modelBuilder.Entity("Casa.Domain.Entities.PropertyAttachment", b =>
+                {
+                    b.HasOne("Casa.Domain.Entities.PropertyListing", "PropertyListing")
+                        .WithMany("Attachments")
+                        .HasForeignKey("PropertyListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PropertyListing");
+                });
+
+            modelBuilder.Entity("Casa.Domain.Entities.PropertyStatusHistory", b =>
+                {
+                    b.HasOne("Casa.Domain.Entities.PropertyListing", "PropertyListing")
+                        .WithMany("StatusHistory")
+                        .HasForeignKey("PropertyListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PropertyListing");
+                });
+
+            modelBuilder.Entity("Casa.Domain.Entities.PropertyListing", b =>
+                {
+                    b.Navigation("Attachments");
+
+                    b.Navigation("StatusHistory");
                 });
 #pragma warning restore 612, 618
         }

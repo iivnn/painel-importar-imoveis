@@ -1,0 +1,19 @@
+@if (mapPreviewService.state().visible) {
+  <div class="global-map-preview" role="tooltip">
+    <div class="global-map-preview__meta">
+      <strong>Google Maps</strong>
+      <span>{{ coordinatesLabel() }}</span>
+      <small>
+        {{ mapPreviewService.state().hasExactLocation ? 'Localizacao exata' : 'Localizacao aproximada' }}
+      </small>
+    </div>
+
+    <iframe
+      class="global-map-preview__frame"
+      [src]="googleMapsEmbedUrl()"
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+      title="Mapa da localizacao"
+    ></iframe>
+  </div>
+}

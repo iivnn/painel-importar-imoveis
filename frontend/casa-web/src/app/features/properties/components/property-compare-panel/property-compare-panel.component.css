@@ -1,0 +1,120 @@
+.compare-shell {
+  display: grid;
+  gap: 1rem;
+}
+
+.compare-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.compare-toolbar__summary {
+  color: var(--app-muted-strong);
+  font-weight: 700;
+}
+
+.compare-feedback {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--app-muted);
+}
+
+.compare-table-shell {
+  border: 1px solid var(--app-border);
+  border-radius: 28px;
+  background: var(--app-surface);
+  box-shadow: 0 20px 60px var(--app-shadow-soft);
+  overflow: auto;
+}
+
+.compare-table {
+  min-width: 980px;
+  margin: 0;
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--app-ink);
+  --bs-table-border-color: color-mix(in srgb, var(--app-border) 88%, transparent);
+}
+
+.compare-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: color-mix(in srgb, var(--app-surface-elevated) 96%, transparent);
+  color: var(--app-muted-strong);
+  border-bottom: 1px solid color-mix(in srgb, var(--app-border-strong) 84%, transparent);
+}
+
+.compare-table th,
+.compare-table td {
+  padding: 1rem;
+  vertical-align: top;
+}
+
+.compare-table__criterion-head,
+.compare-table__row-label {
+  width: 12rem;
+  min-width: 12rem;
+  background: color-mix(in srgb, var(--app-surface-soft) 92%, var(--app-surface-elevated));
+  color: var(--app-muted-strong);
+  font-size: 0.84rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.compare-table__property-column {
+  min-width: 18rem;
+}
+
+.compare-table__property-head {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.compare-table__property-head strong {
+  color: var(--app-ink);
+  font-size: 1.02rem;
+}
+
+.compare-table__property-head span {
+  color: var(--app-muted);
+  font-size: 0.92rem;
+}
+
+.compare-table__property-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding-top: 0.1rem;
+}
+
+.compare-table__value-cell,
+.compare-table__long-copy {
+  color: var(--app-ink);
+  background: color-mix(in srgb, var(--app-surface-soft) 92%, transparent);
+}
+
+.compare-table tbody tr:nth-child(even) .compare-table__value-cell,
+.compare-table tbody tr:nth-child(even) .compare-table__long-copy {
+  background: color-mix(in srgb, var(--app-surface-elevated) 88%, transparent);
+}
+
+.compare-table__value {
+  color: var(--app-ink);
+  font-weight: 700;
+}
+
+.compare-table__long-copy {
+  color: var(--app-muted-strong);
+  line-height: 1.6;
+}
+
+@media (max-width: 767.98px) {
+  .compare-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

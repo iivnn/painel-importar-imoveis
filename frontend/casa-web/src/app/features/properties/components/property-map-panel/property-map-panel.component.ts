@@ -23,6 +23,10 @@ export class PropertyMapPanelComponent implements AfterViewInit, OnDestroy {
   readonly properties = input<PropertyListing[]>([]);
   readonly isLoading = input(false);
   readonly loadError = input('');
+  readonly initialLatitude = input(-14.235);
+  readonly initialLongitude = input(-51.9253);
+  readonly initialZoom = input(4);
+  readonly onlyExactLocation = input(false);
 
   @ViewChild('mapHost') private mapHost?: ElementRef<HTMLDivElement>;
 
@@ -40,7 +44,7 @@ export class PropertyMapPanelComponent implements AfterViewInit, OnDestroy {
   }
 
   get totalWithCoordinates(): number {
-    return this.properties().filter(property => property.latitude !== null && property.longitude !== null).length;
+    return this.visibleProperties().length;
   }
 
   ngAfterViewInit(): void {
@@ -52,7 +56,7 @@ export class PropertyMapPanelComponent implements AfterViewInit, OnDestroy {
     this.map = L.map(host, {
       zoomControl: true,
       attributionControl: true
-    }).setView([-14.235, -51.9253], 4);
+    }).setView([this.initialLatitude(), this.initialLongitude()], this.initialZoom());
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
@@ -75,8 +79,7 @@ export class PropertyMapPanelComponent implements AfterViewInit, OnDestroy {
 
     this.markersLayer.clearLayers();
 
-    const points = this.properties()
-      .filter(property => property.latitude !== null && property.longitude !== null)
+    const points = this.visibleProperties()
       .map(property => {
         const marker = L.circleMarker([property.latitude!, property.longitude!], {
           radius: 8,
@@ -96,7 +99,7 @@ export class PropertyMapPanelComponent implements AfterViewInit, OnDestroy {
       });
 
     if (!points.length) {
-      this.map.setView([-14.235, -51.9253], 4);
+      this.map.setView([this.initialLatitude(), this.initialLongitude()], this.initialZoom());
       return;
     }
 
@@ -108,7 +111,7 @@ export class PropertyMapPanelComponent implements AfterViewInit, OnDestroy {
 
   private buildPopupContent(property: PropertyListing): string {
     const price = property.price === null
-      ? 'Nao informado'
+      ? 'N\u00e3o informado'
       : new Intl.NumberFormat('pt-BR', {
           style: 'currency',
           currency: 'BRL'
@@ -118,7 +121,7 @@ export class PropertyMapPanelComponent implements AfterViewInit, OnDestroy {
     const location = `${property.neighborhood} - ${property.city}/${property.state}`;
     const status = this.formatStatus(property.swotStatus);
     const link = property.originalUrl
-      ? `<a href="${property.originalUrl}" target="_blank" rel="noopener noreferrer">Ver anuncio</a>`
+      ? `<a href="${property.originalUrl}" target="_blank" rel="noopener noreferrer">Ver an\u00fancio</a>`
       : '<span>Sem link</span>';
 
     return `
@@ -127,6 +130,7 @@ export class PropertyMapPanelComponent implements AfterViewInit, OnDestroy {
         <span>${location}</span>
         <span>Categoria: ${property.category}</span>
         <span>Status: ${status}</span>
+        ${property.isFavorite ? '<span>Finalista</span>' : ''}
         <span>Valor: ${price}</span>
         <span>Nota: ${score}</span>
         ${link}
@@ -135,6 +139,13 @@ export class PropertyMapPanelComponent implements AfterViewInit, OnDestroy {
   }
 
   private formatStatus(status: PropertyListing['swotStatus']): string {
-    return status === 'EmAnalise' ? 'Em analise' : status;
+    return status === 'EmAnalise' ? 'Em an\u00e1lise' : status;
+  }
+
+  private visibleProperties(): PropertyListing[] {
+    return this.properties().filter(property =>
+      property.latitude !== null
+      && property.longitude !== null
+      && (!this.onlyExactLocation() || property.hasExactLocation));
   }
 }

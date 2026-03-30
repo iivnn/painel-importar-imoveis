@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Casa Importador</title>
+    <link rel="stylesheet" href="./popup.css" />
+  </head>
+  <body>
+    <main class="popup-shell">
+      <header class="popup-header">
+        <span class="popup-kicker">Importacao rapida</span>
+        <h1>Casa Importador</h1>
+        <p>Leia os dados do anuncio aberto e envie para o sistema local.</p>
+      </header>
+
+      <section class="popup-card">
+        <div class="popup-actions">
+          <button id="extractButton" class="button button-secondary" type="button">Ler pagina</button>
+          <button id="importButton" class="button button-primary" type="button" disabled>Revisar</button>
+        </div>
+
+        <div id="statusMessage" class="status-message status-message--muted">
+          Abra um anuncio suportado e clique em "Ler pagina".
+        </div>
+      </section>
+
+      <section class="popup-card">
+        <h2>Pre-visualizacao</h2>
+        <dl class="preview-grid">
+          <div>
+            <dt>Titulo</dt>
+            <dd id="previewTitle">-</dd>
+          </div>
+          <div>
+            <dt>Preco</dt>
+            <dd id="previewPrice">-</dd>
+          </div>
+          <div>
+            <dt>Fonte</dt>
+            <dd id="previewSource">-</dd>
+          </div>
+          <div>
+            <dt>Endereco</dt>
+            <dd id="previewAddress">-</dd>
+          </div>
+          <div>
+            <dt>Imagens</dt>
+            <dd id="previewImages">-</dd>
+          </div>
+        </dl>
+      </section>
+
+      <footer class="popup-footer">
+        <a href="../options/options.html" target="_blank" rel="noreferrer">Configurar API local</a>
+      </footer>
+    </main>
+
+    <div id="confirmModal" class="confirm-modal" hidden>
+      <div class="confirm-modal__backdrop"></div>
+      <section class="confirm-modal__dialog" aria-modal="true" role="dialog" aria-labelledby="confirmModalTitle">
+        <header class="confirm-modal__header">
+          <div>
+            <span class="popup-kicker">Confirmacao</span>
+            <h2 id="confirmModalTitle">Revisar antes de importar</h2>
+          </div>
+          <button id="closeModalButton" class="icon-button" type="button" aria-label="Fechar revisao">&times;</button>
+        </header>
+
+        <div class="confirm-modal__body">
+          <label class="field">
+            <span>Titulo</span>
+            <input id="fieldTitle" type="text" />
+          </label>
+
+          <div class="field-grid">
+            <label class="field">
+              <span>Preco</span>
+              <input id="fieldPrice" type="text" />
+            </label>
+
+            <label class="field">
+              <span>Categoria</span>
+              <input id="fieldCategory" type="text" />
+            </label>
+          </div>
+
+          <label class="field">
+            <span>Endereco</span>
+            <input id="fieldAddressLine" type="text" />
+          </label>
+
+          <div class="field-grid">
+            <label class="field">
+              <span>Bairro</span>
+              <input id="fieldNeighborhood" type="text" />
+            </label>
+
+            <label class="field">
+              <span>Cidade</span>
+              <input id="fieldCity" type="text" />
+            </label>
+          </div>
+
+          <div class="field-grid field-grid--compact">
+            <label class="field">
+              <span>Estado</span>
+              <input id="fieldState" type="text" maxlength="2" />
+            </label>
+
+            <label class="field">
+              <span>CEP</span>
+              <input id="fieldPostalCode" type="text" />
+            </label>
+          </div>
+
+          <label class="field">
+            <span>Descricao</span>
+            <textarea id="fieldDescription" rows="4"></textarea>
+          </label>
+
+          <label class="checkbox-field">
+            <input id="fieldImportImages" type="checkbox" checked />
+            <span id="fieldImportImagesLabel">Importar imagens encontradas</span>
+          </label>
+        </div>
+
+        <footer class="confirm-modal__footer">
+          <button id="cancelModalButton" class="button button-secondary" type="button">Cancelar</button>
+          <button id="confirmImportButton" class="button button-primary" type="button">Confirmar importacao</button>
+        </footer>
+      </section>
+    </div>
+
+    <script type="module" src="./popup.js"></script>
+  </body>
+</html>

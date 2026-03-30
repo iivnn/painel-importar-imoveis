@@ -1,0 +1,365 @@
+<section class="favorites-shell">
+  <section class="favorites-hero">
+    <div>
+      <p class="favorites-hero__kicker mb-2">Shortlist pessoal</p>
+      <h2 class="favorites-hero__title mb-1">Favoritos</h2>
+      <p class="favorites-hero__copy mb-0">
+        Seus candidatos reais para decis&oacute;o, com contexto r&aacute;pido de pre&ccedil;o, localiza&ccedil;&atilde;o, SWOT e maturidade.
+      </p>
+    </div>
+  </section>
+
+  @if (data(); as data) {
+    <section class="favorites-summary-grid">
+      <article class="favorites-summary-card">
+        <span>Total</span>
+        <strong>{{ data.summary.totalFavorites }}</strong>
+      </article>
+      <article class="favorites-summary-card">
+        <span>Pre&ccedil;o m&eacute;dio</span>
+        <strong>
+          @if (data.summary.averagePrice !== null) {
+            {{ data.summary.averagePrice | number: '1.0-0' }}
+          } @else {
+            -
+          }
+        </strong>
+      </article>
+      <article class="favorites-summary-card">
+        <span>Maior nota</span>
+        <strong>
+          @if (data.summary.highestScore !== null) {
+            {{ data.summary.highestScore | number: '1.1-1' }}
+          } @else {
+            -
+          }
+        </strong>
+      </article>
+      <article class="favorites-summary-card">
+        <span>Novo</span>
+        <strong>{{ statusCount('Novo') }}</strong>
+      </article>
+      <article class="favorites-summary-card">
+        <span>Visitado</span>
+        <strong>{{ statusCount('Visitado') }}</strong>
+      </article>
+    </section>
+  }
+
+  <section class="favorites-filters">
+    <div class="favorites-filters__top">
+      <div>
+        <h3 class="favorites-filters__title mb-1">Filtros e ordena&ccedil;&atilde;o</h3>
+        <p class="favorites-filters__copy mb-0">Refine a shortlist para comparar s&oacute; o que importa agora.</p>
+      </div>
+
+      <div class="app-select-shell favorites-sort-shell">
+        <select
+          class="form-control app-select favorites-sort-select"
+          [value]="sortBy()"
+          (change)="emitSortChange(($any($event.target)).value)"
+        >
+          @for (option of sortOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="favorites-filters__grid">
+      <label class="favorites-field">
+        <span>Pre&ccedil;o m&iacute;nimo</span>
+        <input
+          class="form-control"
+          type="number"
+          min="0"
+          step="0.01"
+          [value]="draft().minPrice"
+          (input)="updateField('minPrice', ($any($event.target)).value)"
+        />
+      </label>
+
+      <label class="favorites-field">
+        <span>Pre&ccedil;o m&aacute;ximo</span>
+        <input
+          class="form-control"
+          type="number"
+          min="0"
+          step="0.01"
+          [value]="draft().maxPrice"
+          (input)="updateField('maxPrice', ($any($event.target)).value)"
+        />
+      </label>
+
+      <label class="favorites-field">
+        <span>Bairro</span>
+        <div class="app-select-shell">
+          <select
+            class="form-control app-select"
+            [value]="draft().neighborhood"
+            (change)="updateField('neighborhood', ($any($event.target)).value)"
+          >
+            <option value="">Todos</option>
+            @for (option of data()?.filterOptions?.neighborhoods ?? []; track option) {
+              <option [value]="option">{{ option }}</option>
+            }
+          </select>
+        </div>
+      </label>
+
+      <label class="favorites-field">
+        <span>Categoria</span>
+        <div class="app-select-shell">
+          <select
+            class="form-control app-select"
+            [value]="draft().category"
+            (change)="updateField('category', ($any($event.target)).value)"
+          >
+            <option value="">Todas</option>
+            @for (option of data()?.filterOptions?.categories ?? []; track option) {
+              <option [value]="option">{{ option }}</option>
+            }
+          </select>
+        </div>
+      </label>
+
+      <label class="favorites-field">
+        <span>Status</span>
+        <div class="app-select-shell">
+          <select
+            class="form-control app-select"
+            [value]="draft().swotStatus"
+            (change)="updateField('swotStatus', ($any($event.target)).value)"
+          >
+            <option value="">Todos</option>
+            @for (option of statusOptions; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+        </div>
+      </label>
+
+      <label class="favorites-field">
+        <span>Nota m&iacute;nima</span>
+        <input
+          class="form-control"
+          type="number"
+          min="0"
+          max="10"
+          step="0.1"
+          [value]="draft().minScore"
+          (input)="updateField('minScore', ($any($event.target)).value)"
+        />
+      </label>
+    </div>
+
+    <div class="favorites-toggles">
+      <label class="favorites-toggle">
+        <input
+          type="checkbox"
+          [checked]="draft().onlyWithSwot"
+          (change)="updateField('onlyWithSwot', ($any($event.target)).checked)"
+        />
+        <span>S&oacute; com SWOT</span>
+      </label>
+      <label class="favorites-toggle">
+        <input
+          type="checkbox"
+          [checked]="draft().onlyWithNotes"
+          (change)="updateField('onlyWithNotes', ($any($event.target)).checked)"
+        />
+        <span>S&oacute; com observa&ccedil;&otilde;es</span>
+      </label>
+      <label class="favorites-toggle">
+        <input
+          type="checkbox"
+          [checked]="draft().onlyWithMedia"
+          (change)="updateField('onlyWithMedia', ($any($event.target)).checked)"
+        />
+        <span>S&oacute; com m&iacute;dia</span>
+      </label>
+    </div>
+
+    <div class="favorites-filters__actions">
+      <button type="button" class="btn btn-brand" (click)="submit()">Aplicar</button>
+      <button type="button" class="btn btn-outline-brand" (click)="reset()">Limpar</button>
+    </div>
+  </section>
+
+  <section class="favorites-list-section">
+    @if (isLoading()) {
+      <div class="favorites-feedback">
+        <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></div>
+        <span>Carregando favoritos...</span>
+      </div>
+    } @else if (loadError()) {
+      <div class="alert alert-danger mb-0" role="alert">
+        {{ loadError() }}
+      </div>
+    } @else if (hasEmptyState()) {
+      <div class="favorites-feedback favorites-feedback--empty">
+        <strong>Nenhum favorito encontrado.</strong>
+        <span>Marque a estrela na listagem principal para construir sua shortlist.</span>
+      </div>
+    } @else {
+      <div class="favorites-pagination-summary">
+        Exibindo {{ displayedRangeStart() }} at&eacute; {{ displayedRangeEnd() }} de
+        {{ data()?.totalItems ?? 0 }} favoritos
+      </div>
+
+      <div class="favorites-list">
+        @for (item of data()?.items ?? []; track trackByPropertyId($index, item)) {
+          <article class="favorite-card">
+            <div class="favorite-card__main">
+              <div class="favorite-card__header">
+                <div>
+                  <h3 class="favorite-card__title mb-1">{{ item.title }}</h3>
+                  <p class="favorite-card__subtitle mb-0">
+                    {{ item.category }} • {{ item.neighborhood }} • {{ item.city }}/{{ item.state }}
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  class="btn favorite-card__star"
+                  title="Remover dos favoritos"
+                  aria-label="Remover dos favoritos"
+                  (click)="toggleFavorite.emit(item.id)"
+                >
+                  <i class="bi bi-star-fill" aria-hidden="true"></i>
+                </button>
+              </div>
+
+              <div class="favorite-card__metrics">
+                <div class="favorite-metric">
+                  <span>Pre&ccedil;o</span>
+                  <strong>
+                    @if (item.price !== null) {
+                      {{ item.price | number: '1.0-0' }}
+                    } @else {
+                      N&atilde;o informado
+                    }
+                  </strong>
+                </div>
+                <div class="favorite-metric">
+                  <span>Status</span>
+                  <strong>{{ item.swotStatus }}</strong>
+                </div>
+                <div class="favorite-metric">
+                  <span>Nota</span>
+                  <strong>
+                    @if (item.score !== null) {
+                      {{ item.score | number: '1.1-1' }}/10
+                    } @else {
+                      -
+                    }
+                  </strong>
+                </div>
+                <div class="favorite-metric">
+                  <span>M&iacute;dia</span>
+                  <strong>{{ item.mediaCount }}</strong>
+                </div>
+                <div class="favorite-metric">
+                  <span>Ajuste ao perfil</span>
+                  <strong>{{ profileFitScore(item) }}/100</strong>
+                </div>
+              </div>
+
+              <div class="favorite-card__insights">
+                <div class="favorite-insight">
+                  <span class="app-badge app-badge--success">Ponto forte</span>
+                  <p class="mb-0">{{ item.strengthsPreview || 'N&atilde;o informado' }}</p>
+                </div>
+                <div class="favorite-insight">
+                  <span class="app-badge app-badge--danger">Risco principal</span>
+                  <p class="mb-0">{{ item.threatsPreview || 'N&atilde;o informado' }}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="favorite-card__side">
+              <app-favorite-media-carousel
+                [title]="item.title"
+                [thumbnailUrls]="item.thumbnailUrls"
+              />
+
+              <div class="favorite-card__chips">
+                <span class="app-badge app-badge--neutral">{{ item.source }}</span>
+                @if (item.hasNotes) {
+                  <span class="app-badge app-badge--info">Com observa&ccedil;&otilde;es</span>
+                } @else {
+                  <span class="app-badge app-badge--neutral">Sem observa&ccedil;&otilde;es</span>
+                }
+                @if (item.hasMedia) {
+                  <span class="app-badge app-badge--success">Com m&iacute;dia</span>
+                } @else {
+                  <span class="app-badge app-badge--neutral">Sem m&iacute;dia</span>
+                }
+              </div>
+
+              <p class="favorite-card__address mb-0">{{ item.addressLine }}</p>
+
+              <div class="favorite-card__actions">
+                <button type="button" class="btn btn-outline-brand" (click)="requestDetail.emit(item.id)">
+                  Detalhe
+                </button>
+                <button type="button" class="btn btn-outline-brand" (click)="toggleCompare.emit(item.id)">
+                  Comparar
+                </button>
+                <button type="button" class="btn btn-outline-brand" (click)="requestSwot.emit(item.id)">
+                  SWOT
+                </button>
+                <button type="button" class="btn btn-outline-brand" (click)="requestMedia.emit(item.id)">
+                  M&iacute;dia
+                </button>
+                <app-map-tooltip-button
+                  [latitude]="item.latitude"
+                  [longitude]="item.longitude"
+                  [hasExactLocation]="item.hasExactLocation"
+                />
+                @if (item.originalUrl) {
+                  <a
+                    class="btn btn-brand"
+                    [href]="item.originalUrl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    An&uacute;ncio
+                  </a>
+                }
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+
+      <div class="favorites-pagination">
+        <button
+          type="button"
+          class="btn table-page-button table-page-button--secondary"
+          (click)="previousPage.emit()"
+          [disabled]="isLoading() || (data()?.page ?? 1) <= 1"
+          title="P&aacute;gina anterior"
+          aria-label="P&aacute;gina anterior"
+        >
+          <i class="bi bi-chevron-left" aria-hidden="true"></i>
+        </button>
+
+        <span class="favorites-pagination__label">
+          P&aacute;gina {{ data()?.page ?? 1 }} de {{ data()?.totalPages ?? 1 }}
+        </span>
+
+        <button
+          type="button"
+          class="btn table-page-button table-page-button--primary"
+          (click)="nextPage.emit()"
+          [disabled]="isLoading() || (data()?.page ?? 1) >= (data()?.totalPages ?? 1)"
+          title="Pr&oacute;xima p&aacute;gina"
+          aria-label="Pr&oacute;xima p&aacute;gina"
+        >
+          <i class="bi bi-chevron-right" aria-hidden="true"></i>
+        </button>
+      </div>
+    }
+  </section>
+</section>

@@ -26,6 +26,15 @@ public class CreatePropertyCommandService(IPropertyListingRepository propertyLis
         property.SwotStatus = PropertySwotStatus.Novo;
 
         await propertyListingRepository.AddAsync(property, cancellationToken);
+        await propertyListingRepository.AddStatusHistoryAsync(
+            new PropertyStatusHistory
+            {
+                PropertyListing = property,
+                PreviousStatus = null,
+                NewStatus = PropertySwotStatus.Novo,
+                Reason = "Cadastro inicial"
+            },
+            cancellationToken);
         await propertyListingRepository.SaveChangesAsync(cancellationToken);
 
         return (property, null);

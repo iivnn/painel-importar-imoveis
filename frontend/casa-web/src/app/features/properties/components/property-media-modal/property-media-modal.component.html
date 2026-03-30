@@ -1,0 +1,195 @@
+<div class="modal-backdrop-shell">
+  <section
+    class="media-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="property-media-title"
+  >
+    <div class="media-modal__header">
+      <div>
+        <p class="media-modal__kicker mb-1">M&iacute;dia e observa&ccedil;&otilde;es</p>
+        <h2 id="property-media-title" class="media-modal__title mb-1">{{ propertyTitle() }}</h2>
+        <p class="media-modal__copy mb-0">Guarde fotos, prints e notas sem poluir a tela principal.</p>
+      </div>
+
+      <button
+        type="button"
+        class="btn media-modal__close"
+        aria-label="Fechar midia e observacoes"
+        title="Fechar midia e observacoes"
+        (click)="cancel.emit()"
+        [disabled]="isBusy()"
+      >
+        <i class="bi bi-x-lg" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <div class="media-modal__content">
+      @if (loadError()) {
+        <div class="alert alert-danger mb-3" role="alert">
+          {{ loadError() }}
+        </div>
+      }
+
+      @if (submitError()) {
+        <div class="alert alert-danger mb-3" role="alert">
+          {{ submitError() }}
+        </div>
+      }
+
+      <div class="media-modal__grid">
+        <section class="media-card media-card--notes">
+          <div class="media-card__header">
+            <div>
+              <h3 class="media-card__title mb-1">Observa&ccedil;&otilde;es</h3>
+              <p class="media-card__copy mb-0">Anote o que chamou aten&ccedil;&atilde;o no an&uacute;ncio ou na visita.</p>
+            </div>
+            <button
+              type="button"
+              class="btn btn-brand"
+              (click)="submitNotes()"
+              [disabled]="isLoading() || isSavingNotes()"
+            >
+              @if (isSavingNotes()) {
+                <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+                Salvando...
+              } @else {
+                Salvar
+              }
+            </button>
+          </div>
+
+          <textarea
+            class="form-control media-notes-textarea"
+            [value]="notesDraft()"
+            (input)="updateNotes(($any($event.target)).value)"
+            [disabled]="isLoading() || isSavingNotes()"
+            rows="12"
+            placeholder="Ex.: impress&atilde;o da visita, pontos de aten&ccedil;&atilde;o, detalhes de negocia&ccedil;&atilde;o..."
+          ></textarea>
+        </section>
+
+        <section class="media-card media-card--uploads">
+          <div class="media-card__header media-card__header--stack">
+            <div>
+              <h3 class="media-card__title mb-1">M&iacute;dia</h3>
+              <p class="media-card__copy mb-0">Separe fotos do im&oacute;vel e prints do an&uacute;ncio.</p>
+            </div>
+          </div>
+
+          <div class="upload-actions">
+            <label class="upload-action">
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                hidden
+                (change)="handleFileSelection('Foto', $event)"
+                [disabled]="isLoading() || activeUploadKind() !== null"
+              />
+              <span class="upload-action__icon"><i class="bi bi-camera" aria-hidden="true"></i></span>
+              <strong>Adicionar fotos</strong>
+              <small>
+                @if (activeUploadKind() === 'Foto') {
+                  Enviando...
+                } @else {
+                  JPG, PNG, WEBP ou GIF
+                }
+              </small>
+            </label>
+
+            <label class="upload-action">
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                hidden
+                (change)="handleFileSelection('Print', $event)"
+                [disabled]="isLoading() || activeUploadKind() !== null"
+              />
+              <span class="upload-action__icon"><i class="bi bi-image" aria-hidden="true"></i></span>
+              <strong>Adicionar prints</strong>
+              <small>
+                @if (activeUploadKind() === 'Print') {
+                  Enviando...
+                } @else {
+                  Capturas e refer&ecirc;ncias
+                }
+              </small>
+            </label>
+          </div>
+
+          <div class="media-groups">
+            <div class="media-group">
+              <div class="media-group__heading">
+                <h4 class="mb-0">Fotos</h4>
+                <span>{{ photos().length }}</span>
+              </div>
+
+              @if (photos().length) {
+                <div class="media-gallery">
+                  @for (attachment of photos(); track attachment.id) {
+                    <article class="media-thumb">
+                      <img [src]="attachment.fileUrl" [alt]="attachment.originalFileName" />
+                      <button
+                        type="button"
+                        class="btn media-thumb__delete"
+                        (click)="deleteAttachment.emit(attachment.id)"
+                        [disabled]="isDeletingAttachment(attachment.id)"
+                        title="Remover imagem"
+                        aria-label="Remover imagem"
+                      >
+                        <i class="bi bi-trash3" aria-hidden="true"></i>
+                      </button>
+                    </article>
+                  }
+                </div>
+              } @else {
+                <p class="media-group__empty mb-0">Nenhuma foto adicionada ainda.</p>
+              }
+            </div>
+
+            <div class="media-group">
+              <div class="media-group__heading">
+                <h4 class="mb-0">Prints</h4>
+                <span>{{ prints().length }}</span>
+              </div>
+
+              @if (prints().length) {
+                <div class="media-gallery">
+                  @for (attachment of prints(); track attachment.id) {
+                    <article class="media-thumb">
+                      <img [src]="attachment.fileUrl" [alt]="attachment.originalFileName" />
+                      <button
+                        type="button"
+                        class="btn media-thumb__delete"
+                        (click)="deleteAttachment.emit(attachment.id)"
+                        [disabled]="isDeletingAttachment(attachment.id)"
+                        title="Remover imagem"
+                        aria-label="Remover imagem"
+                      >
+                        <i class="bi bi-trash3" aria-hidden="true"></i>
+                      </button>
+                    </article>
+                  }
+                </div>
+              } @else {
+                <p class="media-group__empty mb-0">Nenhum print adicionado ainda.</p>
+              }
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    @if (isBusy()) {
+      <div class="media-modal__loading">
+        <div class="media-modal__loading-card">
+          <div class="spinner-border" role="status" aria-hidden="true"></div>
+          <strong>{{ busyTitle() }}</strong>
+          <span>{{ busyDescription() }}</span>
+        </div>
+      </div>
+    }
+  </section>
+</div>

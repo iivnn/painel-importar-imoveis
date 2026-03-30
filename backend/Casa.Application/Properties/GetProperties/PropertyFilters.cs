@@ -15,4 +15,12 @@ public class PropertyFilters
     public PropertySwotStatus? SwotStatus { get; init; }
 
     public decimal? MinScore { get; init; }
+
+    public bool OnlyFavorites { get; init; }
+
+    public bool OnlyWithSwot { get; init; }
+
+    public bool OnlyWithNotes { get; init; }
+
+    public bool OnlyWithMedia { get; init; }
 }

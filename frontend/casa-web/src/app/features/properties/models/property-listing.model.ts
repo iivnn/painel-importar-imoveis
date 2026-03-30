@@ -8,6 +8,10 @@ export interface PropertyListing {
   originalUrl: string;
   swotStatus: PropertySwotStatus;
   price: number | null;
+  condoFee: number | null;
+  iptu: number | null;
+  insurance: number | null;
+  upfrontCost: number | null;
   addressLine: string;
   neighborhood: string;
   city: string;
@@ -21,6 +25,9 @@ export interface PropertyListing {
   opportunities: string;
   threats: string;
   score: number | null;
+  notes: string;
+  discardReason: string;
+  isFavorite: boolean;
   excluded: boolean;
   createdAtUtc: string;
 }

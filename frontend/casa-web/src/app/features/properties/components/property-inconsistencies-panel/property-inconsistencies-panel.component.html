@@ -1,0 +1,164 @@
+<section class="inconsistencies-panel">
+  <div class="inconsistencies-panel__header">
+    <div>
+      <p class="inconsistencies-panel__kicker mb-2">Monitoramento automatico</p>
+      <h2 class="inconsistencies-panel__title mb-1">Inconsistencias</h2>
+      <p class="inconsistencies-panel__copy mb-0">
+        Alertas que ajudam a evitar anuncios problematicos, dados fracos e comparacoes injustas.
+      </p>
+    </div>
+
+    @if (summary(); as summary) {
+      <div class="inconsistencies-panel__updated">
+        Atualizado em {{ summary.generatedAtUtc | date: 'dd/MM/yyyy HH:mm' }}
+      </div>
+    }
+  </div>
+
+  @if (summary(); as summary) {
+    <div class="inconsistencies-summary-grid">
+      <article class="inconsistency-summary-card">
+        <span>Total de alertas</span>
+        <strong>{{ summary.totalCount }}</strong>
+      </article>
+      <article class="inconsistency-summary-card">
+        <span>Imoveis afetados</span>
+        <strong>{{ summary.affectedProperties }}</strong>
+      </article>
+      <article class="inconsistency-summary-card inconsistency-summary-card--high">
+        <span>Alta prioridade</span>
+        <strong>{{ summary.highSeverityCount }}</strong>
+      </article>
+      <article class="inconsistency-summary-card inconsistency-summary-card--medium">
+        <span>Media prioridade</span>
+        <strong>{{ summary.mediumSeverityCount }}</strong>
+      </article>
+      <article class="inconsistency-summary-card inconsistency-summary-card--low">
+        <span>Baixa prioridade</span>
+        <strong>{{ summary.lowSeverityCount }}</strong>
+      </article>
+    </div>
+  }
+
+  <section class="inconsistencies-list-card">
+    <div class="inconsistencies-toolbar">
+      <div class="inconsistencies-toolbar__filters" role="tablist" aria-label="Filtro por severidade">
+        @for (filter of filterOptions(); track filter.value) {
+          <button
+            type="button"
+            class="btn inconsistency-filter-chip"
+            [class.inconsistency-filter-chip--active]="activeSeverity() === filter.value"
+            (click)="setSeverityFilter(filter.value)"
+          >
+            <span>{{ filter.label }}</span>
+            <span class="inconsistency-filter-chip__count">{{ filter.count }}</span>
+          </button>
+        }
+      </div>
+
+      <span class="inconsistencies-toolbar__meta">
+        {{ currentRangeLabel() }} alerta(s)
+      </span>
+    </div>
+
+    @if (isLoading()) {
+      <div class="inconsistencies-feedback">
+        <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></div>
+        <span>Carregando inconsistencias...</span>
+      </div>
+    } @else if (loadError()) {
+      <div class="alert alert-danger mb-0" role="alert">
+        {{ loadError() }}
+      </div>
+    } @else if (!items().length) {
+      <div class="inconsistencies-feedback inconsistencies-feedback--empty">
+        <strong>Nenhuma inconsistencia encontrada.</strong>
+        <span>Os cadastros ativos estao consistentes com as regras atuais do sistema.</span>
+      </div>
+    } @else if (!filteredItems().length) {
+      <div class="inconsistencies-feedback inconsistencies-feedback--empty">
+        <strong>Nenhum alerta neste filtro.</strong>
+        <span>Tente outra severidade para ver os demais alertas encontrados.</span>
+      </div>
+    } @else {
+      <div class="inconsistencies-list">
+        @for (item of pagedItems(); track item.id) {
+          <article class="inconsistency-item">
+            <div class="inconsistency-item__header">
+              <div class="inconsistency-item__title-block">
+                <span
+                  class="inconsistency-severity"
+                  [class.inconsistency-severity--high]="item.severity === 'alta'"
+                  [class.inconsistency-severity--medium]="item.severity === 'media'"
+                  [class.inconsistency-severity--low]="item.severity === 'baixa'"
+                >
+                  {{ severityLabel(item.severity) }}
+                </span>
+                <h3 class="mb-1">{{ item.title }}</h3>
+                <p class="mb-0">{{ item.propertyTitle }}</p>
+              </div>
+              <span class="inconsistency-item__id">#{{ item.propertyId }}</span>
+            </div>
+
+            <div class="inconsistency-item__body">
+              <p class="mb-2">{{ item.description }}</p>
+              <div class="inconsistency-item__recommendation">
+                <strong>Como resolver</strong>
+                <span>{{ item.recommendation }}</span>
+              </div>
+
+              <div class="inconsistency-item__actions">
+                <button
+                  type="button"
+                  class="btn btn-outline-brand inconsistency-item__open-button"
+                  (click)="openProperty.emit(item.propertyId)"
+                >
+                  Abrir imovel relacionado
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary inconsistency-item__dismiss-button"
+                  [disabled]="isDismissing(item.id)"
+                  (click)="dismiss.emit(item.id)"
+                >
+                  @if (isDismissing(item.id)) {
+                    <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+                    Ignorando...
+                  } @else {
+                    Ignorar alerta
+                  }
+                </button>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+
+      @if (totalPages() > 1) {
+        <div class="inconsistencies-pagination">
+          <span class="inconsistencies-pagination__label">Pagina {{ currentPage() }} de {{ totalPages() }}</span>
+          <div class="inconsistencies-pagination__actions">
+            <button
+              type="button"
+              class="btn table-page-button table-page-button--secondary"
+              [disabled]="currentPage() === 1"
+              (click)="goToPreviousPage()"
+              aria-label="Pagina anterior"
+            >
+              <i class="bi bi-chevron-left" aria-hidden="true"></i>
+            </button>
+            <button
+              type="button"
+              class="btn table-page-button table-page-button--primary"
+              [disabled]="currentPage() === totalPages()"
+              (click)="goToNextPage()"
+              aria-label="Proxima pagina"
+            >
+              <i class="bi bi-chevron-right" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      }
+    }
+  </section>
+</section>

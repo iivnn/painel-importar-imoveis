@@ -7,6 +7,8 @@ public static class EndpointRegistration
         endpoints.MapAddressEndpoints();
         endpoints.MapHealthEndpoints();
         endpoints.MapPropertyEndpoints();
+        endpoints.MapPropertyInconsistencyEndpoints();
+        endpoints.MapSettingsEndpoints();
 
         return endpoints;
     }

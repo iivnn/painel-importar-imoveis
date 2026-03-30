@@ -15,10 +15,9 @@ import { MapTooltipButtonComponent } from '../map-tooltip-button/map-tooltip-but
 export class PropertyListingsTableComponent {
   readonly statusOptions: { value: PropertySwotStatus; label: string }[] = [
     { value: 'Novo', label: 'Novo' },
-    { value: 'EmAnalise', label: 'Em analise' },
+    { value: 'EmAnalise', label: 'Em an\u00e1lise' },
     { value: 'Visitado', label: 'Visitado' },
     { value: 'Proposta', label: 'Proposta' },
-    { value: 'Favorito', label: 'Favorito' },
     { value: 'Descartado', label: 'Descartado' }
   ];
 
@@ -33,11 +32,18 @@ export class PropertyListingsTableComponent {
   readonly isLoading = input(false);
   readonly loadError = input('');
   readonly updatingStatusIds = input<number[]>([]);
+  readonly highlightedPropertyId = input<number | null>(null);
+  readonly comparedPropertyIds = input<number[]>([]);
 
   readonly previousPage = output<void>();
   readonly nextPage = output<void>();
   readonly requestSwot = output<PropertyListing>();
+  readonly requestMedia = output<PropertyListing>();
+  readonly requestDetail = output<PropertyListing>();
+  readonly requestEdit = output<PropertyListing>();
   readonly requestDelete = output<PropertyListing>();
+  readonly toggleCompare = output<PropertyListing>();
+  readonly requestFavoriteToggle = output<PropertyListing>();
   readonly requestStatusChange = output<{ property: PropertyListing; status: PropertySwotStatus }>();
 
   displayedRangeStart(): number {
@@ -67,5 +73,13 @@ export class PropertyListingsTableComponent {
 
   isUpdatingStatus(propertyId: number): boolean {
     return this.updatingStatusIds().includes(propertyId);
+  }
+
+  isHighlighted(propertyId: number): boolean {
+    return this.highlightedPropertyId() === propertyId;
+  }
+
+  isCompared(propertyId: number): boolean {
+    return this.comparedPropertyIds().includes(propertyId);
   }
 }

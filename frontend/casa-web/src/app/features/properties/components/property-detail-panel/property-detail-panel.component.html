@@ -1,0 +1,118 @@
+<section class="detail-shell">
+  @let detail = details();
+
+  <div class="detail-toolbar">
+    <button type="button" class="btn btn-outline-brand" (click)="back.emit()">Voltar</button>
+    @if (detail) {
+      <div class="detail-toolbar__actions">
+        <button type="button" class="btn btn-outline-brand" (click)="toggleCompare.emit()">Comparar</button>
+        <button type="button" class="btn btn-outline-brand" (click)="openMedia.emit()">Midia</button>
+        <button type="button" class="btn btn-outline-brand" (click)="openSwot.emit()">SWOT</button>
+        <button type="button" class="btn btn-brand" (click)="edit.emit()">Editar</button>
+      </div>
+    }
+  </div>
+
+  @if (isLoading()) {
+    <div class="detail-feedback">
+      <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></div>
+      <span>Carregando detalhes do imovel...</span>
+    </div>
+  } @else if (loadError()) {
+    <div class="alert alert-danger mb-0" role="alert">{{ loadError() }}</div>
+  } @else if (detail) {
+    <div class="detail-grid">
+      <section class="detail-card detail-card--hero">
+        <div>
+          <p class="detail-card__kicker mb-2">Visao consolidada</p>
+          <h2 class="detail-card__title mb-1">{{ detail.title }}</h2>
+          <p class="detail-card__subtitle mb-0">{{ detail.category }} • {{ detail.neighborhood }} • {{ detail.city }}/{{ detail.state }}</p>
+        </div>
+        <div class="detail-card__hero-metrics">
+          <span class="app-badge app-badge--info">{{ detail.swotStatus }}</span>
+          @if (detail.score !== null) {
+            <strong>Nota {{ detail.score | number:'1.1-1' }}/10</strong>
+          }
+        </div>
+      </section>
+
+      <section class="detail-card">
+        <h3 class="detail-card__section-title">Custos</h3>
+        <div class="detail-metrics-grid">
+          <article><span>Aluguel</span><strong>{{ detail.price ?? 0 | number:'1.0-0' }}</strong></article>
+          <article><span>Condominio</span><strong>{{ detail.condoFee ?? 0 | number:'1.0-0' }}</strong></article>
+          <article><span>IPTU</span><strong>{{ detail.iptu ?? 0 | number:'1.0-0' }}</strong></article>
+          <article><span>Seguro</span><strong>{{ detail.insurance ?? 0 | number:'1.0-0' }}</strong></article>
+          <article><span>Custo mensal total</span><strong>{{ monthlyCost(detail) ?? 0 | number:'1.0-0' }}</strong></article>
+          <article><span>Custo inicial</span><strong>{{ detail.upfrontCost ?? 0 | number:'1.0-0' }}</strong></article>
+        </div>
+      </section>
+
+      <section class="detail-card">
+        <h3 class="detail-card__section-title">Localizacao</h3>
+        <p class="mb-1"><strong>{{ detail.addressLine }}</strong></p>
+        <p class="detail-card__muted mb-3">{{ detail.neighborhood }} • {{ detail.city }}/{{ detail.state }} • CEP {{ detail.postalCode }}</p>
+        <div class="detail-location-actions">
+          <span class="app-badge" [class.app-badge--success]="detail.hasExactLocation" [class.app-badge--warning]="!detail.hasExactLocation">
+            {{ detail.hasExactLocation ? 'Ponto exato' : 'Ponto aproximado' }}
+          </span>
+          <app-map-tooltip-button [latitude]="detail.latitude" [longitude]="detail.longitude" [hasExactLocation]="detail.hasExactLocation" />
+        </div>
+      </section>
+
+      <section class="detail-card">
+        <h3 class="detail-card__section-title">Observacoes e descarte</h3>
+        <div class="detail-copy-block">
+          <strong>Observacoes</strong>
+          <p>{{ detail.notes || 'Nenhuma observacao registrada.' }}</p>
+        </div>
+        @if (detail.discardReason) {
+          <div class="detail-copy-block">
+            <strong>Motivo do descarte</strong>
+            <p>{{ detail.discardReason }}</p>
+          </div>
+        }
+      </section>
+
+      <section class="detail-card detail-card--wide">
+        <h3 class="detail-card__section-title">SWOT</h3>
+        <div class="detail-swot-grid">
+          <article><span>Strengths</span><p>{{ detail.strengths || 'Nao informado.' }}</p></article>
+          <article><span>Weaknesses</span><p>{{ detail.weaknesses || 'Nao informado.' }}</p></article>
+          <article><span>Opportunities</span><p>{{ detail.opportunities || 'Nao informado.' }}</p></article>
+          <article><span>Threats</span><p>{{ detail.threats || 'Nao informado.' }}</p></article>
+        </div>
+      </section>
+
+      <section class="detail-card detail-card--wide">
+        <h3 class="detail-card__section-title">Historico de status</h3>
+        @if (detail.statusHistory.length) {
+          <div class="detail-history-list">
+            @for (item of detail.statusHistory; track item.id) {
+              <article class="detail-history-item">
+                <div>
+                  <strong>{{ item.newStatus }}</strong>
+                  <p class="mb-0">
+                    @if (item.previousStatus) {
+                      De {{ item.previousStatus }} para {{ item.newStatus }}
+                    } @else {
+                      Registro inicial em {{ item.newStatus }}
+                    }
+                  </p>
+                </div>
+                <div class="detail-history-item__meta">
+                  <span>{{ item.changedAtUtc | date:'dd/MM/yyyy HH:mm' }}</span>
+                  @if (item.reason) {
+                    <small>{{ item.reason }}</small>
+                  }
+                </div>
+              </article>
+            }
+          </div>
+        } @else {
+          <p class="detail-card__muted mb-0">Ainda nao ha historico registrado.</p>
+        }
+      </section>
+    </div>
+  }
+</section>
