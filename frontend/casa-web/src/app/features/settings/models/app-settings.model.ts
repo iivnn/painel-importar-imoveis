@@ -1,5 +1,6 @@
 import { PropertySource, PropertySwotStatus } from '../../properties/models/create-property.model';
 import { PropertyFavoriteSortBy } from '../../properties/models/property-favorites.model';
+import { AppLogLevel } from '../../logs/models/app-log.model';
 
 export interface AppSettings {
   defaultSource: PropertySource;
@@ -31,6 +32,22 @@ export interface AppSettings {
   analysisWeight: number;
   evidenceWeight: number;
   sourceQualityWeight: number;
+  backendMinimumLogLevel: AppLogLevel;
+  frontendMinimumLogLevel: AppLogLevel;
+  extensionMinimumLogLevel: AppLogLevel;
+  infoLogRetentionDays: number;
+  warningLogRetentionDays: number;
+  errorLogRetentionDays: number;
+  logNavigationEvents: boolean;
+  logFrontendHttpFailures: boolean;
+  logRealtimeEvents: boolean;
+  logExtensionExtractionEvents: boolean;
+  logExtensionGeocodingEvents: boolean;
+  logExtensionImageImportEvents: boolean;
+  allowFrontendLogIngestion: boolean;
+  allowExtensionLogIngestion: boolean;
+  logDetailsMaxLength: number;
+  logAutoCleanupEnabled: boolean;
 }
 
 export const DEFAULT_APP_SETTINGS: AppSettings = {
@@ -62,5 +79,21 @@ export const DEFAULT_APP_SETTINGS: AppSettings = {
   locationWeight: 25,
   analysisWeight: 20,
   evidenceWeight: 15,
-  sourceQualityWeight: 10
+  sourceQualityWeight: 10,
+  backendMinimumLogLevel: 'Info',
+  frontendMinimumLogLevel: 'Warning',
+  extensionMinimumLogLevel: 'Warning',
+  infoLogRetentionDays: 30,
+  warningLogRetentionDays: 45,
+  errorLogRetentionDays: 90,
+  logNavigationEvents: true,
+  logFrontendHttpFailures: true,
+  logRealtimeEvents: false,
+  logExtensionExtractionEvents: true,
+  logExtensionGeocodingEvents: true,
+  logExtensionImageImportEvents: true,
+  allowFrontendLogIngestion: true,
+  allowExtensionLogIngestion: true,
+  logDetailsMaxLength: 4000,
+  logAutoCleanupEnabled: true
 };

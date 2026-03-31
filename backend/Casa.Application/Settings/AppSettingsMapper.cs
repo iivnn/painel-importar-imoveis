@@ -36,7 +36,23 @@ internal static class AppSettingsMapper
             LocationWeight = profile.LocationWeight,
             AnalysisWeight = profile.AnalysisWeight,
             EvidenceWeight = profile.EvidenceWeight,
-            SourceQualityWeight = profile.SourceQualityWeight
+            SourceQualityWeight = profile.SourceQualityWeight,
+            BackendMinimumLogLevel = profile.BackendMinimumLogLevel,
+            FrontendMinimumLogLevel = profile.FrontendMinimumLogLevel,
+            ExtensionMinimumLogLevel = profile.ExtensionMinimumLogLevel,
+            InfoLogRetentionDays = profile.InfoLogRetentionDays,
+            WarningLogRetentionDays = profile.WarningLogRetentionDays,
+            ErrorLogRetentionDays = profile.ErrorLogRetentionDays,
+            LogNavigationEvents = profile.LogNavigationEvents,
+            LogFrontendHttpFailures = profile.LogFrontendHttpFailures,
+            LogRealtimeEvents = profile.LogRealtimeEvents,
+            LogExtensionExtractionEvents = profile.LogExtensionExtractionEvents,
+            LogExtensionGeocodingEvents = profile.LogExtensionGeocodingEvents,
+            LogExtensionImageImportEvents = profile.LogExtensionImageImportEvents,
+            AllowFrontendLogIngestion = profile.AllowFrontendLogIngestion,
+            AllowExtensionLogIngestion = profile.AllowExtensionLogIngestion,
+            LogDetailsMaxLength = profile.LogDetailsMaxLength,
+            LogAutoCleanupEnabled = profile.LogAutoCleanupEnabled
         };
     }
 
@@ -71,6 +87,22 @@ internal static class AppSettingsMapper
         profile.AnalysisWeight = Clamp(request.AnalysisWeight, 0, 100, 20);
         profile.EvidenceWeight = Clamp(request.EvidenceWeight, 0, 100, 15);
         profile.SourceQualityWeight = Clamp(request.SourceQualityWeight, 0, 100, 10);
+        profile.BackendMinimumLogLevel = request.BackendMinimumLogLevel;
+        profile.FrontendMinimumLogLevel = request.FrontendMinimumLogLevel;
+        profile.ExtensionMinimumLogLevel = request.ExtensionMinimumLogLevel;
+        profile.InfoLogRetentionDays = Clamp(request.InfoLogRetentionDays, 1, 365, 30);
+        profile.WarningLogRetentionDays = Clamp(request.WarningLogRetentionDays, 1, 365, 45);
+        profile.ErrorLogRetentionDays = Clamp(request.ErrorLogRetentionDays, 1, 365, 90);
+        profile.LogNavigationEvents = request.LogNavigationEvents;
+        profile.LogFrontendHttpFailures = request.LogFrontendHttpFailures;
+        profile.LogRealtimeEvents = request.LogRealtimeEvents;
+        profile.LogExtensionExtractionEvents = request.LogExtensionExtractionEvents;
+        profile.LogExtensionGeocodingEvents = request.LogExtensionGeocodingEvents;
+        profile.LogExtensionImageImportEvents = request.LogExtensionImageImportEvents;
+        profile.AllowFrontendLogIngestion = request.AllowFrontendLogIngestion;
+        profile.AllowExtensionLogIngestion = request.AllowExtensionLogIngestion;
+        profile.LogDetailsMaxLength = Clamp(request.LogDetailsMaxLength, 500, 12000, 4000);
+        profile.LogAutoCleanupEnabled = request.LogAutoCleanupEnabled;
     }
 
     private static int Clamp(int value, int min, int max, int fallback)

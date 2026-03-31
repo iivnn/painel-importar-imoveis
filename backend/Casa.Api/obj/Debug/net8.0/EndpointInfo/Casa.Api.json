@@ -41,6 +41,105 @@
         }
       }
     },
+    "/api/logs": {
+      "get": {
+        "tags": [
+          "Casa.Api"
+        ],
+        "operationId": "GetAppLogs",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "level",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Casa.Api"
+        ],
+        "operationId": "ClearAppLogs",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/logs/summary": {
+      "get": {
+        "tags": [
+          "Casa.Api"
+        ],
+        "operationId": "GetAppLogsSummary",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/logs/ingest": {
+      "post": {
+        "tags": [
+          "Casa.Api"
+        ],
+        "operationId": "IngestAppLog",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogIngestRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/properties": {
       "get": {
         "tags": [
@@ -590,8 +689,58 @@
               "type": "integer",
               "format": "int32"
             }
+          },
+          {
+            "name": "maxImages",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/properties/{id}/attachments/import-urls": {
+      "post": {
+        "tags": [
+          "Casa.Api"
+        ],
+        "operationId": "ImportPropertyAttachmentsFromUrls",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "maxImages",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportPropertyAttachmentUrlsRequest"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -718,6 +867,102 @@
   },
   "components": {
     "schemas": {
+      "AppLogLevel": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "AppLogSource": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "ImportPropertyAttachmentUrlsRequest": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "$ref": "#/components/schemas/PropertyAttachmentKind"
+          },
+          "imageUrls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LogIngestRequest": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "$ref": "#/components/schemas/AppLogSource"
+          },
+          "level": {
+            "$ref": "#/components/schemas/AppLogLevel"
+          },
+          "category": {
+            "type": "string",
+            "nullable": true
+          },
+          "eventName": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "details": { },
+          "traceId": {
+            "type": "string",
+            "nullable": true
+          },
+          "path": {
+            "type": "string",
+            "nullable": true
+          },
+          "method": {
+            "type": "string",
+            "nullable": true
+          },
+          "userAgent": {
+            "type": "string",
+            "nullable": true
+          },
+          "relatedEntityType": {
+            "type": "string",
+            "nullable": true
+          },
+          "relatedEntityId": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PropertyAttachmentKind": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
       "PropertyListingUpsertRequest": {
         "type": "object",
         "properties": {
@@ -755,6 +1000,11 @@
             "nullable": true
           },
           "insurance": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "serviceFee": {
             "type": "number",
             "format": "double",
             "nullable": true
@@ -991,6 +1241,58 @@
           "sourceQualityWeight": {
             "type": "integer",
             "format": "int32"
+          },
+          "backendMinimumLogLevel": {
+            "$ref": "#/components/schemas/AppLogLevel"
+          },
+          "frontendMinimumLogLevel": {
+            "$ref": "#/components/schemas/AppLogLevel"
+          },
+          "extensionMinimumLogLevel": {
+            "$ref": "#/components/schemas/AppLogLevel"
+          },
+          "infoLogRetentionDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "warningLogRetentionDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "errorLogRetentionDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "logNavigationEvents": {
+            "type": "boolean"
+          },
+          "logFrontendHttpFailures": {
+            "type": "boolean"
+          },
+          "logRealtimeEvents": {
+            "type": "boolean"
+          },
+          "logExtensionExtractionEvents": {
+            "type": "boolean"
+          },
+          "logExtensionGeocodingEvents": {
+            "type": "boolean"
+          },
+          "logExtensionImageImportEvents": {
+            "type": "boolean"
+          },
+          "allowFrontendLogIngestion": {
+            "type": "boolean"
+          },
+          "allowExtensionLogIngestion": {
+            "type": "boolean"
+          },
+          "logDetailsMaxLength": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "logAutoCleanupEnabled": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

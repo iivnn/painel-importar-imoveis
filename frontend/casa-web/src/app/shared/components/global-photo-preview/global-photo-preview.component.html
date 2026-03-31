@@ -1,0 +1,22 @@
+@if (photoPreviewService.state().visible) {
+  <div class="global-photo-preview" role="tooltip">
+    <div class="global-photo-preview__meta">
+      <strong>Fotos do imóvel</strong>
+      <span>{{ photoPreviewService.state().propertyTitle }}</span>
+      <small>{{ photoCounterLabel() }}</small>
+    </div>
+
+    @if (photoPreviewService.state().loading) {
+      <div class="global-photo-preview__loading">
+        <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></div>
+        <span>Carregando fotos...</span>
+      </div>
+    } @else {
+      <img
+        class="global-photo-preview__image"
+        [src]="activePhotoUrl()"
+        alt="Pré-visualização rápida das fotos do imóvel"
+      />
+    }
+  </div>
+}

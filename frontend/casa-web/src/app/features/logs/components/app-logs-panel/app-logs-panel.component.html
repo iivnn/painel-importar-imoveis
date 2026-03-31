@@ -1,0 +1,192 @@
+<section class="logs-panel app-card">
+  <header class="logs-panel__header">
+    <div class="logs-panel__intro">
+      <span class="logs-panel__eyebrow">Observabilidade</span>
+      <h2 class="logs-panel__title">Logs do sistema</h2>
+      <p class="logs-panel__subtitle">Vis&atilde;o consolidada do backend, frontend e extens&atilde;o.</p>
+    </div>
+
+    <button type="button" class="btn btn-outline-brand logs-panel__refresh" (click)="refresh.emit()">
+      <i class="bi bi-arrow-clockwise" aria-hidden="true"></i>
+      Atualizar
+    </button>
+  </header>
+
+  <section class="logs-section">
+    <div class="logs-section__header">
+      <h3 class="logs-section__title">Resumo</h3>
+    </div>
+
+    <div class="logs-summary">
+      <article class="logs-summary__card logs-summary__card--primary">
+        <span class="logs-summary__label">Total</span>
+        <strong class="logs-summary__value">{{ summary?.totalItems ?? 0 }}</strong>
+      </article>
+      <article class="logs-summary__card">
+        <span class="logs-summary__label">Erros</span>
+        <strong class="logs-summary__value logs-summary__value--danger">{{ summary?.errorCount ?? 0 }}</strong>
+      </article>
+      <article class="logs-summary__card">
+        <span class="logs-summary__label">Warnings</span>
+        <strong class="logs-summary__value logs-summary__value--warning">{{ summary?.warningCount ?? 0 }}</strong>
+      </article>
+      <article class="logs-summary__card">
+        <span class="logs-summary__label">Infos</span>
+        <strong class="logs-summary__value logs-summary__value--info">{{ summary?.infoCount ?? 0 }}</strong>
+      </article>
+    </div>
+
+    <div class="logs-summary logs-summary--sources">
+      <article class="logs-summary__card">
+        <span class="logs-summary__label">Backend</span>
+        <strong class="logs-summary__value">{{ summary?.backendCount ?? 0 }}</strong>
+      </article>
+      <article class="logs-summary__card">
+        <span class="logs-summary__label">Frontend</span>
+        <strong class="logs-summary__value">{{ summary?.frontendCount ?? 0 }}</strong>
+      </article>
+      <article class="logs-summary__card">
+        <span class="logs-summary__label">Extens&atilde;o</span>
+        <strong class="logs-summary__value">{{ summary?.extensionCount ?? 0 }}</strong>
+      </article>
+    </div>
+  </section>
+
+  <section class="logs-section">
+    <div class="logs-section__header">
+      <h3 class="logs-section__title">Filtros</h3>
+    </div>
+
+    <div class="logs-filters">
+      <div class="logs-filters__grid">
+        <div class="app-select-shell">
+          <select class="form-select app-select" [value]="filters.source" (change)="onSourceChanged($any($event.target).value)">
+            <option value="">Todas as origens</option>
+            @for (source of sourceOptions; track source) {
+              <option [value]="source">{{ source }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="app-select-shell">
+          <select class="form-select app-select" [value]="filters.level" (change)="onLevelChanged($any($event.target).value)">
+            <option value="">Todos os n&iacute;veis</option>
+            @for (level of levelOptions; track level) {
+              <option [value]="level">{{ level }}</option>
+            }
+          </select>
+        </div>
+
+        <input
+          type="search"
+          class="form-control logs-filters__search"
+          [value]="filters.search"
+          placeholder="Buscar por categoria, evento, mensagem ou detalhe"
+          (input)="onSearchChanged($any($event.target).value)"
+        />
+      </div>
+
+      <div class="logs-filters__actions">
+        <button type="button" class="btn btn-outline-brand" (click)="clearFilters.emit()">
+          Limpar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  @if (loadError) {
+    <div class="logs-panel__feedback logs-panel__feedback--error">
+      {{ loadError }}
+    </div>
+  }
+
+  <section class="logs-section">
+    <div class="logs-section__header">
+      <h3 class="logs-section__title">Entradas</h3>
+    </div>
+
+    <div class="logs-list">
+      @if (isLoading) {
+        <div class="logs-panel__feedback">Carregando logs...</div>
+      } @else if ((pageData?.items?.length ?? 0) === 0) {
+        <div class="logs-panel__feedback">Nenhum log encontrado com os filtros atuais.</div>
+      } @else {
+        @for (item of pageData!.items; track trackByLogId($index, item)) {
+          <article class="log-entry">
+            <div class="log-entry__meta">
+              <span [class]="getSourceBadgeClass(item.source)">{{ item.source }}</span>
+              <span [class]="getLevelBadgeClass(item.level)">{{ item.level }}</span>
+              <span class="log-entry__timestamp">{{ item.createdAtUtc | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+            </div>
+
+            <div class="log-entry__headline">
+              <strong>{{ item.category }}</strong>
+              <span>{{ item.eventName }}</span>
+            </div>
+
+            <p class="log-entry__message">{{ item.message }}</p>
+
+            <div class="log-entry__details-grid">
+              @if (item.path) {
+                <span><strong>Caminho:</strong> {{ item.path }}</span>
+              }
+              @if (item.method) {
+                <span><strong>M&eacute;todo:</strong> {{ item.method }}</span>
+              }
+              @if (item.traceId) {
+                <span><strong>TraceId:</strong> {{ item.traceId }}</span>
+              }
+              @if (item.relatedEntityType || item.relatedEntityId) {
+                <span>
+                  <strong>Entidade:</strong>
+                  {{ item.relatedEntityType || 'N/A' }}
+                  @if (item.relatedEntityId) {
+                    <span>#{{ item.relatedEntityId }}</span>
+                  }
+                </span>
+              }
+            </div>
+
+            @if (item.detailsJson) {
+              <details class="log-entry__details">
+                <summary>Detalhes completos</summary>
+                <pre>{{ item.detailsJson }}</pre>
+              </details>
+            }
+          </article>
+        }
+      }
+    </div>
+  </section>
+
+  <footer class="logs-pagination">
+    <span class="logs-pagination__summary">
+      {{ pageData?.totalItems ?? 0 }} registro(s)
+      @if (summary?.latestCreatedAtUtc) {
+        <span>&bull; &Uacute;ltimo: {{ summary?.latestCreatedAtUtc | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+      }
+    </span>
+
+    <div class="logs-pagination__actions">
+      <button
+        type="button"
+        class="btn btn-outline-brand"
+        [disabled]="isLoading || (pageData?.page ?? 1) <= 1"
+        (click)="previousPage.emit()"
+      >
+        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+      </button>
+      <span class="logs-pagination__page">
+        P&aacute;gina {{ pageData?.page ?? 1 }} de {{ pageData?.totalPages ?? 0 }}
+      </span>
+      <button
+        type="button"
+        class="btn btn-outline-brand"
+        [disabled]="isLoading || (pageData?.page ?? 1) >= (pageData?.totalPages ?? 0)"
+        (click)="nextPage.emit()"
+      >
+        <i class="bi bi-chevron-right" aria-hidden="true"></i>
+      </button>
+    </div>
+  </footer>
+</section>

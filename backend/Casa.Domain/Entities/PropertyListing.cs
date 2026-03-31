@@ -24,6 +24,8 @@ public class PropertyListing
 
     public decimal? Insurance { get; set; }
 
+    public decimal? ServiceFee { get; set; }
+
     public decimal? UpfrontCost { get; set; }
 
     public string AddressLine { get; set; } = string.Empty;

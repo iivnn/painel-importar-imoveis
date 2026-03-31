@@ -4,6 +4,7 @@
   </div>
 
   <app-global-map-preview />
+  <app-global-photo-preview />
 
   <div class="container-xl">
     <nav class="app-navbar mb-4" aria-label="Navega&ccedil;&atilde;o principal">
@@ -49,6 +50,17 @@
           <span>Inconsistências</span>
           <span class="app-badge app-badge--warning app-navbar__badge">
             {{ inconsistenciesSummary()?.totalCount ?? 0 }}
+          </span>
+        </button>
+        <button
+          type="button"
+          class="app-navbar__link app-navbar__link--badge"
+          [class.app-navbar__link--active]="activeSection() === 'logs'"
+          (click)="showLogs()"
+        >
+          <span>Logs</span>
+          <span class="app-badge app-badge--danger app-navbar__badge">
+            {{ logsSummary()?.errorCount ?? 0 }}
           </span>
         </button>
         <button
@@ -153,10 +165,25 @@
           [settings]="appSettings()"
           [isLoading]="isSettingsLoading()"
           [isSaving]="isSettingsSaving()"
+          [isClearingLogs]="isClearingLogs()"
           [loadError]="settingsLoadError()"
           [saveError]="settingsSaveError()"
           [saveSuccessMessage]="settingsSaveSuccessMessage()"
           (save)="saveSettings($event)"
+          (clearLogs)="openClearLogsModal()"
+        />
+      } @else if (activeSection() === 'logs') {
+        <app-logs-panel
+          [summary]="logsSummary()"
+          [pageData]="logsPageData()"
+          [filters]="logFilters()"
+          [isLoading]="isLogsLoading()"
+          [loadError]="logsLoadError()"
+          (applyFilters)="applyLogFilters($event)"
+          (clearFilters)="clearLogFilters()"
+          (previousPage)="goToPreviousLogsPage()"
+          (nextPage)="goToNextLogsPage()"
+          (refresh)="refreshLogs()"
         />
       } @else {
         <app-property-inconsistencies-panel
@@ -180,6 +207,15 @@
     [errorMessage]="deleteError()"
     (cancel)="closeDeleteModal()"
     (confirm)="confirmDelete()"
+  />
+}
+
+@if (isClearLogsModalOpen()) {
+  <app-confirm-clear-logs-modal
+    [isClearing]="isClearingLogs()"
+    [errorMessage]="clearLogsError()"
+    (cancel)="closeClearLogsModal()"
+    (confirm)="confirmClearLogs()"
   />
 }
 

@@ -4,11 +4,12 @@ import { Component, input, output } from '@angular/core';
 import { PropertySwotStatus } from '../../models/create-property.model';
 import { PropertyListing, PropertyListingPage } from '../../models/property-listing.model';
 import { MapTooltipButtonComponent } from '../map-tooltip-button/map-tooltip-button.component';
+import { PhotoPreviewButtonComponent } from '../photo-preview-button/photo-preview-button.component';
 
 @Component({
   selector: 'app-property-listings-table',
   standalone: true,
-  imports: [DecimalPipe, MapTooltipButtonComponent],
+  imports: [DecimalPipe, MapTooltipButtonComponent, PhotoPreviewButtonComponent],
   templateUrl: './property-listings-table.component.html',
   styleUrl: './property-listings-table.component.css'
 })
@@ -81,5 +82,143 @@ export class PropertyListingsTableComponent {
 
   isCompared(propertyId: number): boolean {
     return this.comparedPropertyIds().includes(propertyId);
+  }
+
+  getMonthlyTotal(property: PropertyListing): number | null {
+    const values = [
+      property.price,
+      property.condoFee,
+      property.iptu,
+      property.insurance,
+      property.serviceFee
+    ];
+
+    const hasAnyValue = values.some(value => value !== null && value !== undefined);
+    if (!hasAnyValue) {
+      return null;
+    }
+
+    return values.reduce<number>((total, value) => total + (value ?? 0), 0);
+  }
+
+  isFromQuintoAndar(property: PropertyListing): boolean {
+    return this.getListingHost(property).includes('quintoandar.com.br');
+  }
+
+  isFromVivaReal(property: PropertyListing): boolean {
+    return this.getListingHost(property).includes('vivareal.com.br');
+  }
+
+  isFromZapImoveis(property: PropertyListing): boolean {
+    return this.getListingHost(property).includes('zapimoveis.com.br');
+  }
+
+  isFromImovelweb(property: PropertyListing): boolean {
+    return this.getListingHost(property).includes('imovelweb.com.br');
+  }
+
+  isFromNetimoveis(property: PropertyListing): boolean {
+    return this.getListingHost(property).includes('netimoveis.com');
+  }
+
+  isFromOlx(property: PropertyListing): boolean {
+    return this.getListingHost(property).includes('olx.com.br');
+  }
+
+  getSourceBadgeClass(property: PropertyListing): string {
+    if (this.isFromQuintoAndar(property)) {
+      return 'listing-source-badge--quintoandar';
+    }
+
+    if (this.isFromVivaReal(property)) {
+      return 'listing-source-badge--vivareal';
+    }
+
+    if (this.isFromZapImoveis(property)) {
+      return 'listing-source-badge--zapimoveis';
+    }
+
+    if (this.isFromImovelweb(property)) {
+      return 'listing-source-badge--imovelweb';
+    }
+
+    if (this.isFromNetimoveis(property)) {
+      return 'listing-source-badge--netimoveis';
+    }
+
+    if (this.isFromOlx(property)) {
+      return 'listing-source-badge--olx';
+    }
+
+    return '';
+  }
+
+  getSourceIcon(property: PropertyListing): string {
+    if (this.isFromQuintoAndar(property)) {
+      return 'bi-building-check';
+    }
+
+    if (this.isFromVivaReal(property)) {
+      return 'bi-house-door-fill';
+    }
+
+    if (this.isFromZapImoveis(property)) {
+      return 'bi-buildings-fill';
+    }
+
+    if (this.isFromImovelweb(property)) {
+      return 'bi-house-gear-fill';
+    }
+
+    if (this.isFromNetimoveis(property)) {
+      return 'bi-house-lock-fill';
+    }
+
+    if (this.isFromOlx(property)) {
+      return 'bi-shop';
+    }
+
+    return 'bi-link-45deg';
+  }
+
+  getSourceTooltip(property: PropertyListing): string {
+    if (this.isFromQuintoAndar(property)) {
+      return 'Anuncio importado do QuintoAndar';
+    }
+
+    if (this.isFromVivaReal(property)) {
+      return 'Anuncio importado da Viva Real';
+    }
+
+    if (this.isFromZapImoveis(property)) {
+      return 'Anuncio importado do Zap Imoveis';
+    }
+
+    if (this.isFromImovelweb(property)) {
+      return 'Anuncio importado do Imovelweb';
+    }
+
+    if (this.isFromNetimoveis(property)) {
+      return 'Anuncio importado da Netimoveis';
+    }
+
+    if (this.isFromOlx(property)) {
+      return 'Anuncio importado da OLX';
+    }
+
+    return property.source;
+  }
+
+  private getListingHost(property: PropertyListing): string {
+    const url = String(property.originalUrl || '').trim();
+    if (!url) {
+      return '';
+    }
+
+    try {
+      return new URL(url).hostname.toLowerCase();
+    } catch {
+      return '';
+    }
   }
 }

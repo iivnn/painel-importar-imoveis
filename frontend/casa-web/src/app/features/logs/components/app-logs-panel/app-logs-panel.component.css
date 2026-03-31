@@ -1,0 +1,317 @@
+.logs-panel {
+  width: min(100%, 1100px);
+  margin: 0 auto;
+  padding: 1.5rem;
+  border: 1px solid var(--app-border);
+  border-radius: 1.5rem;
+  background: var(--app-surface);
+  box-shadow: 0 18px 34px color-mix(in srgb, var(--app-shadow-soft) 55%, transparent);
+}
+
+.logs-panel__header,
+.logs-pagination,
+.logs-pagination__actions,
+.log-entry__meta,
+.log-entry__headline,
+.log-entry__details-grid {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.logs-panel__header,
+.logs-pagination {
+  justify-content: space-between;
+}
+
+.logs-panel__header {
+  margin-bottom: 1.25rem;
+}
+
+.logs-panel__intro {
+  display: grid;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.logs-panel__eyebrow {
+  color: var(--app-muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.logs-panel__title {
+  margin: 0;
+  font-size: 1.9rem;
+}
+
+.logs-panel__subtitle {
+  margin: 0;
+  color: var(--app-muted);
+}
+
+.logs-section {
+  display: grid;
+  gap: 0.95rem;
+  margin-bottom: 1.2rem;
+}
+
+.logs-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logs-section__title {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--app-muted-strong);
+}
+
+.logs-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.logs-summary--sources {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.logs-summary__card {
+  min-width: 0;
+  padding: 0.95rem 1rem;
+  border: 1px solid var(--app-border);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--app-surface-elevated) 94%, transparent);
+}
+
+.logs-summary__card--primary {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--app-accent-soft) 64%, var(--app-surface-elevated)),
+    color-mix(in srgb, var(--app-surface-elevated) 92%, transparent)
+  );
+  border-color: color-mix(in srgb, var(--app-accent) 24%, var(--app-border));
+}
+
+.logs-summary__label {
+  display: block;
+  color: var(--app-muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.logs-summary__value {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--app-ink);
+}
+
+.logs-summary__value--danger {
+  color: var(--app-danger);
+}
+
+.logs-summary__value--warning {
+  color: var(--app-warning);
+}
+
+.logs-summary__value--info {
+  color: var(--app-info);
+}
+
+.logs-filters {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--app-border);
+  border-radius: 1.15rem;
+  background: color-mix(in srgb, var(--app-surface-soft) 96%, transparent);
+}
+
+.logs-filters__grid {
+  display: grid;
+  grid-template-columns: 11rem 11rem minmax(0, 1fr);
+  gap: 0.9rem;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.logs-filters .app-select-shell,
+.logs-filters__search {
+  min-width: 0;
+  width: 100%;
+}
+
+.logs-filters__actions {
+  flex: 0 0 auto;
+}
+
+.logs-list {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.log-entry {
+  min-width: 0;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--app-border);
+  border-radius: 1.15rem;
+  background: color-mix(in srgb, var(--app-surface-soft) 96%, transparent);
+}
+
+.log-entry__meta,
+.log-entry__details-grid,
+.logs-pagination__actions {
+  flex-wrap: wrap;
+}
+
+.log-entry__meta {
+  margin-bottom: 0.8rem;
+}
+
+.log-entry__headline {
+  margin-bottom: 0.55rem;
+  flex-wrap: wrap;
+  color: var(--app-muted-strong);
+}
+
+.log-entry__headline strong {
+  color: var(--app-ink);
+}
+
+.log-entry__headline span {
+  min-width: 0;
+  word-break: break-word;
+}
+
+.log-entry__timestamp {
+  color: var(--app-muted);
+  font-size: 0.84rem;
+}
+
+.log-entry__message {
+  margin: 0 0 0.8rem;
+  color: var(--app-ink);
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.log-entry__details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  color: var(--app-muted);
+  font-size: 0.9rem;
+}
+
+.log-entry__details-grid span {
+  min-width: 0;
+  word-break: break-word;
+}
+
+.log-entry__details {
+  margin-top: 0.9rem;
+}
+
+.log-entry__details summary {
+  cursor: pointer;
+  color: var(--app-info);
+  font-weight: 700;
+}
+
+.log-entry__details pre {
+  margin: 0.85rem 0 0;
+  padding: 0.9rem;
+  border: 1px solid var(--app-border);
+  border-radius: 0.9rem;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: color-mix(in srgb, var(--app-surface-elevated) 96%, transparent);
+  color: var(--app-ink);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.logs-panel__feedback {
+  padding: 1rem 1.1rem;
+  border: 1px dashed var(--app-border-strong);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--app-surface-elevated) 94%, transparent);
+  color: var(--app-muted);
+}
+
+.logs-panel__feedback--error {
+  margin-bottom: 1rem;
+  border-color: var(--app-danger-border);
+  background: color-mix(in srgb, var(--app-danger-soft) 58%, var(--app-surface-elevated));
+  color: var(--app-danger);
+}
+
+.logs-pagination {
+  margin-top: 0.5rem;
+}
+
+.logs-pagination__summary,
+.logs-pagination__page {
+  color: var(--app-muted);
+}
+
+.logs-pagination__summary {
+  min-width: 0;
+  word-break: break-word;
+}
+
+@media (max-width: 1199.98px) {
+  .logs-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .logs-summary--sources {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .logs-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .logs-filters__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .logs-filters__search {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .logs-panel {
+    padding: 1rem;
+  }
+
+  .logs-panel__header,
+  .logs-pagination {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .logs-summary,
+  .logs-summary--sources,
+  .logs-filters__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .log-entry__details-grid {
+    grid-template-columns: 1fr;
+  }
+}

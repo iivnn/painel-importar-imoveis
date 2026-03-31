@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, OnDestroy, inject, input } from '@angular/core';
 
 import { MapPreviewService } from '../../../../core/services/map-preview.service';
 
@@ -8,7 +8,7 @@ import { MapPreviewService } from '../../../../core/services/map-preview.service
   templateUrl: './map-tooltip-button.component.html',
   styleUrl: './map-tooltip-button.component.css'
 })
-export class MapTooltipButtonComponent {
+export class MapTooltipButtonComponent implements OnDestroy {
   private readonly mapPreviewService = inject(MapPreviewService);
 
   readonly latitude = input<number | null>(null);
@@ -28,6 +28,10 @@ export class MapTooltipButtonComponent {
   }
 
   hidePreview(): void {
+    this.mapPreviewService.hideWithDelay();
+  }
+
+  ngOnDestroy(): void {
     this.mapPreviewService.hide();
   }
 }

@@ -61,4 +61,36 @@ public class UpdateAppSettingsRequest
     public int EvidenceWeight { get; set; }
 
     public int SourceQualityWeight { get; set; }
+
+    public AppLogLevel BackendMinimumLogLevel { get; set; }
+
+    public AppLogLevel FrontendMinimumLogLevel { get; set; }
+
+    public AppLogLevel ExtensionMinimumLogLevel { get; set; }
+
+    public int InfoLogRetentionDays { get; set; }
+
+    public int WarningLogRetentionDays { get; set; }
+
+    public int ErrorLogRetentionDays { get; set; }
+
+    public bool LogNavigationEvents { get; set; }
+
+    public bool LogFrontendHttpFailures { get; set; }
+
+    public bool LogRealtimeEvents { get; set; }
+
+    public bool LogExtensionExtractionEvents { get; set; }
+
+    public bool LogExtensionGeocodingEvents { get; set; }
+
+    public bool LogExtensionImageImportEvents { get; set; }
+
+    public bool AllowFrontendLogIngestion { get; set; }
+
+    public bool AllowExtensionLogIngestion { get; set; }
+
+    public int LogDetailsMaxLength { get; set; }
+
+    public bool LogAutoCleanupEnabled { get; set; }
 }

@@ -1,0 +1,46 @@
+<div class="modal-backdrop-shell">
+  <section
+    class="confirm-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="confirm-clear-logs-title"
+  >
+    <p class="confirm-modal__kicker mb-2">Excluir logs</p>
+    <h2 id="confirm-clear-logs-title" class="confirm-modal__title mb-2">
+      Tem certeza que quer apagar todos os logs?
+    </h2>
+    <p class="confirm-modal__copy mb-0">
+      Essa acao remove de uma vez os logs de backend, frontend e extensao armazenados no sistema.
+    </p>
+
+    @if (errorMessage()) {
+      <div class="alert alert-danger mt-3 mb-0" role="alert">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <div class="confirm-modal__actions mt-4">
+      <button
+        type="button"
+        class="btn btn-outline-brand"
+        (click)="cancel.emit()"
+        [disabled]="isClearing()"
+      >
+        Cancelar
+      </button>
+      <button
+        type="button"
+        class="btn btn-danger"
+        (click)="confirm.emit()"
+        [disabled]="isClearing()"
+      >
+        @if (isClearing()) {
+          <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+          Excluindo...
+        } @else {
+          Confirmar exclusao
+        }
+      </button>
+    </div>
+  </section>
+</div>

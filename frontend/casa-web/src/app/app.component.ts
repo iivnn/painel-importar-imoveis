@@ -3,11 +3,20 @@ import { RouterOutlet } from '@angular/router';
 import { finalize, firstValueFrom } from 'rxjs';
 import * as signalR from '@microsoft/signalr';
 
+import { AppLogsService } from './core/services/app-logs.service';
 import { AppSettingsService } from './core/services/app-settings.service';
 import { PropertyInconsistenciesService } from './core/services/property-inconsistencies.service';
 import { PropertyListingsService } from './core/services/property-listings.service';
+import { AppLogsPanelComponent } from './features/logs/components/app-logs-panel/app-logs-panel.component';
+import {
+  AppLogFilters,
+  AppLogPage,
+  AppLogSummary,
+  EMPTY_APP_LOG_FILTERS
+} from './features/logs/models/app-log.model';
 import { AppSettingsPanelComponent } from './features/settings/components/app-settings-panel/app-settings-panel.component';
 import { AppSettings, DEFAULT_APP_SETTINGS } from './features/settings/models/app-settings.model';
+import { ConfirmClearLogsModalComponent } from './features/logs/components/confirm-clear-logs-modal/confirm-clear-logs-modal.component';
 import { ConfirmDeleteModalComponent } from './features/properties/components/confirm-delete-modal/confirm-delete-modal.component';
 import { CreatePropertyModalComponent } from './features/properties/components/create-property-modal/create-property-modal.component';
 import { PropertyComparePanelComponent } from './features/properties/components/property-compare-panel/property-compare-panel.component';
@@ -40,6 +49,7 @@ import {
 } from './features/properties/models/property-inconsistency.model';
 import { PropertySwotAnalysis, SavePropertySwotRequest } from './features/properties/models/property-swot.model';
 import { GlobalMapPreviewComponent } from './shared/components/global-map-preview/global-map-preview.component';
+import { GlobalPhotoPreviewComponent } from './shared/components/global-photo-preview/global-photo-preview.component';
 import { ThemeToggleButtonComponent } from './shared/components/theme-toggle-button/theme-toggle-button.component';
 
 @Component({
@@ -47,10 +57,13 @@ import { ThemeToggleButtonComponent } from './shared/components/theme-toggle-but
   standalone: true,
   imports: [
     RouterOutlet,
+    AppLogsPanelComponent,
     AppSettingsPanelComponent,
+    ConfirmClearLogsModalComponent,
     PropertyListingsTableComponent,
     ConfirmDeleteModalComponent,
     GlobalMapPreviewComponent,
+    GlobalPhotoPreviewComponent,
     ThemeToggleButtonComponent,
     CreatePropertyModalComponent,
     PropertyComparePanelComponent,
@@ -66,10 +79,12 @@ import { ThemeToggleButtonComponent } from './shared/components/theme-toggle-but
   styleUrl: './app.component.css'
 })
 export class AppComponent implements OnInit, OnDestroy {
+  private readonly appLogsService = inject(AppLogsService);
   private readonly appSettingsService = inject(AppSettingsService);
   private readonly propertyInconsistenciesService = inject(PropertyInconsistenciesService);
   private readonly propertyListingsService = inject(PropertyListingsService);
   private inconsistencyConnection: signalR.HubConnection | null = null;
+  private logsConnection: signalR.HubConnection | null = null;
   private scrollToHighlightedRowAttempts = 0;
   private isRefreshingFromRealtime = false;
 
@@ -88,26 +103,37 @@ export class AppComponent implements OnInit, OnDestroy {
   });
   readonly filters = signal<PropertyFilters>(EMPTY_PROPERTY_FILTERS);
   readonly activeView = signal<'list' | 'map'>('list');
-  readonly activeSection = signal<'inicio' | 'favoritos' | 'inconsistencias' | 'configuracoes' | 'detalhe' | 'comparar'>('inicio');
+  readonly activeSection = signal<'inicio' | 'favoritos' | 'inconsistencias' | 'logs' | 'configuracoes' | 'detalhe' | 'comparar'>('inicio');
   readonly highlightedPropertyId = signal<number | null>(null);
   readonly favoriteFilters = signal<PropertyFavoritesFilters>(EMPTY_PROPERTY_FAVORITES_FILTERS);
   readonly favoriteSortBy = signal<PropertyFavoriteSortBy>('Recent');
   readonly favoritesPage = signal(1);
   readonly favoritesPageSize = signal(6);
+  readonly logFilters = signal<AppLogFilters>(EMPTY_APP_LOG_FILTERS);
+  readonly logsPageData = signal<AppLogPage>({
+    items: [],
+    page: 1,
+    pageSize: 20,
+    totalItems: 0,
+    totalPages: 0
+  });
 
   readonly isLoading = signal(false);
   readonly isMapLoading = signal(false);
   readonly isFilterOptionsLoading = signal(false);
   readonly isFavoritesLoading = signal(false);
   readonly isInconsistenciesLoading = signal(false);
+  readonly isLogsLoading = signal(false);
   readonly dismissingInconsistencyIds = signal<string[]>([]);
   readonly loadError = signal('');
   readonly mapLoadError = signal('');
   readonly favoritesLoadError = signal('');
   readonly inconsistenciesLoadError = signal('');
+  readonly logsLoadError = signal('');
 
   readonly favoritesData = signal<PropertyFavoritesResponse | null>(null);
   readonly inconsistenciesSummary = signal<PropertyInconsistencySummary | null>(null);
+  readonly logsSummary = signal<AppLogSummary | null>(null);
   readonly inconsistencyItems = signal<PropertyInconsistencyItem[]>([]);
   readonly appSettings = signal<AppSettings>(DEFAULT_APP_SETTINGS);
   readonly isSettingsLoading = signal(false);
@@ -115,6 +141,9 @@ export class AppComponent implements OnInit, OnDestroy {
   readonly settingsLoadError = signal('');
   readonly settingsSaveError = signal('');
   readonly settingsSaveSuccessMessage = signal('');
+  readonly isClearLogsModalOpen = signal(false);
+  readonly isClearingLogs = signal(false);
+  readonly clearLogsError = signal('');
 
   readonly isDeleteModalOpen = signal(false);
   readonly propertyPendingDelete = signal<PropertyListing | null>(null);
@@ -158,10 +187,12 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadSettings();
     this.startInconsistencyRealtime();
+    this.startLogsRealtime();
   }
 
   ngOnDestroy(): void {
     void this.inconsistencyConnection?.stop();
+    void this.logsConnection?.stop();
   }
 
   loadPage(page: number): void {
@@ -234,11 +265,24 @@ export class AppComponent implements OnInit, OnDestroy {
 
   showHome(): void {
     this.activeSection.set('inicio');
+    this.appLogsService.logInfo('Navigation', 'ShowHome', 'Tela inicial aberta.');
   }
 
   showInconsistencies(): void {
     this.activeSection.set('inconsistencias');
+    this.appLogsService.logInfo('Navigation', 'ShowInconsistencies', 'Tela de inconsistencias aberta.');
     this.loadInconsistencies();
+  }
+
+  showLogs(): void {
+    this.activeSection.set('logs');
+    this.appLogsService.logInfo('Navigation', 'ShowLogs', 'Tela de logs aberta.');
+    this.refreshLogs();
+  }
+
+  refreshLogs(): void {
+    this.loadLogsSummary();
+    this.loadLogsPage(this.logsPageData().page);
   }
 
   dismissInconsistency(inconsistencyId: string): void {
@@ -266,16 +310,45 @@ export class AppComponent implements OnInit, OnDestroy {
 
   showFavorites(): void {
     this.activeSection.set('favoritos');
+    this.appLogsService.logInfo('Navigation', 'ShowFavorites', 'Tela de favoritos aberta.');
     this.loadFavorites();
   }
 
   showCompare(): void {
     this.activeSection.set('comparar');
+    this.appLogsService.logInfo('Navigation', 'ShowCompare', 'Tela de comparacao aberta.');
     this.loadCompareDetails();
   }
 
   showSettings(): void {
     this.activeSection.set('configuracoes');
+    this.appLogsService.logInfo('Navigation', 'ShowSettings', 'Tela de configuracoes aberta.');
+  }
+
+  applyLogFilters(filters: AppLogFilters): void {
+    this.logFilters.set(filters);
+    this.loadLogsPage(1);
+  }
+
+  clearLogFilters(): void {
+    this.logFilters.set(EMPTY_APP_LOG_FILTERS);
+    this.loadLogsPage(1);
+  }
+
+  goToPreviousLogsPage(): void {
+    if (this.isLogsLoading() || this.logsPageData().page <= 1) {
+      return;
+    }
+
+    this.loadLogsPage(this.logsPageData().page - 1);
+  }
+
+  goToNextLogsPage(): void {
+    if (this.isLogsLoading() || this.logsPageData().page >= this.logsPageData().totalPages) {
+      return;
+    }
+
+    this.loadLogsPage(this.logsPageData().page + 1);
   }
 
   openPropertyFromInconsistency(propertyId: number): void {
@@ -402,6 +475,13 @@ export class AppComponent implements OnInit, OnDestroy {
             this.isCreateModalOpen.set(false);
             this.createModalMode.set('create');
             this.propertyPendingEdit.set(null);
+            this.appLogsService.logInfo('Properties', 'PropertyUpdatedFromUi', 'Imóvel atualizado pela tela principal.', {
+              propertyId: property.id,
+              title: property.title
+            }, {
+              relatedEntityType: 'Property',
+              relatedEntityId: String(property.id)
+            });
             this.loadFilterOptions();
             this.refreshData(1);
             this.loadFavorites();
@@ -413,6 +493,7 @@ export class AppComponent implements OnInit, OnDestroy {
             this.createError.set(
               'N\u00e3o foi poss\u00edvel salvar o registro agora. Confira os campos e tente novamente.'
             );
+            this.appLogsService.logWarning('Properties', 'PropertyUpdateFailedFromUi', 'Falha ao atualizar imóvel pela tela principal.');
           }
         });
 
@@ -427,6 +508,12 @@ export class AppComponent implements OnInit, OnDestroy {
           this.isCreateModalOpen.set(false);
           this.createModalMode.set('create');
           this.propertyPendingEdit.set(null);
+          this.appLogsService.logInfo('Properties', 'PropertyCreatedFromUi', 'Novo imóvel criado pela tela principal.', {
+            title: request.title,
+            category: request.category,
+            city: request.city,
+            state: request.state
+          });
           this.loadFilterOptions();
           this.refreshData(1);
           this.loadFavorites();
@@ -435,6 +522,10 @@ export class AppComponent implements OnInit, OnDestroy {
           this.createError.set(
             'N\u00e3o foi poss\u00edvel salvar o registro agora. Confira os campos e tente novamente.'
           );
+          this.appLogsService.logWarning('Properties', 'PropertyCreateFailedFromUi', 'Falha ao criar imóvel pela tela principal.', {
+            title: request.title,
+            category: request.category
+          });
         }
       });
   }
@@ -454,6 +545,11 @@ export class AppComponent implements OnInit, OnDestroy {
       .subscribe({
         next: settings => {
           this.applySettings(settings);
+          this.appLogsService.logInfo('Settings', 'SettingsSavedFromUi', 'Configurações salvas pela interface.', {
+            listingsPageSize: settings.listingsPageSize,
+            favoritesPageSize: settings.favoritesPageSize,
+            favoritesSortBy: settings.favoritesSortBy
+          });
           this.settingsSaveSuccessMessage.set('Configurações salvas com sucesso.');
           window.setTimeout(() => {
             if (this.settingsSaveSuccessMessage() === 'Configurações salvas com sucesso.') {
@@ -469,6 +565,68 @@ export class AppComponent implements OnInit, OnDestroy {
         },
         error: () => {
           this.settingsSaveError.set('Não foi possível salvar as configurações agora. Tente novamente.');
+          this.appLogsService.logWarning('Settings', 'SettingsSaveFailedFromUi', 'Falha ao salvar configurações pela interface.');
+        }
+      });
+  }
+
+  openClearLogsModal(): void {
+    this.clearLogsError.set('');
+    this.isClearLogsModalOpen.set(true);
+  }
+
+  closeClearLogsModal(): void {
+    if (this.isClearingLogs()) {
+      return;
+    }
+
+    this.clearLogsError.set('');
+    this.isClearLogsModalOpen.set(false);
+  }
+
+  confirmClearLogs(): void {
+    if (this.isClearingLogs()) {
+      return;
+    }
+
+    this.isClearingLogs.set(true);
+    this.clearLogsError.set('');
+
+    this.appLogsService
+      .clearAll()
+      .pipe(finalize(() => this.isClearingLogs.set(false)))
+      .subscribe({
+        next: () => {
+          this.isClearLogsModalOpen.set(false);
+          this.logsSummary.set({
+            totalItems: 0,
+            infoCount: 0,
+            warningCount: 0,
+            errorCount: 0,
+            backendCount: 0,
+            frontendCount: 0,
+            extensionCount: 0,
+            latestCreatedAtUtc: null
+          });
+          this.logsPageData.set({
+            items: [],
+            page: 1,
+            pageSize: this.logsPageData().pageSize,
+            totalItems: 0,
+            totalPages: 0
+          });
+          this.settingsSaveSuccessMessage.set('Logs excluidos com sucesso.');
+          window.setTimeout(() => {
+            if (this.settingsSaveSuccessMessage() === 'Logs excluidos com sucesso.') {
+              this.settingsSaveSuccessMessage.set('');
+            }
+          }, 3000);
+          if (this.activeSection() === 'logs') {
+            this.refreshLogs();
+          }
+        },
+        error: () => {
+          this.clearLogsError.set('Nao foi possivel excluir os logs agora. Tente novamente.');
         }
       });
   }
@@ -705,6 +863,13 @@ export class AppComponent implements OnInit, OnDestroy {
         next: response => {
           this.swotAnalysis.set(response);
           this.updatePropertySwotInPage(property.id, response);
+          this.appLogsService.logInfo('Swot', 'SwotSavedFromUi', 'Análise SWOT salva pela interface.', {
+            propertyId: property.id,
+            score: response.score
+          }, {
+            relatedEntityType: 'Property',
+            relatedEntityId: String(property.id)
+          });
           this.swotLoadError.set('');
           this.swotSubmitError.set('');
           this.refreshData(this.pageData().page);
@@ -719,6 +884,12 @@ export class AppComponent implements OnInit, OnDestroy {
           this.swotSubmitError.set(
             'N\u00e3o foi poss\u00edvel salvar a an\u00e1lise SWOT agora. Tente novamente.'
           );
+          this.appLogsService.logWarning('Swot', 'SwotSaveFailedFromUi', 'Falha ao salvar análise SWOT pela interface.', {
+            propertyId: property.id
+          }, {
+            relatedEntityType: 'Property',
+            relatedEntityId: String(property.id)
+          });
         }
       });
   }
@@ -749,6 +920,14 @@ export class AppComponent implements OnInit, OnDestroy {
             ...current,
             items: current.items.map(item => item.id === updatedProperty.id ? updatedProperty : item)
           }));
+          this.appLogsService.logInfo('Properties', 'PropertyStatusUpdatedFromUi', 'Status do imóvel alterado pela tabela principal.', {
+            propertyId: updatedProperty.id,
+            status: updatedProperty.swotStatus,
+            reason
+          }, {
+            relatedEntityType: 'Property',
+            relatedEntityId: String(updatedProperty.id)
+          });
 
           this.propertyPendingSwot.update(current => current && current.id === updatedProperty.id
             ? updatedProperty
@@ -762,6 +941,13 @@ export class AppComponent implements OnInit, OnDestroy {
         },
         error: () => {
           this.loadError.set('N\u00e3o foi poss\u00edvel atualizar o status agora. Tente novamente.');
+          this.appLogsService.logWarning('Properties', 'PropertyStatusUpdateFailedFromUi', 'Falha ao atualizar status do imóvel pela tabela.', {
+            propertyId: property.id,
+            status
+          }, {
+            relatedEntityType: 'Property',
+            relatedEntityId: String(property.id)
+          });
         }
       });
   }
@@ -784,6 +970,19 @@ export class AppComponent implements OnInit, OnDestroy {
             ...current,
             items: current.items.map(item => item.id === updatedProperty.id ? updatedProperty : item)
           }));
+          this.appLogsService.logInfo(
+            'Properties',
+            'PropertyFavoriteUpdatedFromUi',
+            !property.isFavorite ? 'Imóvel marcado como favorito pela interface.' : 'Imóvel removido dos favoritos pela interface.',
+            {
+              propertyId: updatedProperty.id,
+              isFavorite: updatedProperty.isFavorite
+            },
+            {
+              relatedEntityType: 'Property',
+              relatedEntityId: String(updatedProperty.id)
+            }
+          );
 
           this.mapItems.update(current => current.map(item => item.id === updatedProperty.id
             ? updatedProperty
@@ -800,6 +999,13 @@ export class AppComponent implements OnInit, OnDestroy {
         },
         error: () => {
           this.loadError.set('N\u00e3o foi poss\u00edvel atualizar o favorito agora. Tente novamente.');
+          this.appLogsService.logWarning('Properties', 'PropertyFavoriteUpdateFailedFromUi', 'Falha ao atualizar favorito pela interface.', {
+            propertyId: property.id,
+            nextIsFavorite: !property.isFavorite
+          }, {
+            relatedEntityType: 'Property',
+            relatedEntityId: String(property.id)
+          });
         }
       });
   }
@@ -837,6 +1043,13 @@ export class AppComponent implements OnInit, OnDestroy {
         next: () => {
           this.isDeleteModalOpen.set(false);
           this.propertyPendingDelete.set(null);
+          this.appLogsService.logInfo('Properties', 'PropertyDeletedFromUi', 'Imóvel excluído pela interface.', {
+            propertyId: property.id,
+            title: property.title
+          }, {
+            relatedEntityType: 'Property',
+            relatedEntityId: String(property.id)
+          });
           this.loadFilterOptions();
           this.loadFavorites();
 
@@ -850,6 +1063,13 @@ export class AppComponent implements OnInit, OnDestroy {
           this.deleteError.set(
             'N\u00e3o foi poss\u00edvel excluir o registro agora. Tente novamente.'
           );
+          this.appLogsService.logWarning('Properties', 'PropertyDeleteFailedFromUi', 'Falha ao excluir imóvel pela interface.', {
+            propertyId: property.id,
+            title: property.title
+          }, {
+            relatedEntityType: 'Property',
+            relatedEntityId: String(property.id)
+          });
         }
       });
   }
@@ -911,6 +1131,41 @@ export class AppComponent implements OnInit, OnDestroy {
     this.inconsistencyItems.set(response.items);
   }
 
+  private loadLogsSummary(): void {
+    this.appLogsService.getSummary().subscribe({
+      next: summary => this.logsSummary.set(summary),
+      error: () => {
+        this.logsSummary.set({
+          totalItems: 0,
+          infoCount: 0,
+          warningCount: 0,
+          errorCount: 0,
+          backendCount: 0,
+          frontendCount: 0,
+          extensionCount: 0,
+          latestCreatedAtUtc: null
+        });
+      }
+    });
+  }
+
+  private loadLogsPage(page: number): void {
+    const nextPage = Math.max(1, page);
+
+    this.isLogsLoading.set(true);
+    this.logsLoadError.set('');
+
+    this.appLogsService
+      .getPage(nextPage, this.logsPageData().pageSize, this.logFilters())
+      .pipe(finalize(() => this.isLogsLoading.set(false)))
+      .subscribe({
+        next: response => this.logsPageData.set(response),
+        error: () => {
+          this.logsLoadError.set('Nao foi possivel carregar os logs do sistema agora.');
+        }
+      });
+  }
+
   private startInconsistencyRealtime(): void {
     const connection = this.propertyInconsistenciesService.createConnection();
     this.inconsistencyConnection = connection;
@@ -926,6 +1181,11 @@ export class AppComponent implements OnInit, OnDestroy {
     });
 
     connection.on('propertyCreated', (_event: { propertyId: number; title: string }) => {
+      this.appLogsService.logInfo('Realtime', 'PropertyCreatedRealtimeEvent', 'Evento em tempo real recebido para novo imóvel.', _event, {
+        relatedEntityType: 'Property',
+        relatedEntityId: String(_event.propertyId)
+      });
+
       if (this.activeSection() === 'inicio') {
         this.refreshDataFromRealtime();
       }
@@ -937,6 +1197,29 @@ export class AppComponent implements OnInit, OnDestroy {
 
     void connection.start().catch(() => {
       this.loadInconsistenciesSummary();
+    });
+  }
+
+  private startLogsRealtime(): void {
+    const connection = this.appLogsService.createConnection();
+    this.logsConnection = connection;
+
+    connection.on('logsSummaryUpdated', (summary: AppLogSummary) => {
+      this.logsSummary.set(summary);
+
+      if (this.activeSection() === 'logs') {
+        this.loadLogsPage(this.logsPageData().page);
+      }
+    });
+
+    connection.on('logsChanged', () => {
+      if (this.activeSection() === 'logs') {
+        this.loadLogsPage(this.logsPageData().page);
+      }
+    });
+
+    void connection.start().catch(() => {
+      this.loadLogsSummary();
     });
   }
 
@@ -993,6 +1276,7 @@ export class AppComponent implements OnInit, OnDestroy {
           this.refreshData(1);
           this.loadFavorites();
           this.loadInconsistenciesSummary();
+          this.loadLogsSummary();
         },
         error: () => {
           this.settingsLoadError.set('Não foi possível carregar as configurações do sistema.');
@@ -1000,6 +1284,7 @@ export class AppComponent implements OnInit, OnDestroy {
           this.refreshData(1);
           this.loadFavorites();
           this.loadInconsistenciesSummary();
+          this.loadLogsSummary();
         }
       });
   }
@@ -1084,6 +1369,7 @@ export class AppComponent implements OnInit, OnDestroy {
         condoFee: null,
         iptu: null,
         insurance: null,
+        serviceFee: null,
         upfrontCost: null,
         addressLine: fromFavorites.addressLine,
         neighborhood: fromFavorites.neighborhood,
@@ -1119,6 +1405,7 @@ export class AppComponent implements OnInit, OnDestroy {
         condoFee: fromDetails.condoFee,
         iptu: fromDetails.iptu,
         insurance: fromDetails.insurance,
+        serviceFee: fromDetails.serviceFee,
         upfrontCost: fromDetails.upfrontCost,
         addressLine: fromDetails.addressLine,
         neighborhood: fromDetails.neighborhood,

@@ -7,6 +7,7 @@ namespace Casa.Infrastructure.Persistence;
 
 public class CasaDbContext(DbContextOptions<CasaDbContext> options) : DbContext(options)
 {
+    public DbSet<AppLogEntry> AppLogEntries => Set<AppLogEntry>();
     public DbSet<AppSettingsProfile> AppSettingsProfiles => Set<AppSettingsProfile>();
     public DbSet<DismissedPropertyInconsistency> DismissedPropertyInconsistencies => Set<DismissedPropertyInconsistency>();
     public DbSet<PropertyListing> PropertyListings => Set<PropertyListing>();
@@ -15,6 +16,67 @@ public class CasaDbContext(DbContextOptions<CasaDbContext> options) : DbContext(
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<AppLogEntry>(entity =>
+        {
+            var appLogSourceConverter = new ValueConverter<AppLogSource, string>(
+                source => source.ToString(),
+                source => ParseAppLogSource(source));
+
+            var appLogLevelConverter = new ValueConverter<AppLogLevel, string>(
+                level => level.ToString(),
+                level => ParseAppLogLevel(level));
+
+            entity.ToTable("AppLogEntries");
+            entity.HasKey(log => log.Id);
+
+            entity.Property(log => log.Source)
+                .HasConversion(appLogSourceConverter)
+                .HasMaxLength(40)
+                .IsRequired();
+
+            entity.Property(log => log.Level)
+                .HasConversion(appLogLevelConverter)
+                .HasMaxLength(20)
+                .IsRequired();
+
+            entity.Property(log => log.Category)
+                .HasMaxLength(80)
+                .IsRequired();
+
+            entity.Property(log => log.EventName)
+                .HasMaxLength(120)
+                .IsRequired();
+
+            entity.Property(log => log.Message)
+                .HasMaxLength(2000)
+                .IsRequired();
+
+            entity.Property(log => log.DetailsJson)
+                .HasMaxLength(12000);
+
+            entity.Property(log => log.TraceId)
+                .HasMaxLength(120);
+
+            entity.Property(log => log.Path)
+                .HasMaxLength(500);
+
+            entity.Property(log => log.Method)
+                .HasMaxLength(20);
+
+            entity.Property(log => log.UserAgent)
+                .HasMaxLength(512);
+
+            entity.Property(log => log.RelatedEntityType)
+                .HasMaxLength(80);
+
+            entity.Property(log => log.RelatedEntityId)
+                .HasMaxLength(80);
+
+            entity.HasIndex(log => log.CreatedAtUtc);
+            entity.HasIndex(log => log.Source);
+            entity.HasIndex(log => log.Level);
+        });
+
         var propertyAttachmentKindConverter = new ValueConverter<PropertyAttachmentKind, string>(
             kind => kind.ToString(),
             kind => ParsePropertyAttachmentKind(kind));
@@ -89,6 +151,9 @@ public class CasaDbContext(DbContextOptions<CasaDbContext> options) : DbContext(
             entity.Property(property => property.Insurance)
                 .HasPrecision(10, 2);
 
+            entity.Property(property => property.ServiceFee)
+                .HasPrecision(10, 2);
+
             entity.Property(property => property.UpfrontCost)
                 .HasPrecision(10, 2);
 
@@ -125,6 +190,10 @@ public class CasaDbContext(DbContextOptions<CasaDbContext> options) : DbContext(
 
         modelBuilder.Entity<AppSettingsProfile>(entity =>
         {
+            var appLogLevelConverter = new ValueConverter<AppLogLevel, string>(
+                level => level.ToString(),
+                level => ParseAppLogLevel(level));
+
             entity.ToTable("AppSettingsProfiles");
             entity.HasKey(settings => settings.Id);
 
@@ -186,6 +255,21 @@ public class CasaDbContext(DbContextOptions<CasaDbContext> options) : DbContext(
 
             entity.Property(settings => settings.PriceAboveAverageRatio)
                 .HasPrecision(5, 2);
+
+            entity.Property(settings => settings.BackendMinimumLogLevel)
+                .HasConversion(appLogLevelConverter)
+                .HasMaxLength(20)
+                .IsRequired();
+
+            entity.Property(settings => settings.FrontendMinimumLogLevel)
+                .HasConversion(appLogLevelConverter)
+                .HasMaxLength(20)
+                .IsRequired();
+
+            entity.Property(settings => settings.ExtensionMinimumLogLevel)
+                .HasConversion(appLogLevelConverter)
+                .HasMaxLength(20)
+                .IsRequired();
         });
 
         modelBuilder.Entity<DismissedPropertyInconsistency>(entity =>
@@ -268,6 +352,20 @@ public class CasaDbContext(DbContextOptions<CasaDbContext> options) : DbContext(
             _ when Enum.TryParse<PropertySource>(source, true, out var parsedSource) => parsedSource,
             _ => PropertySource.Outro
         };
+    }
+
+    private static AppLogSource ParseAppLogSource(string? source)
+    {
+        return Enum.TryParse<AppLogSource>(source, true, out var parsedSource)
+            ? parsedSource
+            : AppLogSource.Backend;
+    }
+
+    private static AppLogLevel ParseAppLogLevel(string? level)
+    {
+        return Enum.TryParse<AppLogLevel>(level, true, out var parsedLevel)
+            ? parsedLevel
+            : AppLogLevel.Info;
     }
 
     private static PropertySwotStatus ParsePropertySwotStatus(string? status)

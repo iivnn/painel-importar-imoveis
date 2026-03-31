@@ -59,7 +59,19 @@
             <tr [class.property-row--highlighted]="isHighlighted(property.id)">
               <td class="col-property">
                 <div class="property-main">
-                  <strong>{{ property.title }}</strong>
+                  <div class="d-flex align-items-center gap-2 min-w-0">
+                    <strong>{{ property.title }}</strong>
+                    @if (isFromQuintoAndar(property) || isFromVivaReal(property) || isFromZapImoveis(property) || isFromImovelweb(property) || isFromNetimoveis(property) || isFromOlx(property)) {
+                      <span
+                        class="listing-source-badge"
+                        [class]=" 'listing-source-badge ' + getSourceBadgeClass(property)"
+                        [title]="getSourceTooltip(property)"
+                        [attr.aria-label]="getSourceTooltip(property)"
+                      >
+                        <i class="bi" [class]="getSourceIcon(property)" aria-hidden="true"></i>
+                      </span>
+                    }
+                  </div>
                   <span>{{ property.source }}</span>
                   @if (property.score !== null) {
                     <small class="property-main__score">Nota {{ property.score | number: '1.1-1' }}/10</small>
@@ -89,8 +101,8 @@
                 </div>
               </td>
               <td class="col-price">
-                @if (property.price !== null) {
-                  {{ property.price | number: '1.2-2' }}
+                @if (getMonthlyTotal(property) !== null) {
+                  {{ getMonthlyTotal(property) | number: '1.2-2' }}
                 } @else {
                   N&atilde;o informado
                 }
@@ -162,6 +174,10 @@
                     [latitude]="property.latitude"
                     [longitude]="property.longitude"
                     [hasExactLocation]="property.hasExactLocation"
+                  />
+                  <app-photo-preview-button
+                    [propertyId]="property.id"
+                    [propertyTitle]="property.title"
                   />
                   <button
                     type="button"

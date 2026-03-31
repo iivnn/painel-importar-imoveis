@@ -65,4 +65,36 @@ public class AppSettingsProfile
     public int EvidenceWeight { get; set; } = 15;
 
     public int SourceQualityWeight { get; set; } = 10;
+
+    public AppLogLevel BackendMinimumLogLevel { get; set; } = AppLogLevel.Info;
+
+    public AppLogLevel FrontendMinimumLogLevel { get; set; } = AppLogLevel.Warning;
+
+    public AppLogLevel ExtensionMinimumLogLevel { get; set; } = AppLogLevel.Warning;
+
+    public int InfoLogRetentionDays { get; set; } = 30;
+
+    public int WarningLogRetentionDays { get; set; } = 45;
+
+    public int ErrorLogRetentionDays { get; set; } = 90;
+
+    public bool LogNavigationEvents { get; set; } = true;
+
+    public bool LogFrontendHttpFailures { get; set; } = true;
+
+    public bool LogRealtimeEvents { get; set; } = false;
+
+    public bool LogExtensionExtractionEvents { get; set; } = true;
+
+    public bool LogExtensionGeocodingEvents { get; set; } = true;
+
+    public bool LogExtensionImageImportEvents { get; set; } = true;
+
+    public bool AllowFrontendLogIngestion { get; set; } = true;
+
+    public bool AllowExtensionLogIngestion { get; set; } = true;
+
+    public int LogDetailsMaxLength { get; set; } = 4000;
+
+    public bool LogAutoCleanupEnabled { get; set; } = true;
 }

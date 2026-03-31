@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Casa.Api.Endpoints;
+using Casa.Api.Services.AppLogging;
 using Casa.Api.Middleware;
 using Casa.Application;
 using Casa.Infrastructure;
@@ -14,6 +15,7 @@ builder.Services.AddSignalR();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<Casa.Api.Hubs.InconsistencyBroadcastService>();
+builder.Services.AddScoped<AppLogService>();
 builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
 {
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());

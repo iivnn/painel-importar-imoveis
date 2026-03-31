@@ -11,6 +11,7 @@ export interface PropertyListing {
   condoFee: number | null;
   iptu: number | null;
   insurance: number | null;
+  serviceFee: number | null;
   upfrontCost: number | null;
   addressLine: string;
   neighborhood: string;

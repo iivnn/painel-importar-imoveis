@@ -256,6 +256,10 @@ namespace Casa.Infrastructure.Persistence.Migrations
                         .HasPrecision(10, 2)
                         .HasColumnType("TEXT");
 
+                    b.Property<decimal?>("ServiceFee")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("IsFavorite")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")

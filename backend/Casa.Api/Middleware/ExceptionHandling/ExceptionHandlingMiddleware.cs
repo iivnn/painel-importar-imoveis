@@ -1,5 +1,7 @@
 using System.Net;
 using System.Text.Json;
+using Casa.Api.Services.AppLogging;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Casa.Api.Middleware;
 
@@ -31,6 +33,30 @@ public class ExceptionHandlingMiddleware(
             context.Request.Method,
             context.Request.Path,
             traceId);
+
+        var appLogService = context.RequestServices.GetService<AppLogService>();
+
+        if (appLogService is not null)
+        {
+            await appLogService.SafeLogAsync(
+                () => appLogService.LogErrorAsync(
+                    "ExceptionMiddleware",
+                    "UnhandledException",
+                    exception.Message,
+                    new
+                    {
+                        exceptionType = exception.GetType().FullName,
+                        stackTrace = exception.StackTrace,
+                        requestMethod = context.Request.Method,
+                        requestPath = context.Request.Path.Value,
+                        queryString = context.Request.QueryString.Value
+                    },
+                    traceId,
+                    context.Request.Path,
+                    context.Request.Method,
+                    cancellationToken: context.RequestAborted),
+                "Falha ao persistir log de excecao no banco.");
+        }
 
         if (context.Response.HasStarted)
         {

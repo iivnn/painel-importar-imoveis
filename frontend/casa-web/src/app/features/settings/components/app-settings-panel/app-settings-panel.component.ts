@@ -1,6 +1,7 @@
 import { Component, computed, effect, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
+import { AppLogLevel } from '../../../logs/models/app-log.model';
 import { PropertySource, PropertySwotStatus } from '../../../properties/models/create-property.model';
 import {
   AppSettings,
@@ -22,13 +23,26 @@ type NumericField =
   | 'locationWeight'
   | 'analysisWeight'
   | 'evidenceWeight'
-  | 'sourceQualityWeight';
+  | 'sourceQualityWeight'
+  | 'infoLogRetentionDays'
+  | 'warningLogRetentionDays'
+  | 'errorLogRetentionDays'
+  | 'logDetailsMaxLength';
 
 type BooleanField =
   | 'defaultHasExactLocation'
   | 'mapOnlyExactLocation'
   | 'requireCoordinatesForCompleteLocation'
-  | 'requireOriginalUrl';
+  | 'requireOriginalUrl'
+  | 'logNavigationEvents'
+  | 'logFrontendHttpFailures'
+  | 'logRealtimeEvents'
+  | 'logExtensionExtractionEvents'
+  | 'logExtensionGeocodingEvents'
+  | 'logExtensionImageImportEvents'
+  | 'allowFrontendLogIngestion'
+  | 'allowExtensionLogIngestion'
+  | 'logAutoCleanupEnabled';
 
 type TextField = 'defaultCategory' | 'defaultCity' | 'defaultState';
 
@@ -46,30 +60,38 @@ export class AppSettingsPanelComponent {
   readonly loadError = input('');
   readonly saveError = input('');
   readonly saveSuccessMessage = input('');
+  readonly isClearingLogs = input(false);
 
   readonly save = output<AppSettings>();
+  readonly clearLogs = output<void>();
 
   readonly sourceOptions: { value: PropertySource; label: string }[] = [
     { value: 'AppExterno', label: 'App externo' },
     { value: 'PortalWeb', label: 'Portal web' },
-    { value: 'Indicacao', label: 'Indicação' },
+    { value: 'Indicacao', label: 'Indicacao' },
     { value: 'Corretor', label: 'Corretor' },
     { value: 'Outro', label: 'Outro' }
   ];
 
   readonly favoriteSortOptions = [
     { value: 'Recent', label: 'Mais recentes' },
-    { value: 'LowestPrice', label: 'Menor preço' },
+    { value: 'LowestPrice', label: 'Menor preco' },
     { value: 'HighestScore', label: 'Maior nota' },
     { value: 'Status', label: 'Status' }
   ] as const;
 
   readonly statusOptions: { value: PropertySwotStatus; label: string }[] = [
     { value: 'Novo', label: 'Novo' },
-    { value: 'EmAnalise', label: 'Em análise' },
+    { value: 'EmAnalise', label: 'Em analise' },
     { value: 'Visitado', label: 'Visitado' },
     { value: 'Proposta', label: 'Proposta' },
     { value: 'Descartado', label: 'Descartado' }
+  ];
+
+  readonly logLevelOptions: { value: AppLogLevel; label: string }[] = [
+    { value: 'Info', label: 'Info' },
+    { value: 'Warning', label: 'Warning' },
+    { value: 'Error', label: 'Error' }
   ];
 
   readonly form = signal<AppSettings>(DEFAULT_APP_SETTINGS);
@@ -140,6 +162,16 @@ export class AppSettingsPanelComponent {
     }));
   }
 
+  updateLogLevel(
+    field: 'backendMinimumLogLevel' | 'frontendMinimumLogLevel' | 'extensionMinimumLogLevel',
+    value: AppLogLevel
+  ): void {
+    this.form.update(current => ({
+      ...current,
+      [field]: value
+    }));
+  }
+
   updateNeighborhoods(kind: 'preferred' | 'avoided', value: string): void {
     const items = value
       .split(/\r?\n/)
@@ -200,5 +232,13 @@ export class AppSettingsPanelComponent {
       preferredNeighborhoods: value.preferredNeighborhoods.map(item => item.trim()).filter(Boolean),
       avoidedNeighborhoods: value.avoidedNeighborhoods.map(item => item.trim()).filter(Boolean)
     });
+  }
+
+  requestClearLogs(): void {
+    if (this.isLoading() || this.isSaving() || this.isClearingLogs()) {
+      return;
+    }
+
+    this.clearLogs.emit();
   }
 }

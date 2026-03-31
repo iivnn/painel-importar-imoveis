@@ -61,10 +61,11 @@ export function mapDraftToCreateRequest(draft) {
     latitude: draft.latitude ?? null,
     longitude: draft.longitude ?? null,
     hasExactLocation: draft.latitude !== null && draft.longitude !== null,
-    condoFee: null,
-    iptu: null,
-    insurance: null,
-    upfrontCost: null,
+    condoFee: normalizePrice(draft.condoFee),
+    iptu: normalizePrice(draft.iptu),
+    insurance: normalizePrice(draft.insurance),
+    serviceFee: normalizePrice(draft.serviceFee),
+    upfrontCost: normalizePrice(draft.upfrontCost),
     notes: buildImportNotes(draft),
     discardReason: '',
     strengths: '',
@@ -95,6 +96,23 @@ function buildImportNotes(draft) {
   const lines = [
     `Importado automaticamente em ${new Date().toLocaleString('pt-BR')}.`
   ];
+
+  const costs = [
+    ['Aluguel', draft.price],
+    ['Condominio', draft.condoFee],
+    ['IPTU', draft.iptu],
+    ['Seguro incendio', draft.insurance],
+    ['Taxa de servico', draft.serviceFee],
+    ['Total mensal no anuncio', draft.totalMonthlyCost]
+  ].filter(([, value]) => String(value || '').trim());
+
+  if (costs.length > 0) {
+    lines.push('', 'Custos encontrados no anuncio:');
+
+    costs.forEach(([label, value]) => {
+      lines.push(`- ${label}: ${String(value).trim()}`);
+    });
+  }
 
   if (draft.description) {
     lines.push('', 'Descricao encontrada no anuncio:', draft.description);

@@ -1,4 +1,4 @@
-import { Component, HostListener, inject } from '@angular/core';
+import { Component, HostListener, computed, inject } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 import { MapPreviewService } from '../../../core/services/map-preview.service';
@@ -13,7 +13,7 @@ export class GlobalMapPreviewComponent {
   private readonly sanitizer = inject(DomSanitizer);
   readonly mapPreviewService = inject(MapPreviewService);
 
-  googleMapsEmbedUrl(): SafeResourceUrl {
+  readonly googleMapsEmbedUrl = computed<SafeResourceUrl>(() => {
     const state = this.mapPreviewService.state();
 
     if (state.latitude === null || state.longitude === null) {
@@ -22,9 +22,9 @@ export class GlobalMapPreviewComponent {
 
     const url = `https://www.google.com/maps?q=${state.latitude},${state.longitude}&z=14&output=embed`;
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
-  }
+  });
 
-  coordinatesLabel(): string {
+  readonly coordinatesLabel = computed(() => {
     const state = this.mapPreviewService.state();
 
     if (state.latitude === null || state.longitude === null) {
@@ -32,7 +32,7 @@ export class GlobalMapPreviewComponent {
     }
 
     return `${state.latitude}, ${state.longitude}`;
-  }
+  });
 
   @HostListener('window:scroll')
   @HostListener('window:resize')

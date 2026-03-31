@@ -1,4 +1,5 @@
 using Casa.Api.Hubs;
+using Casa.Api.Services.AppLogging;
 using Casa.Application.Properties.Inconsistencies;
 
 namespace Casa.Api.Endpoints;
@@ -31,12 +32,25 @@ public static class PropertyInconsistencyEndpoints
 
         endpoints.MapPut("/api/properties/inconsistencies/{inconsistencyId}/dismiss", async (
             string inconsistencyId,
+            HttpContext httpContext,
+            AppLogService appLogService,
             DismissPropertyInconsistencyCommandService dismissPropertyInconsistencyCommandService,
             InconsistencyBroadcastService inconsistencyBroadcastService,
             CancellationToken cancellationToken) =>
         {
             await dismissPropertyInconsistencyCommandService.DismissAsync(inconsistencyId, cancellationToken);
             await inconsistencyBroadcastService.PublishSummaryAsync(cancellationToken);
+            await appLogService.LogInfoAsync(
+                "Inconsistencies",
+                "InconsistencyDismissed",
+                "Inconsistencia ignorada pelo usuario.",
+                new { inconsistencyId },
+                httpContext.TraceIdentifier,
+                httpContext.Request.Path,
+                httpContext.Request.Method,
+                "PropertyInconsistency",
+                inconsistencyId,
+                cancellationToken);
 
             return Results.NoContent();
         })

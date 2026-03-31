@@ -69,6 +69,7 @@ export class CreatePropertyModalComponent {
     condoFee: null,
     iptu: null,
     insurance: null,
+    serviceFee: null,
     upfrontCost: null,
     addressLine: '',
     neighborhood: '',
@@ -138,6 +139,7 @@ export class CreatePropertyModalComponent {
         condoFee: initialValue.condoFee,
         iptu: initialValue.iptu,
         insurance: initialValue.insurance,
+        serviceFee: initialValue.serviceFee,
         upfrontCost: initialValue.upfrontCost,
         addressLine: initialValue.addressLine,
         neighborhood: initialValue.neighborhood,
@@ -183,7 +185,7 @@ export class CreatePropertyModalComponent {
   }
 
   updateNumber(
-    field: 'price' | 'condoFee' | 'iptu' | 'insurance' | 'upfrontCost' | 'latitude' | 'longitude',
+    field: 'price' | 'condoFee' | 'iptu' | 'insurance' | 'serviceFee' | 'upfrontCost' | 'latitude' | 'longitude',
     value: string
   ): void {
     const parsedValue = value.trim() === '' ? null : Number(value);

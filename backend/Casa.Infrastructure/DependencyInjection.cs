@@ -1,6 +1,5 @@
 using Casa.Application.Abstractions;
 using Casa.Domain.Entities;
-using Casa.Domain.Enums;
 using Casa.Infrastructure.Persistence;
 using Casa.Infrastructure.Persistence.Repositories;
 using Microsoft.Data.Sqlite;
@@ -90,7 +89,22 @@ public static class DependencyInjection
                 cancellationToken);
         }
 
+        var serviceFeeMigration = dbContext.Database
+            .GetMigrations()
+            .LastOrDefault(migration => migration.Contains("AddServiceFeeToPropertyListing", StringComparison.Ordinal));
+
+        if (!string.IsNullOrWhiteSpace(serviceFeeMigration))
+        {
+            await MarkMigrationAsAppliedIfColumnExistsAsync(
+                databasePath,
+                serviceFeeMigration,
+                "ServiceFee",
+                cancellationToken);
+        }
+
         await dbContext.Database.MigrateAsync(cancellationToken);
+        await EnsureAppLogsTableAsync(databasePath, cancellationToken);
+        await EnsureAppSettingsProfileSchemaAsync(databasePath, cancellationToken);
 
         if (!await dbContext.AppSettingsProfiles.AnyAsync(cancellationToken))
         {
@@ -98,93 +112,139 @@ public static class DependencyInjection
             await dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        if (await dbContext.PropertyListings.AnyAsync(cancellationToken))
+        await CleanupAppLogsAsync(dbContext, cancellationToken);
+
+    }
+
+    private static async Task EnsureAppLogsTableAsync(string databasePath, CancellationToken cancellationToken)
+    {
+        await using var connection = new SqliteConnection($"Data Source={databasePath}");
+        await connection.OpenAsync(cancellationToken);
+
+        var createTableCommand = connection.CreateCommand();
+        createTableCommand.CommandText = """
+            CREATE TABLE IF NOT EXISTS "AppLogEntries" (
+                "Id" INTEGER NOT NULL CONSTRAINT "PK_AppLogEntries" PRIMARY KEY AUTOINCREMENT,
+                "Source" TEXT NOT NULL,
+                "Level" TEXT NOT NULL,
+                "Category" TEXT NOT NULL,
+                "EventName" TEXT NOT NULL,
+                "Message" TEXT NOT NULL,
+                "DetailsJson" TEXT NOT NULL DEFAULT '',
+                "TraceId" TEXT NOT NULL DEFAULT '',
+                "Path" TEXT NOT NULL DEFAULT '',
+                "Method" TEXT NOT NULL DEFAULT '',
+                "UserAgent" TEXT NOT NULL DEFAULT '',
+                "RelatedEntityType" TEXT NOT NULL DEFAULT '',
+                "RelatedEntityId" TEXT NOT NULL DEFAULT '',
+                "CreatedAtUtc" TEXT NOT NULL
+            );
+            CREATE INDEX IF NOT EXISTS "IX_AppLogEntries_CreatedAtUtc" ON "AppLogEntries" ("CreatedAtUtc");
+            CREATE INDEX IF NOT EXISTS "IX_AppLogEntries_Source" ON "AppLogEntries" ("Source");
+            CREATE INDEX IF NOT EXISTS "IX_AppLogEntries_Level" ON "AppLogEntries" ("Level");
+            """;
+
+        await createTableCommand.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    private static async Task EnsureAppSettingsProfileSchemaAsync(string databasePath, CancellationToken cancellationToken)
+    {
+        await using var connection = new SqliteConnection($"Data Source={databasePath}");
+        await connection.OpenAsync(cancellationToken);
+
+        var createTableCommand = connection.CreateCommand();
+        createTableCommand.CommandText = """
+            CREATE TABLE IF NOT EXISTS "AppSettingsProfiles" (
+                "Id" INTEGER NOT NULL CONSTRAINT "PK_AppSettingsProfiles" PRIMARY KEY,
+                "DefaultSource" TEXT NOT NULL DEFAULT 'AppExterno',
+                "DefaultCategory" TEXT NOT NULL DEFAULT 'Apartamento',
+                "DefaultCity" TEXT NOT NULL DEFAULT 'Sao Paulo',
+                "DefaultState" TEXT NOT NULL DEFAULT 'SP',
+                "DefaultHasExactLocation" INTEGER NOT NULL DEFAULT 1,
+                "ListingsPageSize" INTEGER NOT NULL DEFAULT 10,
+                "FavoritesPageSize" INTEGER NOT NULL DEFAULT 6,
+                "FavoritesSortBy" TEXT NOT NULL DEFAULT 'Recent',
+                "MapInitialLatitude" TEXT NOT NULL DEFAULT '-14.235',
+                "MapInitialLongitude" TEXT NOT NULL DEFAULT '-51.9253',
+                "MapInitialZoom" INTEGER NOT NULL DEFAULT 4,
+                "MapOnlyExactLocation" INTEGER NOT NULL DEFAULT 0,
+                "MonthlyBudgetIdeal" TEXT NOT NULL DEFAULT '2500',
+                "MonthlyBudgetMax" TEXT NOT NULL DEFAULT '3500',
+                "PreferredNeighborhoods" TEXT NOT NULL DEFAULT '',
+                "AvoidedNeighborhoods" TEXT NOT NULL DEFAULT '',
+                "PriceBelowAverageRatio" TEXT NOT NULL DEFAULT '0.72',
+                "PriceAboveAverageRatio" TEXT NOT NULL DEFAULT '1.35',
+                "RequireCoordinatesForCompleteLocation" INTEGER NOT NULL DEFAULT 1,
+                "RequireOriginalUrl" INTEGER NOT NULL DEFAULT 1,
+                "MinimumPhotoCount" INTEGER NOT NULL DEFAULT 1,
+                "RequireSwotStatuses" TEXT NOT NULL DEFAULT 'EmAnalise,Visitado,Proposta',
+                "RequireNotesStatuses" TEXT NOT NULL DEFAULT 'Visitado,Proposta',
+                "RequireMediaStatuses" TEXT NOT NULL DEFAULT 'Visitado,Proposta',
+                "PriceWeight" INTEGER NOT NULL DEFAULT 30,
+                "LocationWeight" INTEGER NOT NULL DEFAULT 25,
+                "AnalysisWeight" INTEGER NOT NULL DEFAULT 20,
+                "EvidenceWeight" INTEGER NOT NULL DEFAULT 15,
+                "SourceQualityWeight" INTEGER NOT NULL DEFAULT 10
+            );
+            """;
+
+        await createTableCommand.ExecuteNonQueryAsync(cancellationToken);
+
+        var columns = await GetTableColumnsAsync(connection, "AppSettingsProfiles", cancellationToken);
+        var alterStatements = new List<string>();
+
+        AddMissingColumn(columns, alterStatements, "BackendMinimumLogLevel", "TEXT NOT NULL DEFAULT 'Info'");
+        AddMissingColumn(columns, alterStatements, "FrontendMinimumLogLevel", "TEXT NOT NULL DEFAULT 'Warning'");
+        AddMissingColumn(columns, alterStatements, "ExtensionMinimumLogLevel", "TEXT NOT NULL DEFAULT 'Warning'");
+        AddMissingColumn(columns, alterStatements, "InfoLogRetentionDays", "INTEGER NOT NULL DEFAULT 30");
+        AddMissingColumn(columns, alterStatements, "WarningLogRetentionDays", "INTEGER NOT NULL DEFAULT 45");
+        AddMissingColumn(columns, alterStatements, "ErrorLogRetentionDays", "INTEGER NOT NULL DEFAULT 90");
+        AddMissingColumn(columns, alterStatements, "LogNavigationEvents", "INTEGER NOT NULL DEFAULT 1");
+        AddMissingColumn(columns, alterStatements, "LogFrontendHttpFailures", "INTEGER NOT NULL DEFAULT 1");
+        AddMissingColumn(columns, alterStatements, "LogRealtimeEvents", "INTEGER NOT NULL DEFAULT 0");
+        AddMissingColumn(columns, alterStatements, "LogExtensionExtractionEvents", "INTEGER NOT NULL DEFAULT 1");
+        AddMissingColumn(columns, alterStatements, "LogExtensionGeocodingEvents", "INTEGER NOT NULL DEFAULT 1");
+        AddMissingColumn(columns, alterStatements, "LogExtensionImageImportEvents", "INTEGER NOT NULL DEFAULT 1");
+        AddMissingColumn(columns, alterStatements, "AllowFrontendLogIngestion", "INTEGER NOT NULL DEFAULT 1");
+        AddMissingColumn(columns, alterStatements, "AllowExtensionLogIngestion", "INTEGER NOT NULL DEFAULT 1");
+        AddMissingColumn(columns, alterStatements, "LogDetailsMaxLength", "INTEGER NOT NULL DEFAULT 4000");
+        AddMissingColumn(columns, alterStatements, "LogAutoCleanupEnabled", "INTEGER NOT NULL DEFAULT 1");
+
+        foreach (var statement in alterStatements)
+        {
+            var command = connection.CreateCommand();
+            command.CommandText = statement;
+            await command.ExecuteNonQueryAsync(cancellationToken);
+        }
+    }
+
+    private static async Task CleanupAppLogsAsync(CasaDbContext dbContext, CancellationToken cancellationToken)
+    {
+        var settings = await dbContext.AppSettingsProfiles
+            .AsNoTracking()
+            .FirstAsync(profile => profile.Id == AppSettingsProfile.SingletonId, cancellationToken);
+
+        if (!settings.LogAutoCleanupEnabled)
         {
             return;
         }
 
-        await dbContext.PropertyListings.AddRangeAsync(GetSeedProperties(), cancellationToken);
-        await dbContext.SaveChangesAsync(cancellationToken);
-    }
+        var now = DateTimeOffset.UtcNow;
+        var infoThreshold = now.AddDays(-Math.Max(1, settings.InfoLogRetentionDays));
+        var warningThreshold = now.AddDays(-Math.Max(1, settings.WarningLogRetentionDays));
+        var errorThreshold = now.AddDays(-Math.Max(1, settings.ErrorLogRetentionDays));
 
-    private static List<PropertyListing> GetSeedProperties()
-    {
-        var createdAtBase = DateTime.UtcNow.AddDays(-30);
+        await dbContext.Database.ExecuteSqlInterpolatedAsync(
+            $"""DELETE FROM "AppLogEntries" WHERE "Level" = 'Info' AND "CreatedAtUtc" < {infoThreshold};""",
+            cancellationToken);
 
-        return
-        [
-            CreateSeedProperty("Apartamento 2 quartos", "Apartamento", "Rua Sete de Abril, 120", "Centro", "Sao Paulo", "SP", "01044-000", PropertySource.AppExterno, PropertySwotStatus.Novo, 2350, -23.55052m, -46.63331m, true, 1, createdAtBase),
-            CreateSeedProperty("Casa com quintal", "Casa", "Rua Harmonia, 450", "Vila Madalena", "Sao Paulo", "SP", "05435-000", PropertySource.PortalWeb, PropertySwotStatus.EmAnalise, 3200, -23.56168m, -46.65598m, false, 2, createdAtBase),
-            CreateSeedProperty("Studio compacto", "Studio", "Avenida Atlantica, 890", "Copacabana", "Rio de Janeiro", "RJ", "22010-000", PropertySource.AppExterno, PropertySwotStatus.Novo, 2800, -22.97118m, -43.18254m, true, 3, createdAtBase),
-            CreateSeedProperty("Cobertura duplex", "Cobertura", "Rua Alagoas, 820", "Savassi", "Belo Horizonte", "MG", "30130-160", PropertySource.PortalWeb, PropertySwotStatus.EmAnalise, 5400, -19.93961m, -43.93455m, true, 4, createdAtBase, isFavorite: true),
-            CreateSeedProperty("Apartamento mobiliado", "Apartamento", "Rua Chile, 150", "Centro", "Salvador", "BA", "40020-000", PropertySource.AppExterno, PropertySwotStatus.Visitado, 2600, -12.97182m, -38.50111m, true, 5, createdAtBase),
-            CreateSeedProperty("Casa terrea", "Casa", "Rua Padre Chagas, 310", "Moinhos de Vento", "Porto Alegre", "RS", "90570-080", PropertySource.PortalWeb, PropertySwotStatus.Novo, 3500, -30.0277m, -51.20465m, false, 6, createdAtBase),
-            CreateSeedProperty("Loft central", "Loft", "Setor Comercial Sul, Quadra 2", "Asa Sul", "Brasilia", "DF", "70302-000", PropertySource.AppExterno, PropertySwotStatus.Novo, 3100, -15.79389m, -47.88278m, true, 7, createdAtBase),
-            CreateSeedProperty("Apartamento vista mar", "Apartamento", "Avenida Boa Viagem, 420", "Boa Viagem", "Recife", "PE", "51011-000", PropertySource.PortalWeb, PropertySwotStatus.Proposta, 3900, -8.12267m, -34.90064m, true, 8, createdAtBase),
-            CreateSeedProperty("Kitnet reformada", "Kitnet", "Rua 24 de Maio, 91", "Centro", "Curitiba", "PR", "80230-080", PropertySource.AppExterno, PropertySwotStatus.Novo, 1650, -25.43232m, -49.27185m, false, 9, createdAtBase),
-            CreateSeedProperty("Apartamento familiar", "Apartamento", "Rua dos Mundurucus, 740", "Jurunas", "Belem", "PA", "66025-660", PropertySource.PortalWeb, PropertySwotStatus.EmAnalise, 2100, -1.45583m, -48.49018m, false, 10, createdAtBase),
-            CreateSeedProperty("Casa em condominio", "Casa", "Avenida Efigenio Sales, 1800", "Aleixo", "Manaus", "AM", "69060-020", PropertySource.AppExterno, PropertySwotStatus.Novo, 4300, -3.10094m, -60.01381m, true, 11, createdAtBase),
-            CreateSeedProperty("Apartamento proximo ao parque", "Apartamento", "Rua das Palmeiras, 210", "Jardins", "Aracaju", "SE", "49025-550", PropertySource.PortalWeb, PropertySwotStatus.Novo, 2200, -10.94725m, -37.07308m, false, 12, createdAtBase),
-            CreateSeedProperty("Studio com varanda", "Studio", "Rua Monsenhor Bruno, 650", "Meireles", "Fortaleza", "CE", "60115-190", PropertySource.AppExterno, PropertySwotStatus.EmAnalise, 2450, -3.73186m, -38.49678m, true, 13, createdAtBase, isFavorite: true),
-            CreateSeedProperty("Apartamento amplo", "Apartamento", "Rua Candido Mendes, 500", "Centro", "Sao Luis", "MA", "65020-120", PropertySource.PortalWeb, PropertySwotStatus.Descartado, 2300, -2.52972m, -44.30278m, false, 14, createdAtBase),
-            CreateSeedProperty("Casa com edicula", "Casa", "Rua Pedro II, 120", "Centro", "Joao Pessoa", "PB", "58013-420", PropertySource.AppExterno, PropertySwotStatus.Novo, 2700, -7.1195m, -34.84501m, false, 15, createdAtBase),
-            CreateSeedProperty("Apartamento novo", "Apartamento", "Avenida Afonso Pena, 90", "Centro", "Campo Grande", "MS", "79002-070", PropertySource.PortalWeb, PropertySwotStatus.Novo, 2400, -20.46971m, -54.62012m, true, 16, createdAtBase),
-            CreateSeedProperty("Casa geminada", "Casa", "Rua 13 de Junho, 300", "Porto", "Cuiaba", "MT", "78020-000", PropertySource.AppExterno, PropertySwotStatus.Visitado, 2600, -15.60141m, -56.09789m, false, 17, createdAtBase),
-            CreateSeedProperty("Apartamento compacto", "Apartamento", "Rua Senador Souza Naves, 75", "Centro", "Londrina", "PR", "86010-160", PropertySource.PortalWeb, PropertySwotStatus.Novo, 1850, -23.30445m, -51.16958m, true, 18, createdAtBase),
-            CreateSeedProperty("Cobertura com terraco", "Cobertura", "Rua Maceio, 55", "Adrianopolis", "Manaus", "AM", "69057-010", PropertySource.AppExterno, PropertySwotStatus.EmAnalise, 5200, -3.10395m, -60.01022m, true, 19, createdAtBase, isFavorite: true),
-            CreateSeedProperty("Casa perto da praia", "Casa", "Avenida Litoranea, 130", "Ponta Negra", "Natal", "RN", "59090-130", PropertySource.PortalWeb, PropertySwotStatus.Proposta, 3400, -5.87841m, -35.17235m, false, 20, createdAtBase),
-            CreateSeedProperty("Apartamento no centro historico", "Apartamento", "Rua do Giz, 40", "Centro", "Sao Luis", "MA", "65010-680", PropertySource.AppExterno, PropertySwotStatus.Novo, 2050, -2.52993m, -44.30684m, true, 21, createdAtBase),
-            CreateSeedProperty("Studio perto do metro", "Studio", "Rua Aurora, 300", "Centro", "Sao Paulo", "SP", "01209-001", PropertySource.PortalWeb, PropertySwotStatus.Novo, 1950, -23.53858m, -46.64201m, true, 22, createdAtBase),
-            CreateSeedProperty("Apartamento com sacada", "Apartamento", "Rua 7 de Setembro, 980", "Centro", "Florianopolis", "SC", "88010-300", PropertySource.AppExterno, PropertySwotStatus.Visitado, 3300, -27.59538m, -48.54805m, true, 23, createdAtBase),
-            CreateSeedProperty("Casa de vila", "Casa", "Rua do Lavradio, 150", "Lapa", "Rio de Janeiro", "RJ", "20230-070", PropertySource.PortalWeb, PropertySwotStatus.Novo, 2900, -22.91371m, -43.18252m, false, 24, createdAtBase),
-            CreateSeedProperty("Kitnet universitaria", "Kitnet", "Rua Clovis Bevilaqua, 55", "Centro", "Teresina", "PI", "64000-370", PropertySource.AppExterno, PropertySwotStatus.Descartado, 1400, -5.09194m, -42.80336m, false, 25, createdAtBase),
-            CreateSeedProperty("Apartamento terreo", "Apartamento", "Rua Marechal Deodoro, 210", "Centro", "Maceio", "AL", "57020-200", PropertySource.PortalWeb, PropertySwotStatus.Novo, 1750, -9.66599m, -35.735m, true, 26, createdAtBase),
-            CreateSeedProperty("Casa espacosa", "Casa", "Rua Joaquim Tavora, 610", "Centro", "Palmas", "TO", "77001-014", PropertySource.AppExterno, PropertySwotStatus.EmAnalise, 3600, -10.18472m, -48.33361m, false, 27, createdAtBase, isFavorite: true),
-            CreateSeedProperty("Apartamento mobiliado premium", "Apartamento", "Rua das Acacias, 87", "Jardim Europa", "Goiania", "GO", "74240-160", PropertySource.PortalWeb, PropertySwotStatus.EmAnalise, 4100, -16.68689m, -49.26479m, true, 28, createdAtBase),
-            CreateSeedProperty("Studio executivo", "Studio", "Rua Duque de Caxias, 180", "Centro", "Porto Velho", "RO", "76801-120", PropertySource.AppExterno, PropertySwotStatus.Novo, 1700, -8.76194m, -63.90389m, false, 29, createdAtBase),
-            CreateSeedProperty("Apartamento com vista", "Apartamento", "Avenida Nacoes Unidas, 450", "Centro", "Boa Vista", "RR", "69301-000", PropertySource.PortalWeb, PropertySwotStatus.Novo, 2150, 2.82384m, -60.67529m, true, 30, createdAtBase)
-        ];
-    }
+        await dbContext.Database.ExecuteSqlInterpolatedAsync(
+            $"""DELETE FROM "AppLogEntries" WHERE "Level" = 'Warning' AND "CreatedAtUtc" < {warningThreshold};""",
+            cancellationToken);
 
-    private static PropertyListing CreateSeedProperty(
-        string title,
-        string category,
-        string addressLine,
-        string neighborhood,
-        string city,
-        string state,
-        string postalCode,
-        PropertySource source,
-        PropertySwotStatus swotStatus,
-        decimal price,
-        decimal latitude,
-        decimal longitude,
-        bool hasExactLocation,
-        int sequence,
-        DateTime createdAtBase,
-        bool isFavorite = false)
-    {
-        return new PropertyListing
-        {
-            Title = title,
-            Category = category,
-            AddressLine = addressLine,
-            Neighborhood = neighborhood,
-            City = city,
-            State = state,
-            PostalCode = postalCode,
-            Source = source,
-            OriginalUrl = $"https://example.com/imovel-{sequence}",
-            SwotStatus = swotStatus,
-            Price = price,
-            Latitude = latitude,
-            Longitude = longitude,
-            HasExactLocation = hasExactLocation,
-            Score = Math.Round(5.4m + (sequence % 5) * 0.8m, 1),
-            IsFavorite = isFavorite,
-            Excluded = false,
-            CreatedAtUtc = createdAtBase.AddDays(sequence - 1)
-        };
+        await dbContext.Database.ExecuteSqlInterpolatedAsync(
+            $"""DELETE FROM "AppLogEntries" WHERE "Level" = 'Error' AND "CreatedAtUtc" < {errorThreshold};""",
+            cancellationToken);
     }
 
     private static string GetDatabasePath(CasaDbContext dbContext, string contentRootPath)
@@ -226,7 +286,8 @@ public static class DependencyInjection
             "Opportunities",
             "Threats",
             "Score",
-            "IsFavorite"
+            "IsFavorite",
+            "ServiceFee"
         };
 
         return expectedColumns.Any(column => !columns.Contains(column));
@@ -236,13 +297,21 @@ public static class DependencyInjection
     {
         await using var connection = new SqliteConnection($"Data Source={databasePath}");
         await connection.OpenAsync(cancellationToken);
+        return await GetTableColumnsAsync(connection, "PropertyListings", cancellationToken);
+    }
 
+    private static async Task<HashSet<string>> GetTableColumnsAsync(
+        SqliteConnection connection,
+        string tableName,
+        CancellationToken cancellationToken)
+    {
         var tableExistsCommand = connection.CreateCommand();
         tableExistsCommand.CommandText = """
             SELECT COUNT(*)
             FROM sqlite_master
-            WHERE type = 'table' AND name = 'PropertyListings';
+            WHERE type = 'table' AND name = $tableName;
             """;
+        tableExistsCommand.Parameters.AddWithValue("$tableName", tableName);
 
         var tableExists = Convert.ToInt32(await tableExistsCommand.ExecuteScalarAsync(cancellationToken)) > 0;
         if (!tableExists)
@@ -251,7 +320,7 @@ public static class DependencyInjection
         }
 
         var pragmaCommand = connection.CreateCommand();
-        pragmaCommand.CommandText = "PRAGMA table_info('PropertyListings');";
+        pragmaCommand.CommandText = $"PRAGMA table_info('{tableName}');";
 
         await using var reader = await pragmaCommand.ExecuteReaderAsync(cancellationToken);
         var columns = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -262,6 +331,18 @@ public static class DependencyInjection
         }
 
         return columns;
+    }
+
+    private static void AddMissingColumn(
+        HashSet<string> columns,
+        ICollection<string> alterStatements,
+        string columnName,
+        string sqlTypeAndDefault)
+    {
+        if (!columns.Contains(columnName))
+        {
+            alterStatements.Add($"ALTER TABLE AppSettingsProfiles ADD COLUMN {columnName} {sqlTypeAndDefault};");
+        }
     }
 
     private static async Task UpgradeLegacySchemaAsync(
@@ -333,6 +414,11 @@ public static class DependencyInjection
         if (!columns.Contains("IsFavorite"))
         {
             upgradeStatements.Add("ALTER TABLE PropertyListings ADD COLUMN IsFavorite INTEGER NOT NULL DEFAULT 0;");
+        }
+
+        if (!columns.Contains("ServiceFee"))
+        {
+            upgradeStatements.Add("ALTER TABLE PropertyListings ADD COLUMN ServiceFee TEXT NULL;");
         }
 
         foreach (var statement in upgradeStatements)

@@ -20,6 +20,7 @@ export interface PropertyDetails {
   condoFee: number | null;
   iptu: number | null;
   insurance: number | null;
+  serviceFee: number | null;
   upfrontCost: number | null;
   monthlyTotalCost: number | null;
   addressLine: string;

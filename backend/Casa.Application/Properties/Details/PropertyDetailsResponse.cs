@@ -22,6 +22,8 @@ public class PropertyDetailsResponse
 
     public decimal? Insurance { get; init; }
 
+    public decimal? ServiceFee { get; init; }
+
     public decimal? UpfrontCost { get; init; }
 
     public decimal? MonthlyTotalCost { get; init; }

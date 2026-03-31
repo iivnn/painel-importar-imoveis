@@ -97,6 +97,10 @@
               <input class="form-control field-shell__control" [ngModel]="form().insurance" (ngModelChange)="updateNumber('insurance', $event)" name="insurance" inputmode="decimal" />
             </label>
             <label class="field-shell">
+              <span class="field-shell__label">Taxa de serviço</span>
+              <input class="form-control field-shell__control" [ngModel]="form().serviceFee" (ngModelChange)="updateNumber('serviceFee', $event)" name="serviceFee" inputmode="decimal" />
+            </label>
+            <label class="field-shell">
               <span class="field-shell__label">Custo inicial</span>
               <input class="form-control field-shell__control" [ngModel]="form().upfrontCost" (ngModelChange)="updateNumber('upfrontCost', $event)" name="upfrontCost" inputmode="decimal" />
             </label>

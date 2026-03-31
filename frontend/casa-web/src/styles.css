@@ -425,3 +425,40 @@ h4,
   border-color: var(--app-danger-border);
   color: var(--app-danger);
 }
+
+.listing-source-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  color: #f8fafc;
+  background: linear-gradient(135deg, #4a90e2, #2359a8);
+}
+
+.listing-source-badge--quintoandar {
+  background: linear-gradient(135deg, #4a90e2, #2359a8);
+}
+
+.listing-source-badge--vivareal {
+  background: linear-gradient(135deg, #16a34a, #0f766e);
+}
+
+.listing-source-badge--zapimoveis {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+}
+
+.listing-source-badge--imovelweb {
+  background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+}
+
+.listing-source-badge--netimoveis {
+  background: linear-gradient(135deg, #0891b2, #155e75);
+}
+
+.listing-source-badge--olx {
+  background: linear-gradient(135deg, #6d28d9, #4c1d95);
+}

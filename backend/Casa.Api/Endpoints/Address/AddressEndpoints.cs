@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
+using Casa.Api.Services.AppLogging;
 
 namespace Casa.Api.Endpoints;
 
@@ -9,12 +10,23 @@ public static class AddressEndpoints
     {
         endpoints.MapGet("/api/address/cep/{cep}", async (
             string cep,
+            HttpContext httpContext,
             IHttpClientFactory httpClientFactory,
+            AppLogService appLogService,
             CancellationToken cancellationToken) =>
         {
             var normalizedCep = new string(cep.Where(char.IsDigit).ToArray());
             if (normalizedCep.Length != 8)
             {
+                await appLogService.LogWarningAsync(
+                    "AddressLookup",
+                    "InvalidCep",
+                    "Consulta de CEP recebida com formato invalido.",
+                    new { cep },
+                    httpContext.TraceIdentifier,
+                    httpContext.Request.Path,
+                    httpContext.Request.Method,
+                    cancellationToken: cancellationToken);
                 return Results.BadRequest(new { message = "CEP invalido." });
             }
 
@@ -25,14 +37,47 @@ public static class AddressEndpoints
 
             if (!response.IsSuccessStatusCode)
             {
+                await appLogService.LogWarningAsync(
+                    "AddressLookup",
+                    "ViaCepHttpFailure",
+                    "ViaCEP retornou falha para a consulta de CEP.",
+                    new { cep = normalizedCep, statusCode = (int)response.StatusCode },
+                    httpContext.TraceIdentifier,
+                    httpContext.Request.Path,
+                    httpContext.Request.Method,
+                    cancellationToken: cancellationToken);
                 return Results.StatusCode(StatusCodes.Status502BadGateway);
             }
 
             var viaCepResponse = await response.Content.ReadFromJsonAsync<ViaCepResponse>(cancellationToken: cancellationToken);
             if (viaCepResponse is null || viaCepResponse.HasError)
             {
+                await appLogService.LogWarningAsync(
+                    "AddressLookup",
+                    "CepNotFound",
+                    "CEP nao encontrado no ViaCEP.",
+                    new { cep = normalizedCep },
+                    httpContext.TraceIdentifier,
+                    httpContext.Request.Path,
+                    httpContext.Request.Method,
+                    cancellationToken: cancellationToken);
                 return Results.NotFound(new { message = "CEP nao encontrado." });
             }
+
+            await appLogService.LogInfoAsync(
+                "AddressLookup",
+                "CepResolved",
+                "Consulta de CEP concluida com sucesso.",
+                new
+                {
+                    cep = viaCepResponse.PostalCode ?? normalizedCep,
+                    city = viaCepResponse.City,
+                    state = viaCepResponse.State
+                },
+                httpContext.TraceIdentifier,
+                httpContext.Request.Path,
+                httpContext.Request.Method,
+                cancellationToken: cancellationToken);
 
             return Results.Ok(new CepLookupResponse(
                 viaCepResponse.PostalCode ?? normalizedCep,

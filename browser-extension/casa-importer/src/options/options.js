@@ -2,6 +2,7 @@ import { getSettings, saveSettings } from '../shared/settings.js';
 
 const apiBaseUrlInput = document.getElementById('apiBaseUrl');
 const requestTimeoutMsInput = document.getElementById('requestTimeoutMs');
+const maxImagesToImportInput = document.getElementById('maxImagesToImport');
 const saveButton = document.getElementById('saveButton');
 const saveStatus = document.getElementById('saveStatus');
 
@@ -13,7 +14,8 @@ saveButton.addEventListener('click', async () => {
   try {
     await saveSettings({
       apiBaseUrl: apiBaseUrlInput.value,
-      requestTimeoutMs: requestTimeoutMsInput.value
+      requestTimeoutMs: requestTimeoutMsInput.value,
+      maxImagesToImport: maxImagesToImportInput.value
     });
 
     saveStatus.textContent = 'Configuracoes salvas com sucesso.';
@@ -27,6 +29,7 @@ async function bootstrap() {
     const settings = await getSettings();
     apiBaseUrlInput.value = settings.apiBaseUrl;
     requestTimeoutMsInput.value = String(settings.requestTimeoutMs);
+    maxImagesToImportInput.value = String(settings.maxImagesToImport);
     saveStatus.textContent = 'Pronto para configurar.';
   } catch (error) {
     saveStatus.textContent = error?.message || 'Falha ao carregar configuracoes.';

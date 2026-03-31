@@ -1,4 +1,5 @@
 using Casa.Api.Hubs;
+using Casa.Api.Services.AppLogging;
 using Casa.Application.Abstractions;
 using Casa.Application.Properties;
 using Casa.Application.Properties.CreateProperty;
@@ -11,6 +12,8 @@ using Casa.Application.Properties.Status;
 using Casa.Application.Properties.Swot;
 using Casa.Application.Properties.UpdateProperty;
 using Casa.Domain.Enums;
+using System.Net.Http.Headers;
+using System.Linq;
 
 namespace Casa.Api.Endpoints;
 
@@ -126,13 +129,15 @@ public static class PropertyEndpoints
         {
             var property = await repository.GetByIdAsync(id, cancellationToken);
 
-            return property is null ? Results.NotFound() : Results.Ok(property);
+            return property is null ? Results.NotFound() : Results.Ok(PropertyListingMapper.ToResponse(property));
         })
         .WithName("GetPropertyById")
         .WithOpenApi();
 
         endpoints.MapPost("/api/properties", async (
             PropertyListingUpsertRequest request,
+            HttpContext httpContext,
+            AppLogService appLogService,
             CreatePropertyCommandService createPropertyCommandService,
             InconsistencyBroadcastService inconsistencyBroadcastService,
             CancellationToken cancellationToken) =>
@@ -141,6 +146,20 @@ public static class PropertyEndpoints
 
             if (error is not null)
             {
+                await appLogService.LogWarningAsync(
+                    "Properties",
+                    "PropertyCreateValidationFailed",
+                    "Falha de validacao ao criar imovel.",
+                    new
+                    {
+                        request.Title,
+                        request.Category,
+                        error
+                    },
+                    httpContext.TraceIdentifier,
+                    httpContext.Request.Path,
+                    httpContext.Request.Method,
+                    cancellationToken: cancellationToken);
                 return Results.ValidationProblem(new Dictionary<string, string[]>
                 {
                     ["propertyListing"] = [error]
@@ -149,7 +168,25 @@ public static class PropertyEndpoints
 
             await inconsistencyBroadcastService.PublishSummaryAsync(cancellationToken);
             await inconsistencyBroadcastService.PublishPropertyCreatedAsync(property!.Id, property.Title, cancellationToken);
-            return Results.Created($"/api/properties/{property!.Id}", property);
+            await appLogService.LogInfoAsync(
+                "Properties",
+                "PropertyCreated",
+                "Novo imovel criado com sucesso.",
+                new
+                {
+                    property.Id,
+                    property.Title,
+                    property.Source,
+                    property.City,
+                    property.State
+                },
+                httpContext.TraceIdentifier,
+                httpContext.Request.Path,
+                httpContext.Request.Method,
+                "Property",
+                property.Id.ToString(),
+                cancellationToken);
+            return Results.Created($"/api/properties/{property!.Id}", PropertyListingMapper.ToResponse(property));
         })
         .WithName("CreateProperty")
         .WithOpenApi();
@@ -157,6 +194,8 @@ public static class PropertyEndpoints
         endpoints.MapPut("/api/properties/{id:int}", async (
             int id,
             PropertyListingUpsertRequest request,
+            HttpContext httpContext,
+            AppLogService appLogService,
             UpdatePropertyCommandService updatePropertyCommandService,
             InconsistencyBroadcastService inconsistencyBroadcastService,
             CancellationToken cancellationToken) =>
@@ -165,6 +204,23 @@ public static class PropertyEndpoints
 
             if (error is not null)
             {
+                await appLogService.LogWarningAsync(
+                    "Properties",
+                    "PropertyUpdateValidationFailed",
+                    "Falha de validacao ao atualizar imovel.",
+                    new
+                    {
+                        propertyId = id,
+                        request.Title,
+                        request.Category,
+                        error
+                    },
+                    httpContext.TraceIdentifier,
+                    httpContext.Request.Path,
+                    httpContext.Request.Method,
+                    "Property",
+                    id.ToString(),
+                    cancellationToken);
                 return Results.ValidationProblem(new Dictionary<string, string[]>
                 {
                     ["propertyListing"] = [error]
@@ -174,9 +230,25 @@ public static class PropertyEndpoints
             if (property is not null)
             {
                 await inconsistencyBroadcastService.PublishSummaryAsync(cancellationToken);
+                await appLogService.LogInfoAsync(
+                    "Properties",
+                    "PropertyUpdated",
+                    "Imovel atualizado com sucesso.",
+                    new
+                    {
+                        property.Id,
+                        property.Title,
+                        property.SwotStatus
+                    },
+                    httpContext.TraceIdentifier,
+                    httpContext.Request.Path,
+                    httpContext.Request.Method,
+                    "Property",
+                    property.Id.ToString(),
+                    cancellationToken);
             }
 
-            return property is null ? Results.NotFound() : Results.Ok(property);
+            return property is null ? Results.NotFound() : Results.Ok(PropertyListingMapper.ToResponse(property));
         })
         .WithName("UpdateProperty")
         .WithOpenApi();
@@ -184,6 +256,8 @@ public static class PropertyEndpoints
         endpoints.MapPut("/api/properties/{id:int}/status", async (
             int id,
             UpdatePropertyStatusRequest request,
+            HttpContext httpContext,
+            AppLogService appLogService,
             UpdatePropertyStatusCommandService updatePropertyStatusCommandService,
             InconsistencyBroadcastService inconsistencyBroadcastService,
             CancellationToken cancellationToken) =>
@@ -193,9 +267,26 @@ public static class PropertyEndpoints
             if (property is not null)
             {
                 await inconsistencyBroadcastService.PublishSummaryAsync(cancellationToken);
+                await appLogService.LogInfoAsync(
+                    "Properties",
+                    "PropertyStatusUpdated",
+                    "Status do imovel atualizado.",
+                    new
+                    {
+                        property.Id,
+                        property.Title,
+                        property.SwotStatus,
+                        request.Reason
+                    },
+                    httpContext.TraceIdentifier,
+                    httpContext.Request.Path,
+                    httpContext.Request.Method,
+                    "Property",
+                    property.Id.ToString(),
+                    cancellationToken);
             }
 
-            return property is null ? Results.NotFound() : Results.Ok(property);
+            return property is null ? Results.NotFound() : Results.Ok(PropertyListingMapper.ToResponse(property));
         })
         .WithName("UpdatePropertyStatus")
         .WithOpenApi();
@@ -203,6 +294,8 @@ public static class PropertyEndpoints
         endpoints.MapPut("/api/properties/{id:int}/favorite", async (
             int id,
             UpdatePropertyFavoriteRequest request,
+            HttpContext httpContext,
+            AppLogService appLogService,
             UpdatePropertyFavoriteCommandService updatePropertyFavoriteCommandService,
             InconsistencyBroadcastService inconsistencyBroadcastService,
             CancellationToken cancellationToken) =>
@@ -212,9 +305,25 @@ public static class PropertyEndpoints
             if (property is not null)
             {
                 await inconsistencyBroadcastService.PublishSummaryAsync(cancellationToken);
+                await appLogService.LogInfoAsync(
+                    "Properties",
+                    "PropertyFavoriteUpdated",
+                    request.IsFavorite ? "Imovel marcado como favorito." : "Imovel removido dos favoritos.",
+                    new
+                    {
+                        property.Id,
+                        property.Title,
+                        request.IsFavorite
+                    },
+                    httpContext.TraceIdentifier,
+                    httpContext.Request.Path,
+                    httpContext.Request.Method,
+                    "Property",
+                    property.Id.ToString(),
+                    cancellationToken);
             }
 
-            return property is null ? Results.NotFound() : Results.Ok(property);
+            return property is null ? Results.NotFound() : Results.Ok(PropertyListingMapper.ToResponse(property));
         })
         .WithName("UpdatePropertyFavorite")
         .WithOpenApi();
@@ -234,6 +343,8 @@ public static class PropertyEndpoints
         endpoints.MapPut("/api/properties/{id:int}/swot", async (
             int id,
             PropertySwotAnalysisRequest request,
+            HttpContext httpContext,
+            AppLogService appLogService,
             SavePropertySwotAnalysisCommandService savePropertySwotAnalysisCommandService,
             InconsistencyBroadcastService inconsistencyBroadcastService,
             CancellationToken cancellationToken) =>
@@ -243,6 +354,25 @@ public static class PropertyEndpoints
             if (swot is not null)
             {
                 await inconsistencyBroadcastService.PublishSummaryAsync(cancellationToken);
+                await appLogService.LogInfoAsync(
+                    "Swot",
+                    "SwotSaved",
+                    "Analise SWOT salva para o imovel.",
+                    new
+                    {
+                        propertyId = id,
+                        swot.Score,
+                        hasStrengths = !string.IsNullOrWhiteSpace(swot.Strengths),
+                        hasWeaknesses = !string.IsNullOrWhiteSpace(swot.Weaknesses),
+                        hasOpportunities = !string.IsNullOrWhiteSpace(swot.Opportunities),
+                        hasThreats = !string.IsNullOrWhiteSpace(swot.Threats)
+                    },
+                    httpContext.TraceIdentifier,
+                    httpContext.Request.Path,
+                    httpContext.Request.Method,
+                    "Property",
+                    id.ToString(),
+                    cancellationToken);
             }
 
             return swot is null ? Results.NotFound() : Results.Ok(swot);
@@ -265,6 +395,8 @@ public static class PropertyEndpoints
         endpoints.MapPut("/api/properties/{id:int}/notes", async (
             int id,
             UpdatePropertyNotesRequest request,
+            HttpContext httpContext,
+            AppLogService appLogService,
             UpdatePropertyNotesCommandService updatePropertyNotesCommandService,
             InconsistencyBroadcastService inconsistencyBroadcastService,
             CancellationToken cancellationToken) =>
@@ -274,6 +406,21 @@ public static class PropertyEndpoints
             if (details is not null)
             {
                 await inconsistencyBroadcastService.PublishSummaryAsync(cancellationToken);
+                await appLogService.LogInfoAsync(
+                    "Properties",
+                    "PropertyNotesUpdated",
+                    "Observacoes do imovel atualizadas.",
+                    new
+                    {
+                        propertyId = id,
+                        notesLength = details.Notes?.Length ?? 0
+                    },
+                    httpContext.TraceIdentifier,
+                    httpContext.Request.Path,
+                    httpContext.Request.Method,
+                    "Property",
+                    id.ToString(),
+                    cancellationToken);
             }
 
             return details is null ? Results.NotFound() : Results.Ok(details);
@@ -283,7 +430,10 @@ public static class PropertyEndpoints
 
         endpoints.MapPost("/api/properties/{id:int}/attachments", async (
             int id,
+            int? maxImages,
             HttpRequest httpRequest,
+            HttpContext httpContext,
+            AppLogService appLogService,
             SavePropertyAttachmentsCommandService savePropertyAttachmentsCommandService,
             InconsistencyBroadcastService inconsistencyBroadcastService,
             IWebHostEnvironment environment,
@@ -291,29 +441,90 @@ public static class PropertyEndpoints
         {
             if (!httpRequest.HasFormContentType)
             {
+                await appLogService.LogWarningAsync(
+                    "Attachments",
+                    "InvalidAttachmentForm",
+                    "Tentativa de envio de anexo com formulario invalido.",
+                    new { propertyId = id },
+                    httpContext.TraceIdentifier,
+                    httpContext.Request.Path,
+                    httpContext.Request.Method,
+                    "Property",
+                    id.ToString(),
+                    cancellationToken);
                 return Results.BadRequest(new { error = "Formulario invalido." });
             }
 
             var form = await httpRequest.ReadFormAsync(cancellationToken);
             if (!Enum.TryParse<PropertyAttachmentKind>(form["kind"], true, out var kind))
             {
+                await appLogService.LogWarningAsync(
+                    "Attachments",
+                    "InvalidAttachmentKind",
+                    "Tentativa de envio de anexo com tipo invalido.",
+                    new { propertyId = id, kind = form["kind"].ToString() },
+                    httpContext.TraceIdentifier,
+                    httpContext.Request.Path,
+                    httpContext.Request.Method,
+                    "Property",
+                    id.ToString(),
+                    cancellationToken);
                 return Results.BadRequest(new { error = "Tipo de anexo invalido." });
             }
 
             if (form.Files.Count == 0)
             {
+                await appLogService.LogWarningAsync(
+                    "Attachments",
+                    "NoAttachmentFiles",
+                    "Tentativa de envio de anexo sem arquivos.",
+                    new { propertyId = id, kind },
+                    httpContext.TraceIdentifier,
+                    httpContext.Request.Path,
+                    httpContext.Request.Method,
+                    "Property",
+                    id.ToString(),
+                    cancellationToken);
                 return Results.BadRequest(new { error = "Nenhum arquivo foi enviado." });
             }
+
+            var normalizedMaxImages = NormalizeMaxImages(maxImages);
+            var filesToProcess = form.Files.Take(normalizedMaxImages).ToList();
 
             var savedFiles = new List<(string OriginalFileName, string StoredFileName, string RelativePath, string ContentType)>();
             var propertyDirectory = Path.Combine(environment.ContentRootPath, "Data", "uploads", "properties", id.ToString());
             Directory.CreateDirectory(propertyDirectory);
 
-            foreach (var file in form.Files)
+            var skippedFiles = new List<object>();
+
+            foreach (var file in filesToProcess)
             {
                 if (!IsSupportedImage(file.ContentType))
                 {
-                    return Results.BadRequest(new { error = "Somente imagens JPG, PNG, WEBP e GIF sao suportadas." });
+                    await appLogService.LogWarningAsync(
+                        "Attachments",
+                        "UnsupportedAttachmentContentType",
+                        "Tentativa de envio de imagem com formato nao suportado.",
+                        new
+                        {
+                            propertyId = id,
+                            kind,
+                            file.FileName,
+                            file.ContentType
+                        },
+                        httpContext.TraceIdentifier,
+                        httpContext.Request.Path,
+                        httpContext.Request.Method,
+                        "Property",
+                        id.ToString(),
+                        cancellationToken);
+                    skippedFiles.Add(new
+                    {
+                        file.FileName,
+                        file.ContentType,
+                        reason = "UnsupportedContentType"
+                    });
+                    continue;
                 }
 
                 var extension = Path.GetExtension(file.FileName);
@@ -330,22 +541,240 @@ public static class PropertyEndpoints
                     file.ContentType));
             }
 
+            if (savedFiles.Count == 0)
+            {
+                return Results.BadRequest(new { error = "Somente imagens JPG, PNG, WEBP e GIF sao suportadas." });
+            }
+
             var details = await savePropertyAttachmentsCommandService.ExecuteAsync(id, kind, savedFiles, cancellationToken);
 
             if (details is not null)
             {
                 await inconsistencyBroadcastService.PublishSummaryAsync(cancellationToken);
+                await appLogService.LogInfoAsync(
+                    "Attachments",
+                    "AttachmentsUploaded",
+                    "Arquivos enviados para o imovel.",
+                    new
+                    {
+                        propertyId = id,
+                        kind,
+                        uploadedCount = savedFiles.Count,
+                        skippedCount = skippedFiles.Count,
+                        requestedCount = form.Files.Count,
+                        processedCount = filesToProcess.Count,
+                        maxImages = normalizedMaxImages
+                    },
+                    httpContext.TraceIdentifier,
+                    httpContext.Request.Path,
+                    httpContext.Request.Method,
+                    "Property",
+                    id.ToString(),
+                    cancellationToken);
             }
 
-            return details is null ? Results.NotFound() : Results.Ok(details);
+            return details is null ? Results.NotFound() : Results.Ok(new
+            {
+                attachments = details.Attachments
+                    .Select(attachment => new
+                    {
+                        attachment.Id,
+                        attachment.Kind,
+                        attachment.OriginalFileName,
+                        attachment.FileUrl,
+                        attachment.ContentType
+                    })
+                    .ToList(),
+                notes = details.Notes,
+                uploadedCount = savedFiles.Count,
+                skippedCount = skippedFiles.Count,
+                processedCount = filesToProcess.Count,
+                requestedCount = form.Files.Count,
+                skippedFiles
+            });
         })
         .DisableAntiforgery()
         .WithName("AddPropertyAttachments")
         .WithOpenApi();
 
+        endpoints.MapPost("/api/properties/{id:int}/attachments/import-urls", async (
+            int id,
+            int? maxImages,
+            ImportPropertyAttachmentUrlsRequest request,
+            HttpContext httpContext,
+            AppLogService appLogService,
+            SavePropertyAttachmentsCommandService savePropertyAttachmentsCommandService,
+            InconsistencyBroadcastService inconsistencyBroadcastService,
+            IWebHostEnvironment environment,
+            IHttpClientFactory httpClientFactory,
+            CancellationToken cancellationToken) =>
+        {
+            if (request.ImageUrls.Count == 0)
+            {
+                await appLogService.LogWarningAsync(
+                    "Attachments",
+                    "NoAttachmentUrls",
+                    "Tentativa de importar imagens por URL sem imagens informadas.",
+                    new { propertyId = id, request.Kind },
+                    httpContext.TraceIdentifier,
+                    httpContext.Request.Path,
+                    httpContext.Request.Method,
+                    "Property",
+                    id.ToString(),
+                    cancellationToken);
+                return Results.BadRequest(new { error = "Nenhuma URL de imagem foi enviada." });
+            }
+
+            var client = httpClientFactory.CreateClient();
+            var savedFiles = new List<(string OriginalFileName, string StoredFileName, string RelativePath, string ContentType)>();
+            var importedUrls = new List<string>();
+            var failedItems = new List<object>();
+            var propertyDirectory = Path.Combine(environment.ContentRootPath, "Data", "uploads", "properties", id.ToString());
+            Directory.CreateDirectory(propertyDirectory);
+            var normalizedMaxImages = NormalizeMaxImages(maxImages);
+            var imageUrlsToProcess = request.ImageUrls.Take(normalizedMaxImages).ToList();
+
+            for (var index = 0; index < imageUrlsToProcess.Count; index++)
+            {
+                var imageUrl = imageUrlsToProcess[index];
+                if (!Uri.TryCreate(imageUrl, UriKind.Absolute, out var uri))
+                {
+                    failedItems.Add(new { imageUrl, reason = "InvalidUrl" });
+                    continue;
+                }
+
+                try
+                {
+                    using var response = await client.GetAsync(uri, cancellationToken);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        failedItems.Add(new
+                        {
+                            imageUrl,
+                            reason = "HttpError",
+                            status = (int)response.StatusCode
+                        });
+                        continue;
+                    }
+
+                    var inferredContentType = InferImageContentType(
+                        response.Content.Headers.ContentType,
+                        imageUrl);
+
+                    if (!IsSupportedImage(inferredContentType))
+                    {
+                        failedItems.Add(new
+                        {
+                            imageUrl,
+                            reason = "UnsupportedContentType",
+                            contentType = inferredContentType
+                        });
+                        continue;
+                    }
+
+                    var extension = InferImageExtension(inferredContentType, imageUrl);
+                    var storedFileName = $"{Guid.NewGuid():N}.{extension}";
+                    var filePath = Path.Combine(propertyDirectory, storedFileName);
+
+                    await using (var stream = File.Create(filePath))
+                    {
+                        await response.Content.CopyToAsync(stream, cancellationToken);
+                    }
+
+                    savedFiles.Add((
+                        Path.GetFileName(uri.LocalPath) is { Length: > 0 } originalFileName ? originalFileName : $"importada-{index + 1}.{extension}",
+                        storedFileName,
+                        $"/uploads/properties/{id}/{storedFileName}",
+                        inferredContentType));
+                    importedUrls.Add(imageUrl);
+                }
+                catch (Exception ex)
+                {
+                    failedItems.Add(new
+                    {
+                        imageUrl,
+                        reason = "Exception",
+                        message = ex.Message
+                    });
+                }
+            }
+
+            if (savedFiles.Count == 0)
+            {
+                await appLogService.LogWarningAsync(
+                    "Attachments",
+                    "AttachmentUrlImportEmpty",
+                    "Nenhuma imagem valida foi importada a partir das URLs enviadas.",
+                    new
+                    {
+                        propertyId = id,
+                        request.Kind,
+                        requestedCount = request.ImageUrls.Count,
+                        failedCount = failedItems.Count
+                    },
+                    httpContext.TraceIdentifier,
+                    httpContext.Request.Path,
+                    httpContext.Request.Method,
+                    "Property",
+                    id.ToString(),
+                    cancellationToken);
+                return Results.BadRequest(new { error = "Nenhuma imagem valida foi importada a partir das URLs enviadas." });
+            }
+
+            var details = await savePropertyAttachmentsCommandService.ExecuteAsync(id, request.Kind, savedFiles, cancellationToken);
+
+            if (details is not null)
+            {
+                await inconsistencyBroadcastService.PublishSummaryAsync(cancellationToken);
+                await appLogService.LogInfoAsync(
+                    "Attachments",
+                    "AttachmentUrlsImported",
+                    "Imagens importadas por URL para o imovel.",
+                    new
+                    {
+                        propertyId = id,
+                        request.Kind,
+                        importedCount = savedFiles.Count,
+                        requestedCount = request.ImageUrls.Count,
+                        processedCount = imageUrlsToProcess.Count,
+                        failedCount = failedItems.Count,
+                        maxImages = normalizedMaxImages
+                    },
+                    httpContext.TraceIdentifier,
+                    httpContext.Request.Path,
+                    httpContext.Request.Method,
+                    "Property",
+                    id.ToString(),
+                    cancellationToken);
+            }
+
+            return details is null ? Results.NotFound() : Results.Ok(new
+            {
+                attachments = details.Attachments
+                    .Select(attachment => new
+                    {
+                        attachment.Id,
+                        attachment.Kind,
+                        attachment.OriginalFileName,
+                        attachment.FileUrl,
+                        attachment.ContentType
+                    })
+                    .ToList(),
+                importedUrls,
+                failedItems,
+                requestedCount = request.ImageUrls.Count,
+                processedCount = imageUrlsToProcess.Count,
+                importedCount = savedFiles.Count
+            });
+        })
+        .WithName("ImportPropertyAttachmentsFromUrls")
+        .WithOpenApi();
+
         endpoints.MapDelete("/api/properties/{propertyId:int}/attachments/{attachmentId:int}", async (
             int propertyId,
             int attachmentId,
+            HttpContext httpContext,
+            AppLogService appLogService,
             DeletePropertyAttachmentCommandService deletePropertyAttachmentCommandService,
             InconsistencyBroadcastService inconsistencyBroadcastService,
             IWebHostEnvironment environment,
@@ -366,6 +795,21 @@ public static class PropertyEndpoints
             }
 
             await inconsistencyBroadcastService.PublishSummaryAsync(cancellationToken);
+            await appLogService.LogInfoAsync(
+                "Attachments",
+                "AttachmentDeleted",
+                "Anexo removido do imovel.",
+                new
+                {
+                    propertyId,
+                    attachmentId
+                },
+                httpContext.TraceIdentifier,
+                httpContext.Request.Path,
+                httpContext.Request.Method,
+                "Property",
+                propertyId.ToString(),
+                cancellationToken);
             return Results.NoContent();
         })
         .WithName("DeletePropertyAttachment")
@@ -373,6 +817,8 @@ public static class PropertyEndpoints
 
         endpoints.MapDelete("/api/properties/{id:int}", async (
             int id,
+            HttpContext httpContext,
+            AppLogService appLogService,
             SoftDeletePropertyCommandService softDeletePropertyCommandService,
             InconsistencyBroadcastService inconsistencyBroadcastService,
             CancellationToken cancellationToken) =>
@@ -382,6 +828,17 @@ public static class PropertyEndpoints
             if (deleted)
             {
                 await inconsistencyBroadcastService.PublishSummaryAsync(cancellationToken);
+                await appLogService.LogInfoAsync(
+                    "Properties",
+                    "PropertySoftDeleted",
+                    "Imovel marcado como excluido.",
+                    new { propertyId = id },
+                    httpContext.TraceIdentifier,
+                    httpContext.Request.Path,
+                    httpContext.Request.Method,
+                    "Property",
+                    id.ToString(),
+                    cancellationToken);
             }
 
             return deleted ? Results.NoContent() : Results.NotFound();
@@ -415,4 +872,59 @@ public static class PropertyEndpoints
     {
         return contentType is "image/jpeg" or "image/png" or "image/webp" or "image/gif";
     }
+
+    private static string InferImageContentType(MediaTypeHeaderValue? contentType, string imageUrl)
+    {
+        var mediaType = contentType?.MediaType?.ToLowerInvariant();
+        if (!string.IsNullOrWhiteSpace(mediaType))
+        {
+            return mediaType;
+        }
+
+        var extension = Path.GetExtension(imageUrl).ToLowerInvariant();
+        return extension switch
+        {
+            ".png" => "image/png",
+            ".webp" => "image/webp",
+            ".gif" => "image/gif",
+            ".jpg" or ".jpeg" => "image/jpeg",
+            _ => string.Empty
+        };
+    }
+
+    private static string InferImageExtension(string contentType, string imageUrl)
+    {
+        return contentType switch
+        {
+            "image/png" => "png",
+            "image/webp" => "webp",
+            "image/gif" => "gif",
+            "image/jpeg" => "jpg",
+            _ => Path.GetExtension(imageUrl).TrimStart('.').ToLowerInvariant() switch
+            {
+                "png" => "png",
+                "webp" => "webp",
+                "gif" => "gif",
+                "jpg" or "jpeg" => "jpg",
+                _ => "jpg"
+            }
+        };
+    }
+
+    private static int NormalizeMaxImages(int? maxImages)
+    {
+        if (!maxImages.HasValue || maxImages.Value < 1)
+        {
+            return 10;
+        }
+
+        return Math.Min(maxImages.Value, 30);
+    }
+}
+
+public sealed class ImportPropertyAttachmentUrlsRequest
+{
+    public PropertyAttachmentKind Kind { get; init; } = PropertyAttachmentKind.Foto;
+
+    public IReadOnlyList<string> ImageUrls { get; init; } = [];
 }

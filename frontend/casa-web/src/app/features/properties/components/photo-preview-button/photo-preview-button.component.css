@@ -1,0 +1,25 @@
+.btn-photo-preview {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  --bs-btn-color: var(--app-info);
+  --bs-btn-bg: color-mix(in srgb, var(--app-info-soft) 72%, transparent);
+  --bs-btn-border-color: var(--app-info-border);
+  --bs-btn-hover-color: var(--app-on-info);
+  --bs-btn-hover-bg: var(--app-info);
+  --bs-btn-hover-border-color: var(--app-info);
+  --bs-btn-active-color: var(--app-on-info);
+  --bs-btn-active-bg: color-mix(in srgb, var(--app-info) 86%, black 14%);
+  --bs-btn-active-border-color: color-mix(in srgb, var(--app-info) 86%, black 14%);
+  --bs-btn-font-size: 0.78rem;
+  --bs-btn-font-weight: 700;
+  --bs-btn-padding-y: 0.34rem;
+  --bs-btn-padding-x: 0.34rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+}
+
+.btn-photo-preview i {
+  font-size: 0.86rem;
+}

@@ -267,6 +267,154 @@
           </label>
         </div>
       </section>
+
+      <section class="settings-card settings-card--wide">
+        <div class="settings-card__header">
+          <div>
+            <h3 class="settings-card__title mb-1">Logs e diagn&oacute;stico</h3>
+            <p class="settings-card__copy mb-0">Controle a verbosidade, reten&ccedil;&atilde;o e ingest&atilde;o dos logs do backend, frontend e extens&atilde;o.</p>
+          </div>
+        </div>
+
+        <div class="settings-fields settings-fields--three">
+          <label class="settings-field">
+            <span>N&iacute;vel m&iacute;nimo do backend</span>
+            <div class="app-select-shell">
+              <select class="form-control app-select" [ngModel]="form().backendMinimumLogLevel" (ngModelChange)="updateLogLevel('backendMinimumLogLevel', $event)">
+                @for (option of logLevelOptions; track option.value) {
+                  <option [ngValue]="option.value">{{ option.label }}</option>
+                }
+              </select>
+            </div>
+          </label>
+
+          <label class="settings-field">
+            <span>N&iacute;vel m&iacute;nimo do frontend</span>
+            <div class="app-select-shell">
+              <select class="form-control app-select" [ngModel]="form().frontendMinimumLogLevel" (ngModelChange)="updateLogLevel('frontendMinimumLogLevel', $event)">
+                @for (option of logLevelOptions; track option.value) {
+                  <option [ngValue]="option.value">{{ option.label }}</option>
+                }
+              </select>
+            </div>
+          </label>
+
+          <label class="settings-field">
+            <span>N&iacute;vel m&iacute;nimo da extens&atilde;o</span>
+            <div class="app-select-shell">
+              <select class="form-control app-select" [ngModel]="form().extensionMinimumLogLevel" (ngModelChange)="updateLogLevel('extensionMinimumLogLevel', $event)">
+                @for (option of logLevelOptions; track option.value) {
+                  <option [ngValue]="option.value">{{ option.label }}</option>
+                }
+              </select>
+            </div>
+          </label>
+        </div>
+
+        <div class="settings-fields settings-fields--three">
+          <label class="settings-field">
+            <span>Reten&ccedil;&atilde;o de Info (dias)</span>
+            <input class="form-control" type="number" min="1" max="365" [ngModel]="form().infoLogRetentionDays" (ngModelChange)="updateNumber('infoLogRetentionDays', $event)" />
+          </label>
+
+          <label class="settings-field">
+            <span>Reten&ccedil;&atilde;o de Warning (dias)</span>
+            <input class="form-control" type="number" min="1" max="365" [ngModel]="form().warningLogRetentionDays" (ngModelChange)="updateNumber('warningLogRetentionDays', $event)" />
+          </label>
+
+          <label class="settings-field">
+            <span>Reten&ccedil;&atilde;o de Error (dias)</span>
+            <input class="form-control" type="number" min="1" max="365" [ngModel]="form().errorLogRetentionDays" (ngModelChange)="updateNumber('errorLogRetentionDays', $event)" />
+          </label>
+        </div>
+
+        <div class="settings-fields settings-fields--three">
+          <label class="settings-field">
+            <span>Tamanho m&aacute;ximo do detalhe</span>
+            <input class="form-control" type="number" min="500" max="12000" step="100" [ngModel]="form().logDetailsMaxLength" (ngModelChange)="updateNumber('logDetailsMaxLength', $event)" />
+          </label>
+        </div>
+
+        <div class="settings-check-grid">
+          <label class="settings-toggle">
+            <input type="checkbox" [ngModel]="form().logAutoCleanupEnabled" (ngModelChange)="updateBoolean('logAutoCleanupEnabled', $event)" />
+            <span>Limpeza autom&aacute;tica de logs ativada</span>
+          </label>
+
+          <label class="settings-toggle">
+            <input type="checkbox" [ngModel]="form().allowFrontendLogIngestion" (ngModelChange)="updateBoolean('allowFrontendLogIngestion', $event)" />
+            <span>Aceitar logs enviados pelo frontend</span>
+          </label>
+
+          <label class="settings-toggle">
+            <input type="checkbox" [ngModel]="form().allowExtensionLogIngestion" (ngModelChange)="updateBoolean('allowExtensionLogIngestion', $event)" />
+            <span>Aceitar logs enviados pela extens&atilde;o</span>
+          </label>
+        </div>
+
+        <div class="settings-status-rules">
+          <div class="settings-status-group">
+            <h4 class="mb-2">Frontend</h4>
+            <div class="settings-check-grid">
+              <label class="settings-toggle">
+                <input type="checkbox" [ngModel]="form().logNavigationEvents" (ngModelChange)="updateBoolean('logNavigationEvents', $event)" />
+                <span>Logar navega&ccedil;&atilde;o entre telas</span>
+              </label>
+
+              <label class="settings-toggle">
+                <input type="checkbox" [ngModel]="form().logFrontendHttpFailures" (ngModelChange)="updateBoolean('logFrontendHttpFailures', $event)" />
+                <span>Logar falhas HTTP do frontend</span>
+              </label>
+
+              <label class="settings-toggle">
+                <input type="checkbox" [ngModel]="form().logRealtimeEvents" (ngModelChange)="updateBoolean('logRealtimeEvents', $event)" />
+                <span>Logar eventos em tempo real</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="settings-status-group">
+            <h4 class="mb-2">Extens&atilde;o</h4>
+            <div class="settings-check-grid">
+              <label class="settings-toggle">
+                <input type="checkbox" [ngModel]="form().logExtensionExtractionEvents" (ngModelChange)="updateBoolean('logExtensionExtractionEvents', $event)" />
+                <span>Logar extra&ccedil;&atilde;o de dados dos sites</span>
+              </label>
+
+              <label class="settings-toggle">
+                <input type="checkbox" [ngModel]="form().logExtensionGeocodingEvents" (ngModelChange)="updateBoolean('logExtensionGeocodingEvents', $event)" />
+                <span>Logar geocodifica&ccedil;&atilde;o e coordenadas</span>
+              </label>
+
+              <label class="settings-toggle">
+                <input type="checkbox" [ngModel]="form().logExtensionImageImportEvents" (ngModelChange)="updateBoolean('logExtensionImageImportEvents', $event)" />
+                <span>Logar importa&ccedil;&atilde;o de imagens</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-log-actions">
+          <div class="settings-log-actions__copy">
+            <h4 class="mb-1">Manutencao dos logs</h4>
+            <p class="mb-0">Apaga todo o historico armazenado no backend, incluindo backend, frontend e extensao.</p>
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-outline-danger"
+            (click)="requestClearLogs()"
+            [disabled]="isLoading() || isSaving() || isClearingLogs()"
+          >
+            @if (isClearingLogs()) {
+              <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+              Limpando logs...
+            } @else {
+              Excluir todos os logs
+            }
+          </button>
+        </div>
+      </section>
     </div>
 
     @if (saveError()) {

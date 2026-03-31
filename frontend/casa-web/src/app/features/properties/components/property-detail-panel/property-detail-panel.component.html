@@ -43,6 +43,7 @@
           <article><span>Condominio</span><strong>{{ detail.condoFee ?? 0 | number:'1.0-0' }}</strong></article>
           <article><span>IPTU</span><strong>{{ detail.iptu ?? 0 | number:'1.0-0' }}</strong></article>
           <article><span>Seguro</span><strong>{{ detail.insurance ?? 0 | number:'1.0-0' }}</strong></article>
+          <article><span>Taxa de servico</span><strong>{{ detail.serviceFee ?? 0 | number:'1.0-0' }}</strong></article>
           <article><span>Custo mensal total</span><strong>{{ monthlyCost(detail) ?? 0 | number:'1.0-0' }}</strong></article>
           <article><span>Custo inicial</span><strong>{{ detail.upfrontCost ?? 0 | number:'1.0-0' }}</strong></article>
         </div>

@@ -19,15 +19,31 @@
     "https://www.quintoandar.com.br/*",
     "https://www.vivareal.com.br/*",
     "https://www.zapimoveis.com.br/*",
-    "https://www.olx.com.br/*"
+    "https://www.imovelweb.com.br/*",
+    "https://www.netimoveis.com/*",
+    "https://painel.netimoveis.com/*",
+    "https://fotosimoveis.blob.core.windows.net/*",
+    "https://www.olx.com.br/*",
+    "https://*.olx.com.br/*"
   ],
   "background": {
     "service_worker": "src/background.js",
     "type": "module"
   },
+  "icons": {
+    "16": "assets/icons/icon-16.png",
+    "32": "assets/icons/icon-32.png",
+    "48": "assets/icons/icon-48.png",
+    "128": "assets/icons/icon-128.png"
+  },
   "action": {
     "default_title": "Casa Importador",
-    "default_popup": "src/popup/popup.html"
+    "default_popup": "src/popup/popup.html",
+    "default_icon": {
+      "16": "assets/icons/icon-16.png",
+      "32": "assets/icons/icon-32.png",
+      "48": "assets/icons/icon-48.png"
+    }
   },
   "options_page": "src/options/options.html",
   "content_scripts": [
@@ -36,7 +52,10 @@
         "https://www.quintoandar.com.br/*",
         "https://www.vivareal.com.br/*",
         "https://www.zapimoveis.com.br/*",
-        "https://www.olx.com.br/*"
+        "https://www.imovelweb.com.br/*",
+        "https://www.netimoveis.com/*",
+        "https://www.olx.com.br/*",
+        "https://*.olx.com.br/*"
       ],
       "js": [
         "src/content/extractors.js",
