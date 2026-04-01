@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
+import { getApiUrl, getFileUrl } from '../config/app-runtime-config';
 import { CreatePropertyRequest, PropertySwotStatus } from '../../features/properties/models/create-property.model';
 import {
   PropertyFavoriteSortBy,
@@ -19,8 +20,7 @@ import { PropertySwotAnalysis, SavePropertySwotRequest } from '../../features/pr
 @Injectable({ providedIn: 'root' })
 export class PropertyListingsService {
   private readonly http = inject(HttpClient);
-  private readonly apiBaseUrl = 'http://localhost:5074/api/properties';
-  private readonly fileBaseUrl = 'http://localhost:5074';
+  private readonly apiBaseUrl = getApiUrl('/api/properties');
 
   getPage(page: number, pageSize: number, filters: PropertyFilters): Observable<PropertyListingPage> {
     const params = this.appendFilters(new HttpParams()
@@ -96,7 +96,7 @@ export class PropertyListingsService {
               ...item,
               thumbnailUrls: item.thumbnailUrls.map(url => url.startsWith('http')
                 ? url
-                : `${this.fileBaseUrl}${url}`)
+                : getFileUrl(url))
             }))
           });
           subscriber.complete();
@@ -220,7 +220,7 @@ export class PropertyListingsService {
         ...attachment,
         fileUrl: attachment.fileUrl.startsWith('http')
           ? attachment.fileUrl
-          : `${this.fileBaseUrl}${attachment.fileUrl}`
+          : getFileUrl(attachment.fileUrl)
       }))
     };
   }

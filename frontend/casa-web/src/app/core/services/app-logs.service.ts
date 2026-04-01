@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { Observable } from 'rxjs';
 
+import { getApiUrl, getHubUrl } from '../config/app-runtime-config';
 import {
   AppLogFilters,
   AppLogLevel,
@@ -17,8 +18,8 @@ export class AppLogsService {
   private readonly http = inject(HttpClient);
   private readonly httpBackend = inject(HttpBackend);
   private readonly rawHttp = new HttpClient(this.httpBackend);
-  private readonly apiBaseUrl = 'http://localhost:5074/api/logs';
-  private readonly hubUrl = 'http://localhost:5074/hubs/logs';
+  private readonly apiBaseUrl = getApiUrl('/api/logs');
+  private readonly hubUrl = getHubUrl('/hubs/logs');
 
   createConnection(): signalR.HubConnection {
     return new signalR.HubConnectionBuilder()

@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import * as signalR from '@microsoft/signalr';
 import { Observable } from 'rxjs';
 
+import { getApiUrl, getHubUrl } from '../config/app-runtime-config';
 import {
   PropertyInconsistenciesResponse,
   PropertyInconsistencySummary
@@ -11,8 +12,8 @@ import {
 @Injectable({ providedIn: 'root' })
 export class PropertyInconsistenciesService {
   private readonly http = inject(HttpClient);
-  private readonly apiBaseUrl = 'http://localhost:5074/api/properties/inconsistencies';
-  private readonly hubUrl = 'http://localhost:5074/hubs/inconsistencies';
+  private readonly apiBaseUrl = getApiUrl('/api/properties/inconsistencies');
+  private readonly hubUrl = getHubUrl('/hubs/inconsistencies');
 
   createConnection(): signalR.HubConnection {
     return new signalR.HubConnectionBuilder()
