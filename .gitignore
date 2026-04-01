@@ -1,0 +1,43 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vs/
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/
+*.sublime-workspace
+*.user
+*.suo
+
+# .NET
+**/bin/
+**/obj/
+TestResults/
+
+# Frontend / Angular
+frontend/casa-web/node_modules/
+frontend/casa-web/.angular/
+frontend/casa-web/dist/
+frontend/casa-web/coverage/
+frontend/casa-web/.sass-cache/
+frontend/casa-web/.cache/
+npm-debug.log*
+yarn-error.log*
+
+# Local app data
+backend/Casa.Api/Data/*.db
+backend/Casa.Api/Data/*.db-shm
+backend/Casa.Api/Data/*.db-wal
+backend/Casa.Api/Data/uploads/
+
+# Temp / local outputs
+tmp/
+output/
+tmp-build-casa-api*/
+
+# Extension local/debug artifacts
+browser-extension/casa-importer/*.log
