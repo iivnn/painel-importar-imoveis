@@ -1252,7 +1252,11 @@ function ensureDraftLocation(draft) {
 function extractFromQuintoAndar() {
   const draft = defaultDraft('QuintoAndar');
   const nextData = getNextData();
-  const house = nextData?.props?.pageProps?.house;
+  const pageProps = nextData?.props?.pageProps;
+  const house =
+    pageProps?.house ||
+    pageProps?.initialState?.house?.houseInfo ||
+    {};
   const jsonLdEntries = getJsonLdEntries();
   const apartmentLd = jsonLdEntries.find(entry => entry?.['@type'] === 'Apartment');
   const canonicalUrl = textFromMeta('link[rel="canonical"]') || textFromMeta('meta[property="og:url"]');
@@ -1280,6 +1284,7 @@ function extractFromQuintoAndar() {
     house?.pricingInfos?.condominium,
     house?.pricing?.condominium,
     house?.condominiumFee,
+    house?.condoPrice,
     pageCosts.condoFee
   );
   draft.iptu = valueFromCandidates(
@@ -1291,18 +1296,21 @@ function extractFromQuintoAndar() {
     house?.pricingInfos?.insurance,
     house?.pricing?.insurance,
     house?.pricingInfos?.fireInsurance,
+    house?.homeProtection,
     pageCosts.insurance
   );
   draft.serviceFee = valueFromCandidates(
     house?.pricingInfos?.serviceFee,
     house?.pricing?.serviceFee,
     house?.serviceFee,
+    house?.tenantServiceFee,
     pageCosts.serviceFee
   );
   draft.totalMonthlyCost = valueFromCandidates(
     house?.pricingInfos?.total,
     house?.pricing?.total,
     house?.totalPrice,
+    house?.totalCost,
     pageCosts.totalMonthlyCost
   );
   draft.description =
